@@ -18,23 +18,15 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Client {
-    public enum EType{
-        PERSONAL, COMPANY
-    }
 
     @Id
     private String id;
 
     @NotNull(message = "El Tipo no debe estar vacio (1 Personal, 2 Empresarial)")
-    private EType idType;
+    private TypeClient idType;
 
     // Id Person y/o Company
     private String idPerson;
-
-
-
-
-
 
 
 }

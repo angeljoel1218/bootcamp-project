@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Credit {
     @Id
     private String id;
+
     @NonNull
     private String name;
     private Integer maxNumber;
