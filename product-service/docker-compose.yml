@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  product-service:
+    container_name: product-service
+    image: product-service:latest
+    ports:
+      - 8080:8080
+    networks:
+      - spring-cloud-network
+  mongodb-service:
+    image: mongo:5.0
+    ports:
+      - 27017:27017
+    volumes:
+      - ~/apps/mongo:/data/db
+    networks:
+      - spring-cloud-network
+networks:
+  spring-cloud-network:
+    driver: bridge
