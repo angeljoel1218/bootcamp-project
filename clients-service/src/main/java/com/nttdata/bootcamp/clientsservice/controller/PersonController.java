@@ -25,25 +25,25 @@ public class PersonController {
     }
 
     @GetMapping("person/{id}")
-    public Mono<Person> getClient(@PathVariable("id") String id){
-        return personService.getPerson(id);
+    public Mono<Person> findById(@PathVariable("id") String id){
+        return personService.findById(id);
     }
 
     @PostMapping("person")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public  Mono<Person> savePerson(@RequestBody @Valid Mono<Person> personMono){
-        return  personService.savePerson(personMono);
+    public  Mono<Person> create(@RequestBody @Valid Mono<Person> personMono){
+        return  personService.create(personMono);
     }
 
 
     @PostMapping("person/update/{id}")
     public  Mono<Person> updatePerson(@RequestBody Mono<Person> personMono, @PathVariable String id){
-        return  personService.updatePerson(personMono,id);
+        return  personService.update(personMono,id);
     }
 
     @PostMapping("person/delete/{id}")
     public  Mono<Void> personService(@PathVariable String id){
-        return personService.deletePerson(id);
+        return personService.delete(id);
     }
 
 }

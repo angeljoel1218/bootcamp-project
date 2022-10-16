@@ -18,7 +18,7 @@ public class CompanyServiceImpl implements   CompanyService{
 
 
     @Override
-    public Mono<Company> saveCompany(Mono<Company> companyMono) {
+    public Mono<Company> create(Mono<Company> companyMono) {
         return companyMono.flatMap(companyRepository::insert);
     }
 
@@ -28,12 +28,12 @@ public class CompanyServiceImpl implements   CompanyService{
     }
 
     @Override
-    public Mono<Company> getCompany(String id) {
+    public Mono<Company> findById(String id) {
         return companyRepository.findById(id);
     }
 
     @Override
-    public Mono<Company> updateCompany(Mono<Company> companyMono, String id) {
+    public Mono<Company> update(Mono<Company> companyMono, String id) {
         return companyRepository.findById(id)
                 .flatMap(t->companyMono)
                 .doOnNext(e->e.setId(id))
@@ -41,7 +41,7 @@ public class CompanyServiceImpl implements   CompanyService{
     }
 
     @Override
-    public Mono<Void> deleteCompany(String id) {
+    public Mono<Void> delete(String id) {
         return companyRepository.deleteById(id);
     }
 }

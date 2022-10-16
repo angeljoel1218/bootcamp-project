@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
-//@RequestMapping("/client")
 public class ClientController {
 
     @Autowired
@@ -19,30 +18,30 @@ public class ClientController {
 
 
     @GetMapping("client")
-    public Flux<Client> getclients(){
+    public Flux<Client> findAll(){
         return   clientService.findAll();
     }
 
     @GetMapping("client/{id}")
-    public Mono<Client> getClient(@PathVariable("id") String id){
-        return clientService.getClient(id);
+    public Mono<Client> findById(@PathVariable("id") String id){
+        return clientService.findById(id);
     }
 
     @PostMapping("client")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public  Mono<Client> saveClient(@RequestBody @Valid Mono<Client> clientMono){
-        return  clientService.saveClient(clientMono);
+    public  Mono<Client> create(@RequestBody @Valid Mono<Client> clientMono){
+        return  clientService.create(clientMono);
     }
 
 
     @PostMapping("client/update/{id}")
-    public  Mono<Client> updateClient(@RequestBody Mono<Client> clientMono, @PathVariable String id){
-        return  clientService.updateClient(clientMono,id);
+    public  Mono<Client> update(@RequestBody Mono<Client> clientMono, @PathVariable String id){
+        return  clientService.update(clientMono,id);
     }
 
     @PostMapping("client/delete/{id}")
-    public  Mono<Void> deleteClient(@PathVariable String id){
-        return clientService.deleteClient(id);
+    public  Mono<Void> delete(@PathVariable String id){
+        return clientService.delete(id);
     }
 
 }

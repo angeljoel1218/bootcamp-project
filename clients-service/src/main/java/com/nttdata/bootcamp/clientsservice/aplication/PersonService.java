@@ -7,14 +7,14 @@ import reactor.core.publisher.Mono;
 
 public interface PersonService {
 
-    Mono<Person> savePerson(Mono<Person> personMono);
+    Mono<Person> create(Mono<Person> personMono);
 
     Flux<Person> findAll();
 
-    Mono<Person> getPerson(String id);
+    Mono<Person> findById(String id);
 
-    Mono<Person> updatePerson(Mono<Person> personMono,String id);
+    Mono<Person> update(Mono<Person> personMono,String id);
 
-    Mono<Void> deletePerson(String id);
+    Mono<Void> delete(String id);
 
 }
