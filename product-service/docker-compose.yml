@@ -1,20 +1,19 @@
 version: '3.9'
 services:
-  product-service:
-    container_name: product-service
-    image: product-service:latest
-    ports:
-      - 8080:8080
-    networks:
-      - spring-cloud-network
   mongodb-service:
     image: mongo:5.0
     ports:
       - 27017:27017
+    container_name: mongodb-service
     volumes:
-      - ~/apps/mongo:/data/db
-    networks:
-      - spring-cloud-network
-networks:
-  spring-cloud-network:
-    driver: bridge
+      - ./db/:/data/db
+  product-service:
+    container_name: product-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mongodb-service
+    image: product-service:latest
+    ports:
+      - 8080:8080

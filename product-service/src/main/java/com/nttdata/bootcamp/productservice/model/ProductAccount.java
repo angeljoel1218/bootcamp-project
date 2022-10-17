@@ -9,15 +9,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Account {
+public class ProductAccount {
     @Id
     private String id;
-    @NonNull
+    private String code;
     private String name;
     private Float maintenance;
     private Integer maxMovements;
-    @NonNull
     private String coin;
-    @NonNull
     private TypeAccount type;
 }

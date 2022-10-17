@@ -9,15 +9,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Credit {
+public class ProductCredit {
     @Id
     private String id;
-
-    @NonNull
+    private String code;
     private String name;
     private Integer maxNumber;
-    @NonNull
     private String coin;
-    @NonNull
     private TypeCredit type;
 }
