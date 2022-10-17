@@ -47,12 +47,12 @@ public class FixedTermDepositAccountController {
     }
 
     @PutMapping("fixed-term-deposit/deposit")
-    public Mono<Void> deposit(@PathVariable OperationDto depositDto){
+    public Mono<String> deposit(@PathVariable OperationDto depositDto){
         return accountService.deposit(depositDto);
     }
 
     @PutMapping("fixed-term-deposit/withdraw")
-    public Mono<Void> withdraw(@PathVariable OperationDto depositDto){
+    public Mono<String> withdraw(@PathVariable OperationDto depositDto){
         return accountService.withdraw(depositDto);
     }
 }
