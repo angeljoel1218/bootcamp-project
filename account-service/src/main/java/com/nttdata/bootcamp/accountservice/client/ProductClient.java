@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.accountservice.client;
 
+import com.nttdata.bootcamp.accountservice.model.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.dto.ProductAccountDto;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,4 +12,6 @@ import reactor.core.publisher.Mono;
 public interface ProductClient {
     @RequestMapping(method = RequestMethod.GET, value = "/product-account/{id}")
     Mono<ProductAccountDto> getProductAccount(@PathVariable("id") String id);
+    @RequestMapping(method = RequestMethod.GET, value = "/product-account/{value}/type")
+    Mono<ProductAccountDto> getProductAccountByType(@PathVariable("value") TypeAccount value);
 }

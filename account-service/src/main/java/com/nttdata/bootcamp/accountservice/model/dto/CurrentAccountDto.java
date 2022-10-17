@@ -15,6 +15,7 @@ public class CurrentAccountDto {
     private String holderId;
     private String [] holders;
     private String [] authorizedSigners;
+    private String productId;
     private Date createdAt;
     private Date updatedAt;
     private StateAccount state;

@@ -14,6 +14,8 @@ public class FixedTermDepositAccountDto {
     private Float interestRate;
     private String coin;
     private String holderId;
+    private String productId;
+    private Integer dayOfOperation;
     private Date createdAt;
     private Date updatedAt;
     private StateAccount state;

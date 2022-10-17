@@ -10,7 +10,7 @@ public class TransactionDto {
     private String id;
     private String operation;
     private Float amount;
-    private String origin;
+    private String accountId;
     private String destination;
     private Date dateOfTransaction;
     private TypeTransaction type;

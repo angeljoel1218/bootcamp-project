@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.productservice.controller;
 
 import com.nttdata.bootcamp.productservice.application.ProductAccountService;
+import com.nttdata.bootcamp.productservice.model.TypeAccount;
 import com.nttdata.bootcamp.productservice.model.dto.ProductAccountDto;
 import com.nttdata.bootcamp.productservice.application.mappers.MapperProductAccount;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,16 @@ public class ProductAccountController {
     @GetMapping("product-account/{id}")
     public Mono<ResponseEntity<ProductAccountDto>> findById(@PathVariable String id) {
         return productAccountService.findById(id)
+                .map(a -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(a))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+
+    @GetMapping("product-account/{value}/type")
+    public Mono<ResponseEntity<ProductAccountDto>> findByType(@PathVariable TypeAccount value) {
+        return productAccountService.findByType(value)
                 .map(a -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(a))

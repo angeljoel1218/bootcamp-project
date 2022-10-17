@@ -3,6 +3,7 @@ package com.nttdata.bootcamp.productservice.application;
 import com.nttdata.bootcamp.productservice.application.mappers.MapperProductAccount;
 import com.nttdata.bootcamp.productservice.infrastructure.ProductAccountRepository;
 import com.nttdata.bootcamp.productservice.model.ProductAccount;
+import com.nttdata.bootcamp.productservice.model.TypeAccount;
 import com.nttdata.bootcamp.productservice.model.dto.ProductAccountDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,12 @@ public class ProductAccountServiceImpl implements ProductAccountService {
     @Override
     public Mono<ProductAccountDto> findById(String id) {
         return productAccountRepository.findById(id)
+                .flatMap(mapperProductAccount::toDto);
+    }
+
+    @Override
+    public Mono<ProductAccountDto> findByType(TypeAccount type) {
+        return productAccountRepository.findByType(type)
                 .flatMap(mapperProductAccount::toDto);
     }
 
