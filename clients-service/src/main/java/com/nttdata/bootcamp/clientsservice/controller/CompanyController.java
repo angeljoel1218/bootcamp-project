@@ -25,25 +25,24 @@ public class CompanyController {
     }
 
     @GetMapping("company/{id}")
-    public Mono<Company> getCompany(@PathVariable("id") String id){
-        return companyService.getCompany(id);
+    public Mono<Company> findById(@PathVariable("id") String id){
+        return companyService.findById(id);
     }
 
     @PostMapping("company")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public  Mono<Company> saveCompany(@RequestBody @Valid Mono<Company> companyMono){
-        return  companyService.saveCompany(companyMono);
+        return  companyService.create(companyMono);
     }
-
 
     @PostMapping("company/update/{id}")
     public  Mono<Company> updateCompany(@RequestBody Mono<Company> companyMono, @PathVariable String id){
-        return  companyService.updateCompany(companyMono,id);
+        return  companyService.update(companyMono,id);
     }
 
     @PostMapping("company/delete/{id}")
     public  Mono<Void> deleteCompany(@PathVariable String id){
-        return companyService.deleteCompany(id);
+        return companyService.delete(id);
     }
 
 }

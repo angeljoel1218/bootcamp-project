@@ -15,7 +15,7 @@ public class ClientServiceImpl implements  ClientService {
 
 
     @Override
-    public Mono<Client> saveClient(Mono<Client> clientMono) {
+    public Mono<Client> create(Mono<Client> clientMono) {
         return clientMono.flatMap(clientRepository::insert);
     }
 
@@ -25,12 +25,12 @@ public class ClientServiceImpl implements  ClientService {
     }
 
     @Override
-    public Mono<Client> getClient(String id) {
+    public Mono<Client> findById(String id) {
         return clientRepository.findById(id);
     }
 
     @Override
-    public Mono<Client> updateClient(Mono<Client> clientMono, String id) {
+    public Mono<Client> update(Mono<Client> clientMono, String id) {
         return clientRepository.findById(id)
                 .flatMap(t->clientMono)
                 .doOnNext(e->e.setId(id))
@@ -38,7 +38,7 @@ public class ClientServiceImpl implements  ClientService {
     }
 
     @Override
-    public Mono<Void> deleteClient(String id) {
+    public Mono<Void> delete(String id) {
        return  clientRepository.deleteById(id);
 
     }

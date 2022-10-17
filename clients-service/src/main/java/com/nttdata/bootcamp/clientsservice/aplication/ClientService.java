@@ -8,14 +8,14 @@ import reactor.core.publisher.Mono;
 
 public interface ClientService {
 
-    Mono<Client> saveClient(Mono<Client> clientMono);
+    Mono<Client> create(Mono<Client> clientMono);
 
     Flux<Client> findAll();
 
-    Mono<Client> getClient(String id);
+    Mono<Client> findById(String id);
 
-    Mono<Client> updateClient(Mono<Client> clientMono,String id);
+    Mono<Client> update(Mono<Client> clientMono,String id);
 
-    Mono<Void> deleteClient(String id);
+    Mono<Void> delete(String id);
 
 }

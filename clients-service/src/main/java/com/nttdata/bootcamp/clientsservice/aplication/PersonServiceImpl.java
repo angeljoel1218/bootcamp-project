@@ -16,7 +16,7 @@ public class PersonServiceImpl  implements PersonService {
     PersonRepository personRepository;
 
     @Override
-    public Mono<Person> savePerson(Mono<Person> personMono) {
+    public Mono<Person> create(Mono<Person> personMono) {
         return personMono.flatMap(personRepository::insert);
     }
 
@@ -26,12 +26,12 @@ public class PersonServiceImpl  implements PersonService {
     }
 
     @Override
-    public Mono<Person> getPerson(String id) {
+    public Mono<Person> findById(String id) {
         return personRepository.findById(id);
     }
 
     @Override
-    public Mono<Person> updatePerson(Mono<Person> personMono, String id) {
+    public Mono<Person> update(Mono<Person> personMono, String id) {
          return personRepository.findById(id)
                 .flatMap(t->personMono)
                 .doOnNext(e->e.setId(id))
@@ -39,7 +39,7 @@ public class PersonServiceImpl  implements PersonService {
     }
 
     @Override
-    public Mono<Void> deletePerson(String id) {
+    public Mono<Void> delete(String id) {
         return personRepository.deleteById(id);
     }
 }
