@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class SavingAccountDto {
+public class SavingsAccountDto {
     private String id;
     private String number;
     private String cci;
@@ -14,6 +14,7 @@ public class SavingAccountDto {
     private Float interestRate;
     private String coin;
     private String holderId;
+    private String productId;
     private Date createdAt;
     private Date updatedAt;
     private StateAccount state;

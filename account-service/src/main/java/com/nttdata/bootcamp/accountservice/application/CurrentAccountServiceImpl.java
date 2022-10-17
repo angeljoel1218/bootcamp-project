@@ -1,43 +1,109 @@
 package com.nttdata.bootcamp.accountservice.application;
 
-import com.nttdata.bootcamp.accountservice.model.CurrentAccount;
-import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
+import com.nttdata.bootcamp.accountservice.application.mappers.MapperCurrentAccount;
+import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
+import com.nttdata.bootcamp.accountservice.client.ProductClient;
+import com.nttdata.bootcamp.accountservice.client.UserClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.CurrentAccountRepository;
+import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
+import com.nttdata.bootcamp.accountservice.model.*;
+import com.nttdata.bootcamp.accountservice.model.dto.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public class CurrentAccountServiceImpl implements AccountService<CurrentAccountDto>{
+import java.util.Date;
+
+public class CurrentAccountServiceImpl implements AccountService<CurrentAccountDto> {
+    @Autowired
+    UserClient userClient;
+    @Autowired
+    CurrentAccountRepository currentAccountRepository;
+    @Autowired
+    ProductClient productClient;
+    @Autowired
+    MapperCurrentAccount mapperCurrentAccount;
+    @Autowired
+    MapperTransaction mapperTransaction;
+    @Autowired
+    TransactionRepository transactionRepository;
     @Override
     public Mono<CurrentAccountDto> create(CurrentAccountDto accountDto) {
-        return null;
+
+        return currentAccountRepository.findByHolderId(accountDto.getHolderId()).flatMap(aa -> {
+            return userClient.getClient(accountDto.getHolderId()).flatMap(cl -> {
+                if(aa.getId() != null && cl.getIdType().equals(TypeClient.PERSONAL)) {
+                    return Mono.error(new IllegalArgumentException("The client can only have one savings account"));
+                }
+                return productClient.getProductAccountByType(TypeAccount.CURRENT_ACCOUNT).flatMap(pr -> {
+                    accountDto.setProductId(pr.getId());
+                    accountDto.setState(StateAccount.ACTIVE);
+                    accountDto.setCreatedAt(new Date());
+                    return mapperCurrentAccount.toCurrentAccount(accountDto)
+                            .flatMap(currentAccountRepository::insert)
+                            .flatMap(mapperCurrentAccount::toDto);
+                });
+            });
+        });
     }
 
     @Override
     public Mono<CurrentAccountDto> findByHolderId(String holderId) {
-        return null;
+        return currentAccountRepository.findByHolderId(holderId)
+                .flatMap(mapperCurrentAccount::toDto);
     }
 
     @Override
-    public Flux<CurrentAccountDto> listTransactions(String accountId) {
-        return null;
+    public Mono<CurrentAccountDto> findByNumber(String number) {
+        return currentAccountRepository.findByNumber(number)
+                .flatMap(mapperCurrentAccount::toDto);
+    }
+
+    @Override
+    public Flux<TransactionDto> listTransactions(String accountId) {
+        return transactionRepository.findByAccountId(accountId)
+                .flatMap(mapperTransaction::toDto);
     }
 
     @Override
     public Mono<Void> delete(String accountId) {
-        return null;
+        return currentAccountRepository.findByHolderId(accountId)
+                .flatMap(currentAccountRepository::delete);
     }
 
     @Override
-    public Mono<CurrentAccountDto> deposit(CurrentAccountDto depositDto) {
-        return null;
+    public Mono<String> deposit(OperationDto depositDto) {
+        return currentAccountRepository.findByNumber(depositDto.getAccountNumber()).flatMap(currentAccount -> {
+            currentAccount.setBalance(currentAccount.getBalance() + depositDto.getAmount());
+            currentAccount.setUpdatedAt(new Date());
+            Transaction transaction = new Transaction();
+            transaction.setAccountId(currentAccount.getId());
+            transaction.setDateOfTransaction(new Date());
+            transaction.setAmount(depositDto.getAmount());
+            transaction.setType(TypeTransaction.INCOMING);
+            transaction.setOperation(depositDto.getOperation());
+            return currentAccountRepository.save(currentAccount)
+                    .then(Mono.just(transactionRepository.insert(transaction)).then(Mono.just("Deposit completed successfully")));
+        });
     }
 
     @Override
-    public Mono<CurrentAccountDto> withdraw(CurrentAccountDto withdrawDto) {
-        return null;
-    }
-
-    @Override
-    public Mono<CurrentAccountDto> payment(CurrentAccountDto paymentDto) {
-        return null;
+    public Mono<String> withdraw(OperationDto withdrawDto) {
+        return currentAccountRepository.findByNumber(withdrawDto.getAccountNumber())
+                .flatMap(currentAccount -> {
+                    if (currentAccount.getBalance() < withdrawDto.getAmount()) {
+                        return Mono.error(new IllegalArgumentException("There is not enough balance to execute the operation"));
+                    }
+                    currentAccount.setBalance(currentAccount.getBalance() - withdrawDto.getAmount());
+                    currentAccount.setUpdatedAt(new Date());
+                    Transaction transaction = new Transaction();
+                    transaction.setAccountId(currentAccount.getId());
+                    transaction.setDateOfTransaction(new Date());
+                    transaction.setAmount(withdrawDto.getAmount());
+                    transaction.setType(TypeTransaction.OUTGOING);
+                    transaction.setOperation(withdrawDto.getOperation());
+                    return currentAccountRepository.save(currentAccount)
+                            .then(Mono.just(transactionRepository.insert(transaction)).then(Mono.just("Withdrawal completed successfully")));
+                });
     }
 }

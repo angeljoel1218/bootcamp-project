@@ -14,7 +14,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SavingAccount {
+public class SavingsAccount {
     @Id
     private String id;
     private String number;
