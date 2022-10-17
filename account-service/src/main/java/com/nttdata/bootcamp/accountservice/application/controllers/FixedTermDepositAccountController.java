@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @RestController
 public class FixedTermDepositAccountController {
     @Autowired
-    AccountService accountService;
+    AccountService<FixedTermDepositAccountDto> accountService;
 
     @PostMapping("fixed-term-deposit")
     @ResponseStatus(HttpStatus.CREATED)
