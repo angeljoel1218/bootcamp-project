@@ -3,8 +3,10 @@ package com.nttdata.bootcamp.accountservice.application.mappers;
 import com.nttdata.bootcamp.accountservice.model.FixedTermDepositAccount;
 import com.nttdata.bootcamp.accountservice.model.dto.FixedTermDepositAccountDto;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+@Component
 public class MapperFixedTermDeposit {
     public Mono<FixedTermDepositAccountDto> toDto(FixedTermDepositAccount fixedTermDepositAccount) {
         ModelMapper modelMapper = new ModelMapper();

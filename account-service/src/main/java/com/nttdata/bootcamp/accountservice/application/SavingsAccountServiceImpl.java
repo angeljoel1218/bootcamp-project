@@ -10,11 +10,13 @@ import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.*;
 import com.nttdata.bootcamp.accountservice.model.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Date;
 
+@Service
 public class SavingsAccountServiceImpl implements AccountService<SavingsAccountDto> {
     @Autowired
     MapperSavingsAccount mapperSavingsAccount;

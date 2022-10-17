@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+@RestController
 public class CurrentAccountController {
     @Autowired
     AccountService<CurrentAccountDto> accountService;
