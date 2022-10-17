@@ -18,5 +18,9 @@ public interface CreditService {
 
     Mono<Customer> findCustomerById(String id);
 
+    Flux<Credit> findByIdCustomer(String id);
+
+    Flux<PaymentCredit> findPaymentByIdCredit(String id);
+
 
 }
