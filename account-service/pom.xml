@@ -61,6 +61,10 @@
 			<version>3.0.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.playtika.reactivefeign</groupId>
 			<artifactId>feign-reactor-spring-cloud-starter</artifactId>
 			<version>3.1.0</version>
