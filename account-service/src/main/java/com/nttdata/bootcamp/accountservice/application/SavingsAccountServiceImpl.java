@@ -4,7 +4,7 @@ import com.nttdata.bootcamp.accountservice.application.mappers.MapperSavingsAcco
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
 import com.nttdata.bootcamp.accountservice.application.utils.DateUtil;
 import com.nttdata.bootcamp.accountservice.client.ProductClient;
-import com.nttdata.bootcamp.accountservice.client.UserClient;
+import com.nttdata.bootcamp.accountservice.client.CustomerClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.SavingsAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.*;
@@ -26,7 +26,7 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
     ProductClient productClient;
 
     @Autowired
-    UserClient userClient;
+    CustomerClient customerClient;
 
     @Autowired
     SavingsAccountRepository savingsAccountRepository;
@@ -36,8 +36,8 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
 
     @Override
     public Mono<SavingsAccountDto> create(SavingsAccountDto accountDto) {
-        return userClient.getClient(accountDto.getHolderId()).flatMap(client -> {
-            if(client.getIdType().equals(TypeClient.COMPANY)) {
+        return customerClient.getClient(accountDto.getHolderId()).flatMap(client -> {
+            if(client.getIdType().equals(TypeCustomer.COMPANY)) {
                 return Mono.error(new IllegalArgumentException("Client must be personal type"));
             }
             return savingsAccountRepository.findByHolderId(accountDto.getHolderId()).flatMap(savingsAccount -> {
