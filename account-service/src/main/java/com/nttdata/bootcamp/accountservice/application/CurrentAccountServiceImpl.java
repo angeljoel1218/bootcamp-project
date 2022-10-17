@@ -3,7 +3,7 @@ package com.nttdata.bootcamp.accountservice.application;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperCurrentAccount;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
 import com.nttdata.bootcamp.accountservice.client.ProductClient;
-import com.nttdata.bootcamp.accountservice.client.UserClient;
+import com.nttdata.bootcamp.accountservice.client.CustomerClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.CurrentAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.*;
@@ -16,7 +16,7 @@ import java.util.Date;
 
 public class CurrentAccountServiceImpl implements AccountService<CurrentAccountDto> {
     @Autowired
-    UserClient userClient;
+    CustomerClient customerClient;
     @Autowired
     CurrentAccountRepository currentAccountRepository;
     @Autowired
@@ -31,8 +31,8 @@ public class CurrentAccountServiceImpl implements AccountService<CurrentAccountD
     public Mono<CurrentAccountDto> create(CurrentAccountDto accountDto) {
 
         return currentAccountRepository.findByHolderId(accountDto.getHolderId()).flatMap(aa -> {
-            return userClient.getClient(accountDto.getHolderId()).flatMap(cl -> {
-                if(aa.getId() != null && cl.getIdType().equals(TypeClient.PERSONAL)) {
+            return customerClient.getClient(accountDto.getHolderId()).flatMap(cl -> {
+                if(aa.getId() != null && cl.getIdType().equals(TypeCustomer.PERSONAL)) {
                     return Mono.error(new IllegalArgumentException("The client can only have one savings account"));
                 }
                 return productClient.getProductAccountByType(TypeAccount.CURRENT_ACCOUNT).flatMap(pr -> {

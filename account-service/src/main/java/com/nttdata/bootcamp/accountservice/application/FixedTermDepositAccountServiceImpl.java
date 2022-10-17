@@ -4,7 +4,7 @@ import com.nttdata.bootcamp.accountservice.application.mappers.MapperFixedTermDe
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
 import com.nttdata.bootcamp.accountservice.application.utils.DateUtil;
 import com.nttdata.bootcamp.accountservice.client.ProductClient;
-import com.nttdata.bootcamp.accountservice.client.UserClient;
+import com.nttdata.bootcamp.accountservice.client.CustomerClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.FixedTermDepositAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.*;
@@ -21,7 +21,7 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
     @Autowired
     TransactionRepository transactionRepository;
     @Autowired
-    UserClient userClient;
+    CustomerClient customerClient;
     @Autowired
     ProductClient productClient;
     @Autowired
@@ -30,8 +30,8 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
     MapperTransaction mapperTransaction;
     @Override
     public Mono<FixedTermDepositAccountDto> create(FixedTermDepositAccountDto accountDto) {
-        return userClient.getClient(accountDto.getHolderId()).flatMap(client -> {
-            if(client.getIdType().equals(TypeClient.COMPANY)) {
+        return customerClient.getClient(accountDto.getHolderId()).flatMap(client -> {
+            if(client.getIdType().equals(TypeCustomer.COMPANY)) {
                 return Mono.error(new IllegalArgumentException("Client must be personal type"));
             }
             return fixedTermDepositAccountRepository.findByHolderId(accountDto.getHolderId()).flatMap(fixedTermDepositAccount -> {

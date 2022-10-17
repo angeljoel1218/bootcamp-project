@@ -1,5 +1,5 @@
 package com.nttdata.bootcamp.accountservice.model;
 
-public enum TypeClient {
+public enum TypeCustomer {
     PERSONAL, COMPANY
 }
