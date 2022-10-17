@@ -21,7 +21,7 @@ public class CreditCard {
     private String id;
 
     @NotBlank(message = "Id Cliente es requerido")
-    private String idCustumer;
+    private String idCustomer;
 
     @NotBlank(message = "Id del producto es requerido")
     private  String idProduct;

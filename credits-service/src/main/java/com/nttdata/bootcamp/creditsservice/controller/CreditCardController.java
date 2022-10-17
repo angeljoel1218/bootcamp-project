@@ -2,7 +2,7 @@ package com.nttdata.bootcamp.creditsservice.controller;
 
 import com.nttdata.bootcamp.creditsservice.application.CreditCardService;
 import com.nttdata.bootcamp.creditsservice.model.CreditCard;
-import com.nttdata.bootcamp.creditsservice.model.TransactionCredit;
+import com.nttdata.bootcamp.creditsservice.model.TransactionCreditCard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,23 +48,22 @@ public class CreditCardController {
 
 
     @PostMapping("creditcard/payment")
-    public  Mono<ResponseEntity<TransactionCredit>> payment(@RequestBody TransactionCredit transactionCredit, @PathVariable String id){
-
+    public  Mono<ResponseEntity<TransactionCreditCard>> payment(@RequestBody TransactionCreditCard transactionCredit, @PathVariable String id){
         return creditCardService.payment(transactionCredit).map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
             log.info("Error:" + e.getMessage());
             return Mono.just(ResponseEntity.badRequest().build());
 
-        });
+        }).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping("creditcard/charge")
-    public  Mono<ResponseEntity<TransactionCredit>> charge(@RequestBody TransactionCredit transactionCredit, @PathVariable String id){
+    public  Mono<ResponseEntity<TransactionCreditCard>> charge(@RequestBody TransactionCreditCard transactionCredit, @PathVariable String id){
 
         return creditCardService.charge(transactionCredit).map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
             log.info("Error:" + e.getMessage());
             return Mono.just(ResponseEntity.badRequest().build());
 
-        });
+        }).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
 

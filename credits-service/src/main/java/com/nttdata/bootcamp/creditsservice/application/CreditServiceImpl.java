@@ -3,20 +3,17 @@ package com.nttdata.bootcamp.creditsservice.application;
 import com.nttdata.bootcamp.creditsservice.feingclients.CustumerFeingClient;
 import com.nttdata.bootcamp.creditsservice.feingclients.ProductFeingClient;
 import com.nttdata.bootcamp.creditsservice.infrastructure.CreditRepository;
-import com.nttdata.bootcamp.creditsservice.infrastructure.TransactionCreditRepository;
+import com.nttdata.bootcamp.creditsservice.infrastructure.PaymentCreditRepository;
+import com.nttdata.bootcamp.creditsservice.infrastructure.TransactionCreditCardRepository;
 import com.nttdata.bootcamp.creditsservice.model.*;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.apache.bcel.generic.ReturnaddressType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -28,7 +25,7 @@ public class CreditServiceImpl implements CreditService {
     private CreditRepository creditRepository;
 
     @Autowired
-    private TransactionCreditRepository transactionCreditRepository;
+    private PaymentCreditRepository paymentCreditRepository;
 
     @Autowired
     private CustumerFeingClient custumerFeingClient;
@@ -38,40 +35,36 @@ public class CreditServiceImpl implements CreditService {
 
 
     @Override
-    public Mono<Credit> create(Credit creditMono) {
-        List<String> erros= new ArrayList<>();
+    public Mono<Credit> create(Credit credit) {
+        log.info("try to create");
 
+        return custumerFeingClient.findById(credit.getIdCustomer()).flatMap(customer->{
+            return
+            productFeingClient.findById(credit.getIdProduct()).flatMap(product->{
+                List<String> erros= new ArrayList<>();
 
-        Customer customer=    custumerFeingClient.findById(creditMono.getIdCustomer()).block();
-        ProductCredit productCredit = productFeingClient.findById(creditMono.getIdProduct()).block();
+                if(customer.getIdType() == TypeCustomer.COMPANY && product.getType()!= TypeCredit.BUSINESS_CREDIT){
+                    erros.add("El producto no esta disponible");
+                }
 
-        if(customer==null){
-            erros.add("Cliente no existe");
-        }
-        if(productCredit == null){
-            erros.add("Producto no existe");
-        }
+                if(customer.getIdType() == TypeCustomer.PERSONAL && product.getType()!= TypeCredit.PERSONAL_CREDIT){
+                    erros.add("El producto no esta disponible");
+                }
+                return creditRepository.findByIdCustomer(customer.getId()).count().flatMap(cantidadCuentas->{
+                    if(customer.getIdType() == TypeCustomer.PERSONAL ) {
+                        if (cantidadCuentas > 0) {
+                            erros.add("No puede tener mas de una cuenta");
+                        }
+                    }
 
-        if(customer.getIdType() == TypeCustomer.COMPANY && productCredit.getType()!= TypeCredit.BUSINESS_CREDIT){
-            erros.add("El producto no esta disponible");
-        }
+                    if(!erros.isEmpty()){
+                        return Mono.error(new InterruptedException(String.join(",",erros)  + Credit.class.getSimpleName()));
+                    }
 
-        if(customer.getIdType() == TypeCustomer.PERSONAL && productCredit.getType()!= TypeCredit.PERSONAL_CREDIT){
-            erros.add("El producto no esta disponible");
-        }
-
-        if(customer.getIdType() == TypeCustomer.PERSONAL ){
-           Mono<Long> cuenta= creditRepository.findByIdCustomer(customer.getId()).count();
-           if(cuenta.block()>0){
-               erros.add("No puede tener mas de una cuenta");
-           };
-        }
-
-        if(!erros.isEmpty()){
-            return Mono.error(new InterruptedException(String.join(",",erros)  + Credit.class.getSimpleName()));
-        }
-
-        return Mono.just(creditMono).flatMap(creditRepository::insert);
+                    return  Mono.just(credit).flatMap(creditRepository::insert);
+                });
+            });
+        });
 
     }
 
@@ -101,21 +94,17 @@ public class CreditServiceImpl implements CreditService {
     }
 
     @Override
-    public Mono<TransactionCredit> payment(TransactionCredit TransactionCredit) {
-        List<String> erros = new ArrayList<>();
+    public Mono<PaymentCredit> payment(PaymentCredit payment) {
 
-        Credit credit = creditRepository.findById(TransactionCredit.getIdCredit()).block();
-        if (credit == null) {
-            erros.add("crédito no existe");
-        }
+      return creditRepository.findById(payment.getIdCredit()).flatMap(credit -> {
 
+            return Mono.just(payment).flatMap(paymentCreditRepository::insert);
+        });
+    }
 
-        if(!erros.isEmpty()){
-            return Mono.error(new InterruptedException(String.join(",",erros)  + Credit.class.getSimpleName()));
-        }
-
-
-        return Mono.just(TransactionCredit).flatMap(transactionCreditRepository::insert);
+    @Override
+    public Mono<Customer> findCustomerById(String id) {
+        return custumerFeingClient.findById(id);
     }
 
 

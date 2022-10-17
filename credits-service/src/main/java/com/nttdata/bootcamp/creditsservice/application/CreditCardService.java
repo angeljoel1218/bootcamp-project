@@ -1,7 +1,7 @@
 package com.nttdata.bootcamp.creditsservice.application;
 
 import com.nttdata.bootcamp.creditsservice.model.CreditCard;
-import com.nttdata.bootcamp.creditsservice.model.TransactionCredit;
+import com.nttdata.bootcamp.creditsservice.model.TransactionCreditCard;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -14,6 +14,6 @@ public interface CreditCardService {
     Mono<CreditCard> findById(String id);
     Flux<CreditCard> findAll();
 
-    Mono<TransactionCredit> payment(TransactionCredit TransactionCredit);
-    Mono<TransactionCredit> charge(TransactionCredit TransactionCredit);
+    Mono<TransactionCreditCard> payment(TransactionCreditCard TransactionCredit);
+    Mono<TransactionCreditCard> charge(TransactionCreditCard TransactionCredit);
 }

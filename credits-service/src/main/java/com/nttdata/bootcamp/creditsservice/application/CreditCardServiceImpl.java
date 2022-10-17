@@ -3,8 +3,9 @@ package com.nttdata.bootcamp.creditsservice.application;
 import com.nttdata.bootcamp.creditsservice.feingclients.CustumerFeingClient;
 import com.nttdata.bootcamp.creditsservice.feingclients.ProductFeingClient;
 import com.nttdata.bootcamp.creditsservice.infrastructure.CreditCardRepository;
-import com.nttdata.bootcamp.creditsservice.infrastructure.TransactionCreditRepository;
+import com.nttdata.bootcamp.creditsservice.infrastructure.TransactionCreditCardRepository;
 import com.nttdata.bootcamp.creditsservice.model.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class CreditCardServiceImpl implements CreditCardService {
 
@@ -25,7 +27,7 @@ public class CreditCardServiceImpl implements CreditCardService {
     private ProductFeingClient productFeingClient;
 
     @Autowired
-    private TransactionCreditRepository transactionCreditRepository;
+    private TransactionCreditCardRepository transactionCreditRepository;
 
 
     @Autowired
@@ -33,28 +35,27 @@ public class CreditCardServiceImpl implements CreditCardService {
 
     @Override
     public Mono<CreditCard> create(CreditCard creditCard) {
-        List<String> erros= new ArrayList<>();
+        log.info("try to create");
+        return custumerFeingClient.findById(creditCard.getIdCustomer()).flatMap(customer->{
+            return
+                    productFeingClient.findById(creditCard.getIdProduct()).flatMap(product->{
+                        List<String> erros= new ArrayList<>();
 
-        Customer customer=  custumerFeingClient.findById(creditCard.getIdCustumer()).block();
-        ProductCredit productCredit = productFeingClient.findById(creditCard.getIdProduct()).block();
+                        if(customer.getIdType() == TypeCustomer.COMPANY && product.getType()!= TypeCredit.BUSINESS_CREDIT){
+                            erros.add("El producto no esta disponible");
+                        }
 
+                        if(customer.getIdType() == TypeCustomer.PERSONAL && product.getType()!= TypeCredit.PERSONAL_CREDIT){
+                            erros.add("El producto no esta disponible");
+                        }
 
-        if(customer==null){
-            erros.add("Cliente no existe");
-        }
-        if(productCredit == null){
-            erros.add("Producto no existe");
-        }
+                        if(!erros.isEmpty()){
+                            return Mono.error(new InterruptedException(String.join(",",erros)  + Credit.class.getSimpleName()));
+                        }
 
-        if(customer.getIdType() == TypeCustomer.COMPANY && productCredit.getType()!= TypeCredit.BUSINESS_CREDIT){
-            erros.add("El producto no esta disponible");
-        }
-
-        if(!erros.isEmpty()){
-            return Mono.error(new InterruptedException(String.join(",",erros)  + CreditCard.class.getSimpleName()));
-        }
-
-        return Mono.just(creditCard) .flatMap(creditCardRepository::insert);
+                         return  Mono.just(creditCard).flatMap(creditCardRepository::insert);
+                    });
+        });
     }
 
     @Override
@@ -81,47 +82,42 @@ public class CreditCardServiceImpl implements CreditCardService {
     }
 
     @Override
-    public Mono<TransactionCredit> payment(TransactionCredit transactionCredit) {
-        List<String> erros = new ArrayList<>();
+    public Mono<TransactionCreditCard> payment(TransactionCreditCard transactionCredit) {
+        return creditCardRepository.findById(transactionCredit.getIdCredit()).flatMap(credit -> {
+            transactionCredit.setType(TypeTransaction.CHARGE);
+            return Mono.just(transactionCredit).flatMap(transactionCreditRepository::insert);
+        });
 
-        CreditCard credit = creditCardRepository.findById(transactionCredit.getIdCredit()).block();
 
-        if (credit == null) {
-            erros.add("tarjeta de crédito no existe");
-        }
-
-        if(!erros.isEmpty()){
-            return Mono.error(new InterruptedException(String.join(",",erros)  + CreditCard.class.getSimpleName()));
-        }
-
-        transactionCredit.setType(TypeTransaction.PAYMENT);
-        return Mono.just(transactionCredit).flatMap(transactionCreditRepository::insert);
     }
 
     @Override
-    public Mono<TransactionCredit> charge(TransactionCredit transactionCredit) {
+    public Mono<TransactionCreditCard> charge(TransactionCreditCard transactionCredit) {
 
-        List<String> erros = new ArrayList<>();
+        return creditCardRepository.findById(transactionCredit.getIdCredit()).flatMap(credit -> {
 
-        CreditCard credit = creditCardRepository.findById(transactionCredit.getIdCredit()).block();
+            return
+             transactionCreditRepository.findByIdCredit(credit.getId()).filter(t->t.getType()== TypeTransaction.CHARGE).map(t->t.getAmount())
+                    .reduce(BigDecimal::add).flatMap(sumCharge->{
 
-        if (credit == null) {
-            erros.add("tarjeta de crédito no existe");
-        }
+                         List<String> erros= new ArrayList<>();
 
-        BigDecimal totalCharge= transactionCreditRepository.findByIdCredit(credit.getId()).filter(t->t.getType()== TypeTransaction.CHARGE).map(t->t.getAmount())
-                .reduce(BigDecimal::add).block();
+                         if(sumCharge.add(transactionCredit.getAmount()).compareTo(credit.getLimitAmount()) ==1){
+                             erros.add("Ha superado el limite permitido");
+                         };
+
+                         if(!erros.isEmpty()){
+                             return Mono.error(new InterruptedException(String.join(",",erros)  + CreditCard.class.getSimpleName()));
+                         }
+
+                         transactionCredit.setType(TypeTransaction.CHARGE);
+                         return Mono.just(transactionCredit).flatMap(transactionCreditRepository::insert);
+                     });
+
+        });
 
 
-        if(totalCharge.add(transactionCredit.getAmount()).compareTo(credit.getLimitAmount()) ==1){
-            erros.add("Ha superado el limite permitido");
-        };
 
-        if(!erros.isEmpty()){
-            return Mono.error(new InterruptedException(String.join(",",erros)  + CreditCard.class.getSimpleName()));
-        }
 
-        transactionCredit.setType(TypeTransaction.CHARGE);
-        return   Mono.just(transactionCredit).flatMap(transactionCreditRepository::insert);
     }
 }
