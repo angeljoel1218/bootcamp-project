@@ -3,8 +3,9 @@ package com.nttdata.bootcamp.accountservice.application.mappers;
 import com.nttdata.bootcamp.accountservice.model.Transaction;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-
+@Component
 public class MapperTransaction {
     public Mono<TransactionDto> toDto(Transaction transaction) {
         ModelMapper modelMapper = new ModelMapper();

@@ -17,7 +17,7 @@ import javax.validation.Valid;
 @RestController
 public class SavingsController {
     @Autowired
-    AccountService<SavingsAccountDto> accountService;
+    AccountService accountService;
 
     @PostMapping("savings")
     @ResponseStatus(HttpStatus.CREATED)

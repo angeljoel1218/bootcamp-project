@@ -15,9 +15,10 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+@RestController
 public class FixedTermDepositAccountController {
     @Autowired
-    AccountService<FixedTermDepositAccountDto> accountService;
+    AccountService accountService;
 
     @PostMapping("fixed-term-deposit")
     @ResponseStatus(HttpStatus.CREATED)
