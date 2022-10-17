@@ -41,11 +41,11 @@ public class CreditCardServiceImpl implements CreditCardService {
                     productFeingClient.findById(creditCard.getIdProduct()).flatMap(product->{
                         List<String> erros= new ArrayList<>();
 
-                        if(customer.getIdType() == TypeCustomer.COMPANY && product.getType()!= TypeCredit.BUSINESS_CREDIT){
+                        if(customer.getIdType() == TypeCustomer.COMPANY && product.getType()!= TypeCredit.BUSINESS_CREDIT_CARD){
                             erros.add("El producto no esta disponible");
                         }
 
-                        if(customer.getIdType() == TypeCustomer.PERSONAL && product.getType()!= TypeCredit.PERSONAL_CREDIT){
+                        if(customer.getIdType() == TypeCustomer.PERSONAL && product.getType()!= TypeCredit.PERSONAL_CREDIT_CARD){
                             erros.add("El producto no esta disponible");
                         }
 
@@ -119,5 +119,15 @@ public class CreditCardServiceImpl implements CreditCardService {
 
 
 
+    }
+
+    @Override
+    public Flux<CreditCard> findByIdCustomer(String id) {
+        return creditCardRepository.findByIdCustomer(id);
+    }
+
+    @Override
+    public Flux<TransactionCreditCard> findTransactionByIdCredit(String id) {
+        return transactionCreditRepository.findByIdCredit(id);
     }
 }

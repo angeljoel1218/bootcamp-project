@@ -107,5 +107,15 @@ public class CreditServiceImpl implements CreditService {
         return custumerFeingClient.findById(id);
     }
 
+    @Override
+    public Flux<Credit> findByIdCustomer(String id) {
+        return creditRepository.findByIdCustomer(id);
+    }
+
+    @Override
+    public Flux<PaymentCredit> findPaymentByIdCredit(String id) {
+        return paymentCreditRepository.findByIdCredit(id);
+    }
+
 
 }

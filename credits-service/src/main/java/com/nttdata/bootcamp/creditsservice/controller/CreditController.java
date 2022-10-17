@@ -2,9 +2,7 @@ package com.nttdata.bootcamp.creditsservice.controller;
 
 import com.nttdata.bootcamp.creditsservice.application.CreditService;
 import com.nttdata.bootcamp.creditsservice.model.Credit;
-import com.nttdata.bootcamp.creditsservice.model.Customer;
 import com.nttdata.bootcamp.creditsservice.model.PaymentCredit;
-import com.nttdata.bootcamp.creditsservice.model.TransactionCreditCard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,9 +55,17 @@ public class CreditController {
     }
 
     @GetMapping("credits/customer/{id}")
-    public Mono<Customer> findCustomerById(@PathVariable("id") String id){
-        return creditService.findCustomerById(id);
+    public Flux<Credit>  findCustomerById(@PathVariable("id") String id){
+            return  creditService.findByIdCustomer(id);
     }
+
+    @GetMapping("credits/customer/payment/{idCredito}")
+    public Flux<PaymentCredit>  findPaymentByIdCredit(@PathVariable("idCredito") String id){
+        return  creditService.findPaymentByIdCredit(id);
+
+    }
+
+
 
 
 }
