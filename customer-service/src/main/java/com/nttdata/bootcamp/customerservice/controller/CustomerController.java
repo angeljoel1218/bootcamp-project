@@ -25,14 +25,14 @@ public class CustomerController {
     private CustomerService clientService;
 
 
-    @GetMapping("custumer")
+    @GetMapping("customer")
     public Flux<Customer> findAll(){
         log.info("Find All");
         log.info(demoString);
         return   clientService.findAll();
     }
 
-    @GetMapping("custumer/{id}")
+    @GetMapping("customer/{id}")
     public Mono<ResponseEntity<Customer>> findById(@PathVariable("id") String id){
         return clientService.findById(id).map(client -> ResponseEntity.ok().body(client))
                 .onErrorResume(e -> {
@@ -41,19 +41,19 @@ public class CustomerController {
                 }).defaultIfEmpty(ResponseEntity.noContent().build());
     }
 
-    @PostMapping("custumer")
+    @PostMapping("customer")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public  Mono<Customer> create(@RequestBody @Valid Mono<Customer> clientMono){
         return  clientService.create(clientMono);
     }
 
 
-    @PostMapping("custumer/update/{id}")
+    @PostMapping("customer/update/{id}")
     public  Mono<Customer> update(@RequestBody Mono<Customer> clientMono, @PathVariable String id){
         return  clientService.update(clientMono,id);
     }
 
-    @PostMapping("custumer/delete/{id}")
+    @PostMapping("customer/delete/{id}")
     public  Mono<Void> delete(@PathVariable String id){
         return clientService.delete(id);
     }

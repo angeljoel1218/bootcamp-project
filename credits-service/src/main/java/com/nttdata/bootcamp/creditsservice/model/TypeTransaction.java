@@ -1,6 +1,6 @@
 package com.nttdata.bootcamp.creditsservice.model;
 
-public enum TypeClient {
+public enum TypeTransaction {
+     PAYMENT, CHARGE
 
-    PERSONAL, COMPANY
 }

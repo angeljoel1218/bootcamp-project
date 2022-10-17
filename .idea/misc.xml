@@ -10,6 +10,7 @@
         <option value="$USER_HOME$/Downloads/credits-service (1)/credits-service/pom.xml" />
         <option value="$PROJECT_DIR$/credits-service/pom.xml" />
         <option value="$PROJECT_DIR$/customer-service/pom.xml" />
+        <option value="$PROJECT_DIR$/account-service/pom.xml" />
       </list>
     </option>
   </component>

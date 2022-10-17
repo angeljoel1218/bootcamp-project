@@ -1,34 +1,34 @@
 package com.nttdata.bootcamp.creditsservice.model;
 
-
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Date;
 
-@Document(collection = "m_credit" )
+@Document(collection = "transaction_credit" )
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Credit {
-
+public class TransactionCredit {
     @Id
     private String id;
 
-    @NotBlank(message = "Id del cliente es requerido")
-    private String idCustomer;
+    @NotNull
+    private  String idCredit;
 
-    @NotBlank(message = "Id del producto es requerido")
-    private  String idProduct;
+    private String coments;
 
+    @NotNull
     private BigDecimal amount;
 
-    private  Integer dues;
+    @NotNull
+    private TypeTransaction type;
 
-    private String status;
+    private Date date;
 
 }

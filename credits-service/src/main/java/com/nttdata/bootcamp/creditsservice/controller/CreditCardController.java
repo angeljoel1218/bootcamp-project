@@ -2,14 +2,18 @@ package com.nttdata.bootcamp.creditsservice.controller;
 
 import com.nttdata.bootcamp.creditsservice.application.CreditCardService;
 import com.nttdata.bootcamp.creditsservice.model.CreditCard;
+import com.nttdata.bootcamp.creditsservice.model.TransactionCredit;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+@Slf4j
 @RestController
 public class CreditCardController {
 
@@ -28,7 +32,7 @@ public class CreditCardController {
 
     @PostMapping("creditcard")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public  Mono<CreditCard> create(@RequestBody @Valid Mono<CreditCard> creditMono){
+    public  Mono<CreditCard> create(@RequestBody @Valid CreditCard creditMono){
         return  creditCardService.create(creditMono);
     }
 
@@ -40,6 +44,27 @@ public class CreditCardController {
     @PostMapping("creditcard/delete/{id}")
     public  Mono<Void> delete(@PathVariable String id){
         return creditCardService.delete(id);
+    }
+
+
+    @PostMapping("creditcard/payment")
+    public  Mono<ResponseEntity<TransactionCredit>> payment(@RequestBody TransactionCredit transactionCredit, @PathVariable String id){
+
+        return creditCardService.payment(transactionCredit).map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
+            log.info("Error:" + e.getMessage());
+            return Mono.just(ResponseEntity.badRequest().build());
+
+        });
+    }
+
+    @PostMapping("creditcard/charge")
+    public  Mono<ResponseEntity<TransactionCredit>> charge(@RequestBody TransactionCredit transactionCredit, @PathVariable String id){
+
+        return creditCardService.charge(transactionCredit).map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
+            log.info("Error:" + e.getMessage());
+            return Mono.just(ResponseEntity.badRequest().build());
+
+        });
     }
 
 
