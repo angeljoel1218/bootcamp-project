@@ -48,12 +48,12 @@ public class SavingsController {
     }
 
     @PutMapping("savings/deposit")
-    public Mono<String> deposit(@PathVariable OperationDto depositDto){
+    public Mono<String> deposit(@RequestBody OperationDto depositDto){
         return accountService.deposit(depositDto);
     }
 
     @PutMapping("savings/withdraw")
-    public Mono<String> withdraw(@PathVariable OperationDto depositDto){
+    public Mono<String> withdraw(@RequestBody OperationDto depositDto){
         return accountService.withdraw(depositDto);
     }
 }

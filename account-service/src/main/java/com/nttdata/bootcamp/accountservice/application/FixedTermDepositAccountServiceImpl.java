@@ -32,6 +32,8 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
     MapperTransaction mapperTransaction;
     @Override
     public Mono<FixedTermDepositAccountDto> create(FixedTermDepositAccountDto accountDto) {
+        accountDto.setState(StateAccount.ACTIVE);
+        accountDto.setCreatedAt(new Date());
         return customerClient.getClient(accountDto.getHolderId()).flatMap(client -> {
             if(client.getIdType().equals(TypeCustomer.COMPANY)) {
                 return Mono.error(new IllegalArgumentException("Client must be personal type"));
@@ -40,18 +42,22 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
                 if (fixedTermDepositAccount.getId() != null) {
                     return Mono.error(new IllegalArgumentException("The client can only have one fixed term deposit account"));
                 }
-                return productClient.getProductAccountByType(TypeAccount.FIXED_TERM).flatMap(productAccountDto -> {
-                    accountDto.setProductId(productAccountDto.getId());
-                    accountDto.setState(StateAccount.ACTIVE);
-                    accountDto.setCreatedAt(new Date());
-                    Mono<FixedTermDepositAccount> fixedTermDepositAccountMono = mapperFixedTermDeposit.toProductAccount(accountDto)
-                            .flatMap(fixedTermDepositAccountRepository::insert);
-                    return fixedTermDepositAccountMono
-                            .flatMap(mapperFixedTermDeposit::toDto);
-                });
-            });
-        });
+                return this.save(accountDto);
+            }).switchIfEmpty(Mono.defer(() -> this.save(accountDto)));
+        }).switchIfEmpty(Mono.error(new IllegalArgumentException("Customer not found")));
     }
+
+    public Mono<FixedTermDepositAccountDto> save(FixedTermDepositAccountDto accountDto) {
+        return productClient.getProductAccountByType(TypeAccount.FIXED_TERM).flatMap(productAccountDto -> {
+            accountDto.setProductId(productAccountDto.getId());
+            accountDto.setState(StateAccount.ACTIVE);
+            accountDto.setCreatedAt(new Date());
+            Mono<FixedTermDepositAccount> fixedTermDepositAccountMono = mapperFixedTermDeposit.toProductAccount(accountDto)
+                    .flatMap(fixedTermDepositAccountRepository::insert);
+            return fixedTermDepositAccountMono
+                    .flatMap(mapperFixedTermDeposit::toDto);
+        });
+    };
 
     @Override
     public Mono<FixedTermDepositAccountDto> findByHolderId(String holderId) {
@@ -84,23 +90,26 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
                 return Mono.error(new IllegalArgumentException("Date not allowed to perform operations"));
             }
             return productClient.getProductAccount(fixedTermDepositAccount.getProductId()).flatMap(productAccountDto-> {
-                return transactionRepository.findByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), depositDto.getAccountNumber()).count().flatMap(tx -> {
-                    if(productAccountDto.getMaxMovements() <= tx) {
+                return transactionRepository.findByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), fixedTermDepositAccount.getId()).collectList().flatMap(count -> {
+                    if(productAccountDto.getMaxMovements() <= count.size()) {
                         return Mono.error(new IllegalArgumentException("Exceeded the maximum movement limit"));
                     }
                     fixedTermDepositAccount.setUpdatedAt(new Date());
                     fixedTermDepositAccount.setBalance(fixedTermDepositAccount.getBalance() + depositDto.getAmount());
-                    Transaction transaction = new Transaction();
-                    transaction.setAccountId(fixedTermDepositAccount.getId());
-                    transaction.setDateOfTransaction(new Date());
-                    transaction.setAmount(depositDto.getAmount());
-                    transaction.setType(TypeTransaction.INCOMING);
-                    transaction.setOperation(depositDto.getOperation());
                     return fixedTermDepositAccountRepository.save(fixedTermDepositAccount)
-                            .then(Mono.just(transactionRepository.insert(transaction)).then(Mono.just("Deposit completed successfully")));
+                            .flatMap(ft -> {
+                                Transaction transaction = new Transaction();
+                                transaction.setAccountId(fixedTermDepositAccount.getId());
+                                transaction.setDateOfTransaction(new Date());
+                                transaction.setAmount(depositDto.getAmount());
+                                transaction.setType(TypeTransaction.INCOMING);
+                                transaction.setOperation(depositDto.getOperation());
+                                return transactionRepository.insert(transaction);
+                            })
+                            .then(Mono.just("Deposit completed successfully"));
                 });
-            });
-        });
+            }).switchIfEmpty(Mono.error(new IllegalArgumentException("Product does not exist")));
+        }).switchIfEmpty(Mono.error(new IllegalArgumentException("Account number does not exist")));
     }
 
     @Override
@@ -110,22 +119,25 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
                 return Mono.error(new IllegalArgumentException("Date not allowed to perform operations"));
             }
             return productClient.getProductAccount(fixedTermDepositAccount.getProductId()).flatMap(productAccountDto -> {
-                return transactionRepository.findByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), withdrawDto.getAccountNumber()).count().flatMap(count -> {
-                    if(productAccountDto.getMaxMovements() <= count) {
+                return transactionRepository.findByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), fixedTermDepositAccount.getId()).collectList().flatMap(count -> {
+                    if(productAccountDto.getMaxMovements() <= count.size()) {
                         return Mono.error(new IllegalArgumentException("Exceeded the maximum movement limit"));
                     }
                     fixedTermDepositAccount.setUpdatedAt(new Date());
                     fixedTermDepositAccount.setBalance(fixedTermDepositAccount.getBalance() - withdrawDto.getAmount());
-                    Transaction transaction = new Transaction();
-                    transaction.setAccountId(fixedTermDepositAccount.getId());
-                    transaction.setDateOfTransaction(new Date());
-                    transaction.setAmount(withdrawDto.getAmount());
-                    transaction.setType(TypeTransaction.INCOMING);
-                    transaction.setOperation(withdrawDto.getOperation());
                     return fixedTermDepositAccountRepository.save(fixedTermDepositAccount)
-                            .then(Mono.just(transactionRepository.insert(transaction)).then(Mono.just("Withdrawal completed successfully")));
+                            .flatMap(ft-> {
+                                Transaction transaction = new Transaction();
+                                transaction.setAccountId(fixedTermDepositAccount.getId());
+                                transaction.setDateOfTransaction(new Date());
+                                transaction.setAmount(withdrawDto.getAmount());
+                                transaction.setType(TypeTransaction.INCOMING);
+                                transaction.setOperation(withdrawDto.getOperation());
+                                return transactionRepository.insert(transaction);
+                            })
+                            .then(Mono.just("Withdrawal completed successfully"));
                 });
-            });
-        });
+            }).switchIfEmpty(Mono.error(new IllegalArgumentException("Product does not exist")));
+        }).switchIfEmpty(Mono.error(new IllegalArgumentException("Account number does not exist")));
     }
 }

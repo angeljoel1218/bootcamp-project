@@ -31,23 +31,26 @@ public class CurrentAccountServiceImpl implements AccountService<CurrentAccountD
     TransactionRepository transactionRepository;
     @Override
     public Mono<CurrentAccountDto> create(CurrentAccountDto accountDto) {
-
-        return currentAccountRepository.findByHolderId(accountDto.getHolderId()).flatMap(aa -> {
-            return customerClient.getClient(accountDto.getHolderId()).flatMap(cl -> {
-                if(aa.getId() != null && cl.getIdType().equals(TypeCustomer.PERSONAL)) {
-                    return Mono.error(new IllegalArgumentException("The client can only have one savings account"));
-                }
-                return productClient.getProductAccountByType(TypeAccount.CURRENT_ACCOUNT).flatMap(pr -> {
-                    accountDto.setProductId(pr.getId());
-                    accountDto.setState(StateAccount.ACTIVE);
-                    accountDto.setCreatedAt(new Date());
-                    return mapperCurrentAccount.toCurrentAccount(accountDto)
-                            .flatMap(currentAccountRepository::insert)
-                            .flatMap(mapperCurrentAccount::toDto);
-                });
-            });
-        });
+        accountDto.setState(StateAccount.ACTIVE);
+        accountDto.setCreatedAt(new Date());
+        return currentAccountRepository.findByHolderId(accountDto.getHolderId())
+                .flatMap(aa -> customerClient.getClient(accountDto.getHolderId()).flatMap(cl -> {
+                    if(aa.getId() != null && cl.getIdType().equals(TypeCustomer.PERSONAL)) {
+                        return Mono.error(new IllegalArgumentException("The client can only have one savings account"));
+                    }
+                    return this.save(accountDto);
+                }).switchIfEmpty(Mono.error(new IllegalArgumentException("Customer not found"))))
+                .switchIfEmpty(Mono.defer(() -> this.save(accountDto)));
     }
+
+    public Mono<CurrentAccountDto> save(CurrentAccountDto accountDto) {
+        return productClient.getProductAccountByType(TypeAccount.CURRENT_ACCOUNT).flatMap(pr -> {
+            accountDto.setProductId(pr.getId());
+            return mapperCurrentAccount.toCurrentAccount(accountDto)
+                    .flatMap(currentAccountRepository::insert)
+                    .flatMap(mapperCurrentAccount::toDto);
+        });
+    };
 
     @Override
     public Mono<CurrentAccountDto> findByHolderId(String holderId) {
@@ -78,15 +81,17 @@ public class CurrentAccountServiceImpl implements AccountService<CurrentAccountD
         return currentAccountRepository.findByNumber(depositDto.getAccountNumber()).flatMap(currentAccount -> {
             currentAccount.setBalance(currentAccount.getBalance() + depositDto.getAmount());
             currentAccount.setUpdatedAt(new Date());
-            Transaction transaction = new Transaction();
-            transaction.setAccountId(currentAccount.getId());
-            transaction.setDateOfTransaction(new Date());
-            transaction.setAmount(depositDto.getAmount());
-            transaction.setType(TypeTransaction.INCOMING);
-            transaction.setOperation(depositDto.getOperation());
             return currentAccountRepository.save(currentAccount)
-                    .then(Mono.just(transactionRepository.insert(transaction)).then(Mono.just("Deposit completed successfully")));
-        });
+                    .flatMap(ca -> {
+                        Transaction transaction = new Transaction();
+                        transaction.setAccountId(currentAccount.getId());
+                        transaction.setDateOfTransaction(new Date());
+                        transaction.setAmount(depositDto.getAmount());
+                        transaction.setType(TypeTransaction.INCOMING);
+                        transaction.setOperation(depositDto.getOperation());
+                        return transactionRepository.insert(transaction);
+                    }).then(Mono.just("Deposit completed successfully"));
+        }).switchIfEmpty(Mono.error(new IllegalArgumentException("Account number does not exist")));
     }
 
     @Override
@@ -98,14 +103,16 @@ public class CurrentAccountServiceImpl implements AccountService<CurrentAccountD
                     }
                     currentAccount.setBalance(currentAccount.getBalance() - withdrawDto.getAmount());
                     currentAccount.setUpdatedAt(new Date());
-                    Transaction transaction = new Transaction();
-                    transaction.setAccountId(currentAccount.getId());
-                    transaction.setDateOfTransaction(new Date());
-                    transaction.setAmount(withdrawDto.getAmount());
-                    transaction.setType(TypeTransaction.OUTGOING);
-                    transaction.setOperation(withdrawDto.getOperation());
                     return currentAccountRepository.save(currentAccount)
-                            .then(Mono.just(transactionRepository.insert(transaction)).then(Mono.just("Withdrawal completed successfully")));
-                });
+                            .flatMap(ca -> {
+                                Transaction transaction = new Transaction();
+                                transaction.setAccountId(currentAccount.getId());
+                                transaction.setDateOfTransaction(new Date());
+                                transaction.setAmount(withdrawDto.getAmount());
+                                transaction.setType(TypeTransaction.OUTGOING);
+                                transaction.setOperation(withdrawDto.getOperation());
+                                return transactionRepository.insert(transaction);
+                            }).then(Mono.just("Withdrawal completed successfully"));
+                }).switchIfEmpty(Mono.error(new IllegalArgumentException("Account number does not exist")));
     }
 }

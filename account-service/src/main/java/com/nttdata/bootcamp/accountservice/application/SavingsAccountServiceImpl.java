@@ -38,6 +38,8 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
 
     @Override
     public Mono<SavingsAccountDto> create(SavingsAccountDto accountDto) {
+        accountDto.setState(StateAccount.ACTIVE);
+        accountDto.setCreatedAt(new Date());
         return customerClient.getClient(accountDto.getHolderId()).flatMap(client -> {
             if(client.getIdType().equals(TypeCustomer.COMPANY)) {
                 return Mono.error(new IllegalArgumentException("Client must be personal type"));
@@ -46,19 +48,20 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
                 if (savingsAccount.getId() != null) {
                     return Mono.error(new IllegalArgumentException("The client can only have one savings account"));
                 }
-                return productClient.getProductAccountByType(TypeAccount.SAVING).flatMap(productAccountDto -> {
-                    accountDto.setProductId(productAccountDto.getId());
-                    accountDto.setState(StateAccount.ACTIVE);
-                    accountDto.setCreatedAt(new Date());
-
-                    Mono<SavingsAccount> savingsAccountMono = mapperSavingsAccount.toSavingsAccount(accountDto)
-                            .flatMap(savingsAccountRepository::insert);
-
-                    return savingsAccountMono.flatMap(mapperSavingsAccount::toDto);
-                });
-            });
-        });
+                return this.save(accountDto);
+            }).switchIfEmpty(Mono.defer(() -> this.save(accountDto)));
+        }).switchIfEmpty(Mono.error(new IllegalArgumentException("Customer not found")));
     }
+
+    public Mono<SavingsAccountDto> save(SavingsAccountDto accountDto) {
+        return productClient.getProductAccountByType(TypeAccount.SAVING).flatMap(productAccountDto -> {
+            accountDto.setProductId(productAccountDto.getId());
+            Mono<SavingsAccount> savingsAccountMono = mapperSavingsAccount.toSavingsAccount(accountDto)
+                    .flatMap(savingsAccountRepository::insert);
+
+            return savingsAccountMono.flatMap(mapperSavingsAccount::toDto);
+        });
+    };
 
     @Override
     public Mono<SavingsAccountDto> findByHolderId(String holderId) {
@@ -87,23 +90,26 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
     public Mono<String> deposit(OperationDto depositDto) {
         return savingsAccountRepository.findByNumber(depositDto.getAccountNumber()).flatMap(savingsAccount -> {
             return productClient.getProductAccount(savingsAccount.getProductId()).flatMap(productAccountDto -> {
-                return transactionRepository.findByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), depositDto.getAccountNumber()).count().flatMap(count -> {
-                    if(productAccountDto.getMaxMovements() <= count) {
+                return transactionRepository.findByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId()).collectList().flatMap(count -> {
+                    if(productAccountDto.getMaxMovements() <= count.size()) {
                         return Mono.error(new IllegalArgumentException("Exceeded the maximum movement limit"));
                     }
                     savingsAccount.setBalance(savingsAccount.getBalance() + depositDto.getAmount());
                     savingsAccount.setUpdatedAt(new Date());
-                    Transaction transaction = new Transaction();
-                    transaction.setAccountId(savingsAccount.getId());
-                    transaction.setDateOfTransaction(new Date());
-                    transaction.setAmount(depositDto.getAmount());
-                    transaction.setType(TypeTransaction.INCOMING);
-                    transaction.setOperation(depositDto.getOperation());
                     return savingsAccountRepository.save(savingsAccount)
-                            .then(Mono.just(transactionRepository.insert(transaction)).then(Mono.just("Deposit completed successfully")));
+                            .flatMap(sa -> {
+                                Transaction transaction = new Transaction();
+                                transaction.setAccountId(savingsAccount.getId());
+                                transaction.setDateOfTransaction(new Date());
+                                transaction.setAmount(depositDto.getAmount());
+                                transaction.setType(TypeTransaction.INCOMING);
+                                transaction.setOperation(depositDto.getOperation());
+                                return transactionRepository.insert(transaction);
+                            })
+                            .then(Mono.just("Deposit completed successfully"));
                 });
-            });
-        });
+            }).switchIfEmpty(Mono.error(new IllegalArgumentException("Product does not exist")));
+        }).switchIfEmpty(Mono.error(new IllegalArgumentException("Account number does not exist")));
     }
 
     @Override
@@ -113,22 +119,25 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
                 return Mono.error(new IllegalArgumentException("There is not enough balance to execute the operation"));
             }
             return productClient.getProductAccount(savingsAccount.getProductId()).flatMap(productAccountDto -> {
-                return transactionRepository.findByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), withdrawDto.getAccountNumber()).count().flatMap(count-> {
-                    if(productAccountDto.getMaxMovements() <= count) {
+                return transactionRepository.findByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId()).collectList().flatMap(count-> {
+                    if(productAccountDto.getMaxMovements() <= count.size()) {
                         return Mono.error(new IllegalArgumentException("Exceeded the maximum movement limit"));
                     }
                     savingsAccount.setBalance(savingsAccount.getBalance() - withdrawDto.getAmount());
                     savingsAccount.setUpdatedAt(new Date());
-                    Transaction transaction = new Transaction();
-                    transaction.setAccountId(savingsAccount.getId());
-                    transaction.setDateOfTransaction(new Date());
-                    transaction.setAmount(withdrawDto.getAmount());
-                    transaction.setType(TypeTransaction.OUTGOING);
-                    transaction.setOperation(withdrawDto.getOperation());
                     return savingsAccountRepository.save(savingsAccount)
-                            .then(Mono.just(transactionRepository.insert(transaction)).then(Mono.just("Withdrawal completed successfully")));
+                            .flatMap(sa -> {
+                                Transaction transaction = new Transaction();
+                                transaction.setAccountId(savingsAccount.getId());
+                                transaction.setDateOfTransaction(new Date());
+                                transaction.setAmount(withdrawDto.getAmount());
+                                transaction.setType(TypeTransaction.OUTGOING);
+                                transaction.setOperation(withdrawDto.getOperation());
+                                return transactionRepository.insert(transaction);
+                            })
+                            .then(Mono.just("Withdrawal completed successfully"));
                 });
-            });
-        });
+            }).switchIfEmpty(Mono.error(new IllegalArgumentException("Product does not exist")));
+        }).switchIfEmpty(Mono.error(new IllegalArgumentException("Account number does not exist")));
     }
 }

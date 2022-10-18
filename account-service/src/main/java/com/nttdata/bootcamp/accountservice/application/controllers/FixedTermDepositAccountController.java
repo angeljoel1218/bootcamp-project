@@ -1,12 +1,10 @@
 package com.nttdata.bootcamp.accountservice.application.controllers;
 
 import com.nttdata.bootcamp.accountservice.application.AccountService;
-import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.FixedTermDepositAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,12 +47,12 @@ public class FixedTermDepositAccountController {
     }
 
     @PutMapping("fixed-term-deposit/deposit")
-    public Mono<String> deposit(@PathVariable OperationDto depositDto){
+    public Mono<String> deposit(@RequestBody OperationDto depositDto){
         return accountService.deposit(depositDto);
     }
 
     @PutMapping("fixed-term-deposit/withdraw")
-    public Mono<String> withdraw(@PathVariable OperationDto depositDto){
+    public Mono<String> withdraw(@RequestBody OperationDto depositDto){
         return accountService.withdraw(depositDto);
     }
 }

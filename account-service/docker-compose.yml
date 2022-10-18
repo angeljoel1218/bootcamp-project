@@ -1,10 +1,10 @@
 version: '3.9'
 services:
-  mongodb-service:
+  mongodb-db:
     image: mongo:5.0
     ports:
-      - 27018:27017
-    container_name: mongodb-service
+      - 27019:27017
+    container_name: mongodb-db
     volumes:
       - ./db/:/data/db
   account-service:
@@ -13,7 +13,7 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - mongodb-service
+      - mongodb-db
     image: account-service:latest
     ports:
-      - 8082:8080
+      - 8082:8082

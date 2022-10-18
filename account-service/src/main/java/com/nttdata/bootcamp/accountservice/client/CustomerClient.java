@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import reactivefeign.spring.config.ReactiveFeignClient;
 import reactor.core.publisher.Mono;
 
-@ReactiveFeignClient(name = "${feign.service.clients.name}", url = "${feign.service.product.url}")
+@ReactiveFeignClient(name = "${feign.service.clients.name}", url = "${feign.service.clients.url}")
 public interface CustomerClient {
-    @RequestMapping(method = RequestMethod.GET, value = "/client/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/customer/{id}")
     Mono<Customer> getClient(@PathVariable("id") String id);
 }
