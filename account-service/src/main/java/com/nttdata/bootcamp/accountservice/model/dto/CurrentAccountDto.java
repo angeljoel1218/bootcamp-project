@@ -9,7 +9,6 @@ import java.util.Date;
 public class CurrentAccountDto {
     private String id;
     private String number;
-    private String cci;
     private Float balance;
     private String coin;
     private String holderId;

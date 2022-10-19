@@ -54,8 +54,7 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
     }
 
     public Mono<SavingsAccountDto> save(SavingsAccountDto accountDto) {
-        return productClient.getProductAccountByType(TypeAccount.SAVING).flatMap(productAccountDto -> {
-            accountDto.setProductId(productAccountDto.getId());
+        return productClient.getProductAccount(accountDto.getProductId()).flatMap(productAccountDto -> {
             Mono<SavingsAccount> savingsAccountMono = mapperSavingsAccount.toSavingsAccount(accountDto)
                     .flatMap(savingsAccountRepository::insert);
 

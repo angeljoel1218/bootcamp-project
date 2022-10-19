@@ -6,5 +6,4 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 
 public interface ProductAccountRepository extends ReactiveMongoRepository<ProductAccount, String> {
-    Mono<ProductAccount> findByType(TypeAccount type);
 }

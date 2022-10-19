@@ -9,9 +9,7 @@ import java.util.Date;
 public class FixedTermDepositAccountDto {
     private String id;
     private String number;
-    private String cci;
     private Float balance;
-    private Float interestRate;
     private String coin;
     private String holderId;
     private String productId;

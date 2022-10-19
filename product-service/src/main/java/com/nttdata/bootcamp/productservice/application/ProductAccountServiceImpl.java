@@ -51,12 +51,6 @@ public class ProductAccountServiceImpl implements ProductAccountService {
     }
 
     @Override
-    public Mono<ProductAccountDto> findByType(TypeAccount type) {
-        return productAccountRepository.findByType(type)
-                .flatMap(mapperProductAccount::toDto);
-    }
-
-    @Override
     public Flux<ProductAccountDto> findAll() {
         return productAccountRepository.findAll()
                 .flatMap(mapperProductAccount::toDto);

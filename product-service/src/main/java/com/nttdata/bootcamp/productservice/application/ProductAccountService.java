@@ -10,6 +10,5 @@ public interface ProductAccountService {
     Mono<ProductAccountDto> update(String id, ProductAccountDto ProductAccountDto);
     Mono<Void> delete(String id);
     Mono<ProductAccountDto> findById(String id);
-    Mono<ProductAccountDto> findByType(TypeAccount type);
     Flux<ProductAccountDto> findAll();
 }

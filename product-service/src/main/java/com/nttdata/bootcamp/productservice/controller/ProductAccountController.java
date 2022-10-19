@@ -50,16 +50,6 @@ public class ProductAccountController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-
-    @GetMapping("product-account/{value}/type")
-    public Mono<ResponseEntity<ProductAccountDto>> findByType(@PathVariable TypeAccount value) {
-        return productAccountService.findByType(value)
-                .map(a -> ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(a))
-                .defaultIfEmpty(ResponseEntity.notFound().build());
-    }
-
     @GetMapping("product-account/all")
     public Flux<ProductAccountDto> findAll() {
         return productAccountService.findAll();

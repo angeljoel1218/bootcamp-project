@@ -44,8 +44,7 @@ public class CurrentAccountServiceImpl implements AccountService<CurrentAccountD
     }
 
     public Mono<CurrentAccountDto> save(CurrentAccountDto accountDto) {
-        return productClient.getProductAccountByType(TypeAccount.CURRENT_ACCOUNT).flatMap(pr -> {
-            accountDto.setProductId(pr.getId());
+        return productClient.getProductAccount(accountDto.getProductId()).flatMap(pr -> {
             return mapperCurrentAccount.toCurrentAccount(accountDto)
                     .flatMap(currentAccountRepository::insert)
                     .flatMap(mapperCurrentAccount::toDto);

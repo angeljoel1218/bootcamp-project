@@ -48,8 +48,7 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
     }
 
     public Mono<FixedTermDepositAccountDto> save(FixedTermDepositAccountDto accountDto) {
-        return productClient.getProductAccountByType(TypeAccount.FIXED_TERM).flatMap(productAccountDto -> {
-            accountDto.setProductId(productAccountDto.getId());
+        return productClient.getProductAccount(accountDto.getProductId()).flatMap(productAccountDto -> {
             accountDto.setState(StateAccount.ACTIVE);
             accountDto.setCreatedAt(new Date());
             Mono<FixedTermDepositAccount> fixedTermDepositAccountMono = mapperFixedTermDeposit.toProductAccount(accountDto)
