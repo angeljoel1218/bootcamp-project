@@ -17,18 +17,20 @@ public class Customer {
     @Id
     private String id;
 
-    @NotNull(message = "El Tipo no debe estar vacio (1 Personal, 2 Empresarial)")
-    private TypeCustomer idType;
+    private TypeCustomer typeCustomer;
 
     private String name;
 
     private String lastName;
 
-    private String bussinesName;
+    private String businessName;
 
     private String emailAddress;
 
     private String numberDocument;
 
+    private String status;
+
+    private TypeProfile typeProfile;
 
 }
