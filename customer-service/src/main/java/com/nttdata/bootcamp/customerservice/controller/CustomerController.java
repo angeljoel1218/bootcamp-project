@@ -2,11 +2,13 @@ package com.nttdata.bootcamp.customerservice.controller;
 
 import com.nttdata.bootcamp.customerservice.aplication.CustomerService;
 import com.nttdata.bootcamp.customerservice.model.Customer;
+import com.nttdata.bootcamp.customerservice.model.dto.CustomerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -24,40 +26,44 @@ public class CustomerController {
     private String demoString;
 
     @Autowired
-    private CustomerService clientService;
+    private CustomerService custumerService;
 
-
-    @GetMapping("customer")
-    public Flux<Customer> findAll(){
-        log.info("Find All");
-        log.info(demoString);
-        return   clientService.findAll();
-    }
-
-    @GetMapping("customer/{id}")
-    public Mono<ResponseEntity<Customer>> findById(@PathVariable("id") String id){
-        return clientService.findById(id).map(client -> ResponseEntity.ok().body(client))
-                .onErrorResume(e -> {
-                    log.info(e.getMessage());
-                    return Mono.just(ResponseEntity.badRequest().build());
-                }).defaultIfEmpty(ResponseEntity.noContent().build());
-    }
 
     @PostMapping("customer")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public  Mono<Customer> create(@RequestBody @Valid Mono<Customer> clientMono){
-        return  clientService.create(clientMono);
+    @ResponseStatus(HttpStatus.CREATED)
+    public  Mono<CustomerDto> create(@RequestBody @Valid CustomerDto customerDto){
+        return  custumerService.create(customerDto);
     }
 
-
-    @PostMapping("customer/update/{id}")
-    public  Mono<Customer> update(@RequestBody Mono<Customer> clientMono, @PathVariable String id){
-        return  clientService.update(clientMono,id);
+    @PostMapping("customer/{id}")
+    public  Mono<CustomerDto> update(@RequestBody @Valid CustomerDto customerDto, @PathVariable String id){
+        return  custumerService.update(customerDto,id);
     }
 
     @PostMapping("customer/delete/{id}")
     public  Mono<Void> delete(@PathVariable String id){
-        return clientService.delete(id);
+        return custumerService.delete(id);
     }
+
+
+    @GetMapping("customer/{id}")
+    public Mono<ResponseEntity<CustomerDto>> findById(@PathVariable("id") String id){
+        return custumerService.findById(id)
+                .map(a -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(a))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("customer")
+    public Flux<CustomerDto> findAll(){
+        log.info("Find All");
+        log.info(demoString);
+        return   custumerService.findAll();
+    }
+
+
+
+
 
 }
