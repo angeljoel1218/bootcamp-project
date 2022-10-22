@@ -3,6 +3,7 @@ package com.nttdata.bootcamp.productservice.controller;
 import com.nttdata.bootcamp.productservice.application.ProductCreditService;
 import com.nttdata.bootcamp.productservice.model.dto.ProductCreditDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
+@RefreshScope
 public class ProductCreditController {
     @Autowired
     ProductCreditService productCreditService;

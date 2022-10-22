@@ -1,0 +1,76 @@
+version: '3.9'
+services:
+  config-server:
+    container_name: config-server
+    build:
+      context: .
+      dockerfile: ./config-server/Dockerfile
+    image: config-server:latest
+    ports:
+      - '8888:8888'
+    networks:
+      - bootcamp
+  mongodb-service:
+    image: mongo:5.0
+    ports:
+      - '27017:27017'
+    container_name: mongodb-service
+    volumes:
+      - ./db/:/data/db
+    networks:
+      - bootcamp
+  product-service:
+    container_name: product-service
+    build:
+      context: .
+      dockerfile: ./product-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - config-server
+    image: product-service:latest
+    ports:
+      - '8081:8081'
+    networks:
+      - bootcamp
+  customer-service:
+    container_name: customer-service
+    build:
+      context: .
+      dockerfile: ./customer-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - config-server
+    image: customer-service:latest
+    ports:
+      - '8082:8082'
+    networks:
+      - bootcamp
+  account-service:
+    container_name: account-service
+    build:
+      context: .
+      dockerfile: ./account-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - config-server
+    image: account-service:latest
+    ports:
+      - '8083:8083'
+    networks:
+      - bootcamp
+  credit-service:
+    container_name: credit-service
+    build:
+      context: .
+      dockerfile: ./credits-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - config-server
+    image: credit-service:latest
+    ports:
+      - '8084:8084'
+    networks:
+      - bootcamp
+networks:
+  bootcamp:
+    driver: bridge

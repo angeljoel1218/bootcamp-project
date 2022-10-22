@@ -5,7 +5,7 @@ import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import com.nttdata.bootcamp.accountservice.model.dto.SavingsAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+@RefreshScope
 @RestController
 public class SavingsController {
     @Autowired

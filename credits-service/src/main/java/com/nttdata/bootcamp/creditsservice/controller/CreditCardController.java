@@ -7,6 +7,7 @@ import com.nttdata.bootcamp.creditsservice.model.PaymentCredit;
 import com.nttdata.bootcamp.creditsservice.model.TransactionCreditCard;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @Slf4j
+@RefreshScope
 @RestController
 public class CreditCardController {
 
