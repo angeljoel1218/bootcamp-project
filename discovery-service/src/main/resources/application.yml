@@ -1,0 +1,17 @@
+server:
+  port: 9093
+eureka:
+  client:
+    #telling the server not to register himself in the service registry
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://localhost:9093/eureka
+  server:
+    waitTimeInMsWhenSyncEmpty: 0    #wait time for subsequent sync
+
+logging:
+  level:
+    '[com.netflix.eureka]': 'OFF'
+    '[com.netflix.discovery]': 'OFF'
+    

@@ -1,0 +1,51 @@
+server:
+  port: 8080
+---
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:9093/eureka
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      default-filters:
+      - name: SCGWGlobalFilter
+      routes:
+        - id: account-service
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/current-account/**
+          filters:
+          - name: SCGWPreFilter
+          - name: SCGWPostFilter
+        - id: credit-service
+          uri: lb://CREDIT-SERVICE
+          predicates:
+            - Path=/creditcard/**,/credits/**
+          filters:
+          - name: SCGWPreFilter
+          - name: SCGWPostFilter
+        - id: customer-service
+          uri: lb://CUSTOMER-SERVICE
+          predicates:
+            - Path=/customer/**
+          filters:
+            - name: SCGWPreFilter
+            - name: SCGWPostFilter
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-account/**
+          filters:
+            - name: SCGWPreFilter
+            - name: SCGWPostFilter
+        - id: report-service
+          uri: lb://REPORT-SERVICE
+          predicates:
+            - Path=/report/**
+          filters:
+            - name: SCGWPreFilter
+            - name: SCGWPostFilter
+

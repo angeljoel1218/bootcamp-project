@@ -40,7 +40,7 @@ public class CustomerController {
         return  custumerService.update(customerDto,id);
     }
 
-    @PostMapping("customer/delete/{id}")
+    @DeleteMapping("customer/delete/{id}")
     public  Mono<Void> delete(@PathVariable String id){
         return custumerService.delete(id);
     }

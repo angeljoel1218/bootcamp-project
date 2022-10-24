@@ -7,4 +7,5 @@ import reactor.core.publisher.Mono;
 public interface FixedTermDepositAccountRepository extends ReactiveMongoRepository<FixedTermDepositAccount, String> {
     Mono<FixedTermDepositAccount> findByHolderId(String id);
     Mono<FixedTermDepositAccount> findByNumber(String number);
+
 }

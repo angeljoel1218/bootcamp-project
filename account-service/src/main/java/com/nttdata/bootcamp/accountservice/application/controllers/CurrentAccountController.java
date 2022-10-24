@@ -53,8 +53,18 @@ public class CurrentAccountController {
         return accountService.deposit(depositDto);
     }
 
-    @PutMapping("current-account/withdraw")
+        @PutMapping("current-account/withdraw")
     public Mono<String> withdraw(@RequestBody OperationDto depositDto){
         return accountService.withdraw(depositDto);
+    }
+
+
+    @GetMapping("current-account/customer/{holderId}")
+    public Mono<ResponseEntity<CurrentAccountDto>> findByHolderId(@PathVariable("holderId") String holderId){
+        return accountService.findByHolderId(holderId)
+                .map(a -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(a))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }

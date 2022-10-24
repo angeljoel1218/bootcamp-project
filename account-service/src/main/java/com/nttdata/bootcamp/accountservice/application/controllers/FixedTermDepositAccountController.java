@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.accountservice.application.controllers;
 
 import com.nttdata.bootcamp.accountservice.application.AccountService;
+import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.FixedTermDepositAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
@@ -56,5 +57,15 @@ public class FixedTermDepositAccountController {
     @PutMapping("fixed-term-deposit/withdraw")
     public Mono<String> withdraw(@RequestBody OperationDto depositDto){
         return accountService.withdraw(depositDto);
+    }
+
+
+    @GetMapping("fixed-term-deposit/customer/{holderId}")
+    public Mono<ResponseEntity<FixedTermDepositAccountDto>> findByHolderId(@PathVariable("holderId") String holderId){
+        return accountService.findByHolderId(holderId)
+                .map(a -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(a))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 }
