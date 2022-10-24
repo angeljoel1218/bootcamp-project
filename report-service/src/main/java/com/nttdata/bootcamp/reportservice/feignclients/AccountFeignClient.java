@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.reportservice.feignclients;
 
+import com.nttdata.bootcamp.reportservice.feignclients.fallback.AccountFeignClientFallBack;
 import com.nttdata.bootcamp.reportservice.model.CurrentAccountDto;
 import com.nttdata.bootcamp.reportservice.model.FixedTermDepositAccountDto;
 import com.nttdata.bootcamp.reportservice.model.TransactionDto;
@@ -9,7 +10,7 @@ import reactivefeign.spring.config.ReactiveFeignClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-@ReactiveFeignClient(value =  "${feign.service.accounts.name}")
+@ReactiveFeignClient(value =  "${feign.service.accounts.name}", fallback = AccountFeignClientFallBack.class)
 public interface AccountFeignClient {
 
     @GetMapping("current-account/customer/{holderId}")

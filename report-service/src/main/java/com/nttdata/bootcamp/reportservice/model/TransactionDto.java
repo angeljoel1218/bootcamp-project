@@ -18,4 +18,6 @@ public class TransactionDto {
     private String destination;
     private Date dateOfTransaction;
     private TypeTransaction type;
+    private  BigDecimal commission;
+
 }

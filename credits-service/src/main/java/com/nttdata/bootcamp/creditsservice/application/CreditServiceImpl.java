@@ -1,10 +1,9 @@
 package com.nttdata.bootcamp.creditsservice.application;
 
-import com.nttdata.bootcamp.creditsservice.feingclients.CustumerFeingClient;
-import com.nttdata.bootcamp.creditsservice.feingclients.ProductFeingClient;
+import com.nttdata.bootcamp.creditsservice.feignclients.CustomerFeignClient;
+import com.nttdata.bootcamp.creditsservice.feignclients.ProductFeignClient;
 import com.nttdata.bootcamp.creditsservice.infrastructure.CreditRepository;
 import com.nttdata.bootcamp.creditsservice.infrastructure.PaymentCreditRepository;
-import com.nttdata.bootcamp.creditsservice.infrastructure.TransactionCreditCardRepository;
 import com.nttdata.bootcamp.creditsservice.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import java.util.List;
 
 @Slf4j
 @Service
-
 public class CreditServiceImpl implements CreditService {
 
 
@@ -28,10 +26,10 @@ public class CreditServiceImpl implements CreditService {
     private PaymentCreditRepository paymentCreditRepository;
 
     @Autowired
-    private CustumerFeingClient custumerFeingClient;
+    private CustomerFeignClient custumerFeingClient;
 
     @Autowired
-    private ProductFeingClient productFeingClient;
+    private ProductFeignClient productFeingClient;
 
 
     @Override
@@ -43,15 +41,15 @@ public class CreditServiceImpl implements CreditService {
             productFeingClient.findById(credit.getIdProduct()).flatMap(product->{
                 List<String> erros= new ArrayList<>();
 
-                if(customer.getIdType() == TypeCustomer.COMPANY && product.getType()!= TypeCredit.BUSINESS_CREDIT){
+                if(customer.isItsCompany() && product.getCategory() != Category.ACTIVE){
                     erros.add("El producto no esta disponible");
                 }
 
-                if(customer.getIdType() == TypeCustomer.PERSONAL && product.getType()!= TypeCredit.PERSONAL_CREDIT){
+                if(customer.isItsPersonal() && product.getCategory() !=  Category.ACTIVE){
                     erros.add("El producto no esta disponible");
                 }
-                return creditRepository.findByIdCustomer(customer.getId()).count().flatMap(cantidadCuentas->{
-                    if(customer.getIdType() == TypeCustomer.PERSONAL ) {
+                return creditRepository.findByIdCustomer(credit.getIdCustomer()).count().flatMap(cantidadCuentas->{
+                    if(customer.isItsPersonal() ) {
                         if (cantidadCuentas > 0) {
                             erros.add("No puede tener mas de una cuenta");
                         }
@@ -100,11 +98,6 @@ public class CreditServiceImpl implements CreditService {
 
             return Mono.just(payment).flatMap(paymentCreditRepository::insert);
         });
-    }
-
-    @Override
-    public Mono<Customer> findCustomerById(String id) {
-        return custumerFeingClient.findById(id);
     }
 
     @Override

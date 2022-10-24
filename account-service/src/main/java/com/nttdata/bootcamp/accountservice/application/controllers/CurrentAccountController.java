@@ -67,4 +67,6 @@ public class CurrentAccountController {
     public Flux<CurrentAccountDto> findByHolderId(@PathVariable("holderId") String holderId){
         return accountService.findByHolderId(holderId);
     }
+
+
 }
