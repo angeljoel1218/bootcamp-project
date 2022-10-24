@@ -1,6 +1,8 @@
 package com.nttdata.bootcamp.accountservice.application.controllers;
 
-import com.nttdata.bootcamp.accountservice.application.AccountService;
+import com.nttdata.bootcamp.accountservice.application.AccountOneService;
+import com.nttdata.bootcamp.accountservice.application.OperationService;
+import com.nttdata.bootcamp.accountservice.model.dto.FixedTermAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import com.nttdata.bootcamp.accountservice.model.dto.SavingsAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
@@ -19,22 +21,25 @@ import javax.validation.Valid;
 @RestController
 public class SavingsController {
     @Autowired
-    AccountService<SavingsAccountDto> accountService;
+    AccountOneService<SavingsAccountDto> accountService;
 
-    @PostMapping("savings")
+    @Autowired
+    OperationService<SavingsAccountDto> operationService;
+
+    @PostMapping("account/savings")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<SavingsAccountDto> create(@Valid @RequestBody SavingsAccountDto savingsAccountDto){
         return accountService.create(savingsAccountDto);
     }
 
-    @DeleteMapping("savings/{id}")
+    @DeleteMapping("account/savings/{id}")
     public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
         return accountService.delete(id)
                 .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)))
                 .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("savings/{number}")
+    @GetMapping("account/savings/{number}")
     public Mono<ResponseEntity<SavingsAccountDto>> findByNumber(@PathVariable String number){
         return accountService.findByNumber(number)
                 .map(a -> ResponseEntity.ok()
@@ -43,18 +48,23 @@ public class SavingsController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("savings/{accountId}/transactions")
+    @GetMapping("account/savings/{accountId}/transactions")
     public Flux<TransactionDto> listTransactions(@PathVariable String accountId){
         return accountService.listTransactions(accountId);
     }
 
-    @PutMapping("savings/deposit")
+    @PutMapping("account/savings/deposit")
     public Mono<String> deposit(@RequestBody OperationDto depositDto){
-        return accountService.deposit(depositDto);
+        return operationService.deposit(depositDto);
     }
 
-    @PutMapping("savings/withdraw")
+    @PutMapping("account/savings/withdraw")
     public Mono<String> withdraw(@RequestBody OperationDto depositDto){
-        return accountService.withdraw(depositDto);
+        return operationService.withdraw(depositDto);
+    }
+
+    @PostMapping("account/savings/transfer")
+    public Mono<String> wireTransfer(@RequestBody OperationDto depositDto){
+        return operationService.wireTransfer(depositDto);
     }
 }

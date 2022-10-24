@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Document
+@Document(collection = "accounts")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -28,4 +28,5 @@ public class CurrentAccount {
     private Date createdAt;
     private Date updatedAt;
     private StateAccount state;
+    private TypeAccount typeAccount;
 }

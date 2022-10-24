@@ -8,14 +8,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
-@Document
+@Document(collection = "accounts")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FixedTermDepositAccount {
+public class Account {
     @Id
     private String id;
     private String number;
@@ -23,8 +22,6 @@ public class FixedTermDepositAccount {
     private String coin;
     private String holderId;
     private String productId;
-    private Integer dayOfOperation;
-    private Date createdAt;
-    private Date updatedAt;
     private StateAccount state;
+    private TypeAccount typeAccount;
 }

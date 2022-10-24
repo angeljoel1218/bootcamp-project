@@ -6,5 +6,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 public interface SavingsAccountRepository extends ReactiveMongoRepository<SavingsAccount, String> {
     Mono<SavingsAccount> findByHolderId(String id);
+    Mono<Long> countByHolderId(String id);
     Mono<SavingsAccount> findByNumber(String number);
 }

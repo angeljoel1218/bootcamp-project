@@ -9,11 +9,7 @@ import java.security.PublicKey;
 
 public interface AccountService<T> {
     public Mono<T> create(T accountDto);
-    public Mono<T> findByHolderId(String holderId);
     public Mono<T> findByNumber(String number);
     public Flux<TransactionDto> listTransactions(String accountId);
     public Mono<Void> delete(String accountId);
-    public Mono<String> deposit(OperationDto depositDto);
-    public Mono<String> withdraw(OperationDto withdrawDto);
-    public Mono<String> wireTransfer(OperationDto withdrawDto);
 }

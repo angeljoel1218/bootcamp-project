@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.accountservice.model.dto;
 
+import com.nttdata.bootcamp.accountservice.model.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.TypeAffectation;
 import com.nttdata.bootcamp.accountservice.model.TypeTransaction;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class TransactionDto {
     private Date dateOfTransaction;
     private TypeTransaction type;
     private TypeAffectation affectation;
+    private TypeAccount typeAccount;
 }

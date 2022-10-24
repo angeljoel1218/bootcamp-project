@@ -15,7 +15,7 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SavingsAccount {
+public class FixedTermAccount {
     @Id
     private String id;
     private String number;
@@ -23,6 +23,7 @@ public class SavingsAccount {
     private String coin;
     private String holderId;
     private String productId;
+    private Integer dayOfOperation;
     private Date createdAt;
     private Date updatedAt;
     private StateAccount state;

@@ -1,8 +1,9 @@
 package com.nttdata.bootcamp.accountservice.application.controllers;
 
-import com.nttdata.bootcamp.accountservice.application.AccountService;
+import com.nttdata.bootcamp.accountservice.application.AccountOneService;
+import com.nttdata.bootcamp.accountservice.application.OperationService;
 import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
-import com.nttdata.bootcamp.accountservice.model.dto.FixedTermDepositAccountDto;
+import com.nttdata.bootcamp.accountservice.model.dto.FixedTermAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +19,27 @@ import javax.validation.Valid;
 
 @RefreshScope
 @RestController
-public class FixedTermDepositAccountController {
+public class FixedTermAccountController {
     @Autowired
-    AccountService<FixedTermDepositAccountDto> accountService;
+    AccountOneService<FixedTermAccountDto> accountService;
+    @Autowired
+    OperationService<FixedTermAccountDto> operationService;
 
-    @PostMapping("fixed-term-deposit")
+    @PostMapping("account/fixed-term-deposit")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<FixedTermDepositAccountDto> create(@Valid @RequestBody FixedTermDepositAccountDto fixedTermDepositAccountDto){
-        return accountService.create(fixedTermDepositAccountDto);
+    public Mono<FixedTermAccountDto> create(@Valid @RequestBody FixedTermAccountDto fixedTermAccountDto){
+        return accountService.create(fixedTermAccountDto);
     }
 
-    @DeleteMapping("fixed-term-deposit/{id}")
+    @DeleteMapping("account/fixed-term-deposit/{id}")
     public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
         return accountService.delete(id)
                 .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)))
                 .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("fixed-term-deposit/{number}")
-    public Mono<ResponseEntity<FixedTermDepositAccountDto>> findByNumber(@PathVariable String number){
+    @GetMapping("account/fixed-term-deposit/{number}")
+    public Mono<ResponseEntity<FixedTermAccountDto>> findByNumber(@PathVariable String number){
         return accountService.findByNumber(number)
                 .map(a -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
@@ -44,24 +47,24 @@ public class FixedTermDepositAccountController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("fixed-term-deposit/{accountId}/transactions")
+    @GetMapping("account/fixed-term-deposit/{accountId}/transactions")
     public Flux<TransactionDto> listTransactions(@PathVariable String accountId){
         return accountService.listTransactions(accountId);
     }
 
-    @PutMapping("fixed-term-deposit/deposit")
+    @PutMapping("account/fixed-term-deposit/deposit")
     public Mono<String> deposit(@RequestBody OperationDto depositDto){
-        return accountService.deposit(depositDto);
+        return operationService.deposit(depositDto);
     }
 
-    @PutMapping("fixed-term-deposit/withdraw")
+    @PutMapping("account/fixed-term-deposit/withdraw")
     public Mono<String> withdraw(@RequestBody OperationDto depositDto){
-        return accountService.withdraw(depositDto);
+        return operationService.withdraw(depositDto);
     }
 
 
-    @GetMapping("fixed-term-deposit/customer/{holderId}")
-    public Mono<ResponseEntity<FixedTermDepositAccountDto>> findByHolderId(@PathVariable("holderId") String holderId){
+    @GetMapping("account/fixed-term-deposit/customer/{holderId}")
+    public Mono<ResponseEntity<FixedTermAccountDto>> findByHolderId(@PathVariable("holderId") String holderId){
         return accountService.findByHolderId(holderId)
                 .map(a -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)

@@ -20,9 +20,12 @@ public class Transaction {
     private String id;
     private String operation;
     private BigDecimal amount;
+    private BigDecimal commission;
+    private String accountId;
     private String origin;
     private String destination;
     private Date dateOfTransaction;
     private TypeTransaction type;
     private TypeAffectation affectation;
+    private TypeAccount typeAccount;
 }

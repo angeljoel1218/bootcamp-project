@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.accountservice.application.controllers;
 
-import com.nttdata.bootcamp.accountservice.application.AccountService;
+import com.nttdata.bootcamp.accountservice.application.AccountMultiService;
+import com.nttdata.bootcamp.accountservice.application.OperationService;
 import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
@@ -17,25 +18,27 @@ import javax.validation.Valid;
 
 @RefreshScope
 @RestController
-@RequestMapping("product")
 public class CurrentAccountController {
     @Autowired
-    AccountService<CurrentAccountDto> accountService;
+    AccountMultiService<CurrentAccountDto> accountService;
 
-    @PostMapping("current-account")
+    @Autowired
+    OperationService<CurrentAccountDto> operationService;
+
+    @PostMapping("account/current-account")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<CurrentAccountDto> create(@Valid @RequestBody CurrentAccountDto currentAccountDto){
         return accountService.create(currentAccountDto);
     }
 
-    @DeleteMapping("current-account/{id}")
+    @DeleteMapping("account/current-account/{id}")
     public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
         return accountService.delete(id)
                 .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)))
                 .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("current-account/{number}")
+    @GetMapping("account/current-account/{number}")
     public Mono<ResponseEntity<CurrentAccountDto>> findByNumber(@PathVariable String number){
         return accountService.findByNumber(number)
                 .map(a -> ResponseEntity.ok()
@@ -44,28 +47,24 @@ public class CurrentAccountController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("current-account/{accountId}/transactions")
+    @GetMapping("account/current-account/{accountId}/transactions")
     public Flux<TransactionDto> listTransactions(@PathVariable String accountId){
         return accountService.listTransactions(accountId);
     }
 
-    @PutMapping("current-account/deposit")
+    @PutMapping("account/current-account/deposit")
     public Mono<String> deposit(@RequestBody OperationDto depositDto){
-        return accountService.deposit(depositDto);
+        return operationService.deposit(depositDto);
     }
 
-        @PutMapping("current-account/withdraw")
+        @PutMapping("account/current-account/withdraw")
     public Mono<String> withdraw(@RequestBody OperationDto depositDto){
-        return accountService.withdraw(depositDto);
+        return operationService.withdraw(depositDto);
     }
 
 
-    @GetMapping("current-account/customer/{holderId}")
-    public Mono<ResponseEntity<CurrentAccountDto>> findByHolderId(@PathVariable("holderId") String holderId){
-        return accountService.findByHolderId(holderId)
-                .map(a -> ResponseEntity.ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(a))
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+    @GetMapping("account/current-account/customer/{holderId}")
+    public Flux<CurrentAccountDto> findByHolderId(@PathVariable("holderId") String holderId){
+        return accountService.findByHolderId(holderId);
     }
 }
