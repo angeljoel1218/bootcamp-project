@@ -26,7 +26,7 @@ public class ReportController {
                 Map<String,Object> map= new HashMap<>();
 
                 map.put("Name",t.getNumber());
-                map.put("Dias",reportSevice.dailyBalance2(t.getId()).blockLast());
+                map.put("Dias",reportSevice.dailyBalance2(t.getId()));
 
 
                 return map  ;
