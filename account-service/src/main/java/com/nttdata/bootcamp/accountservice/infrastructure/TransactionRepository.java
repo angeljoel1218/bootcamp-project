@@ -7,6 +7,6 @@ import reactor.core.publisher.Flux;
 import java.util.Date;
 
 public interface TransactionRepository extends ReactiveMongoRepository<Transaction, String> {
-    Flux<Transaction> findByAccountId(String id);
-    Flux<Transaction> findByDateOfTransactionBetweenAndAccountId(Date start, Date end, String accountId);
+    //Flux<Transaction> findByAccountId(String id);
+  //  Flux<Transaction> findByDateOfTransactionBetweenAndAccountId(Date start, Date end, String accountId);
 }

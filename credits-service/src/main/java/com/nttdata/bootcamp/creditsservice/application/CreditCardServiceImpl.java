@@ -1,7 +1,7 @@
 package com.nttdata.bootcamp.creditsservice.application;
 
-import com.nttdata.bootcamp.creditsservice.feingclients.CustumerFeingClient;
-import com.nttdata.bootcamp.creditsservice.feingclients.ProductFeingClient;
+import com.nttdata.bootcamp.creditsservice.feignclients.CustomerFeignClient;
+import com.nttdata.bootcamp.creditsservice.feignclients.ProductFeignClient;
 import com.nttdata.bootcamp.creditsservice.infrastructure.CreditCardRepository;
 import com.nttdata.bootcamp.creditsservice.infrastructure.TransactionCreditCardRepository;
 import com.nttdata.bootcamp.creditsservice.model.*;
@@ -21,10 +21,10 @@ public class CreditCardServiceImpl implements CreditCardService {
 
 
     @Autowired
-    private CustumerFeingClient custumerFeingClient;
+    private CustomerFeignClient custumerFeingClient;
 
     @Autowired
-    private ProductFeingClient productFeingClient;
+    private ProductFeignClient productFeingClient;
 
     @Autowired
     private TransactionCreditCardRepository transactionCreditRepository;
@@ -41,11 +41,11 @@ public class CreditCardServiceImpl implements CreditCardService {
                     productFeingClient.findById(creditCard.getIdProduct()).flatMap(product->{
                         List<String> erros= new ArrayList<>();
 
-                        if(customer.getIdType() == TypeCustomer.COMPANY && product.getType()!= TypeCredit.BUSINESS_CREDIT_CARD){
+                        if(customer.isItsCompany() && product.getCategory() != Category.ACTIVE){
                             erros.add("El producto no esta disponible");
                         }
 
-                        if(customer.getIdType() == TypeCustomer.PERSONAL && product.getType()!= TypeCredit.PERSONAL_CREDIT_CARD){
+                        if(customer.isItsPersonal() && product.getCategory() != Category.ACTIVE){
                             erros.add("El producto no esta disponible");
                         }
 

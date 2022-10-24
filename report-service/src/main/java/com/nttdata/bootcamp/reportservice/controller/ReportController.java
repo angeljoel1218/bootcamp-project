@@ -22,16 +22,12 @@ public class ReportController {
 
     @GetMapping("report/customer/{customerId}")
     public Flux<Map<String,Object>>  dailyBalance(@PathVariable("customerId") String customerId){
-        return  reportSevice.dailyBalance(customerId).map(t->{
-                Map<String,Object> map= new HashMap<>();
-
-                map.put("Name",t.getNumber());
-                map.put("Dias",reportSevice.dailyBalance2(t.getId()));
-
-
-                return map  ;
-        });
+        return  reportSevice.dailyBalance2(customerId);
     }
 
+    @GetMapping("report/find/{customerId}")
+    public Mono<CustomerDto>  findCustomerById(@PathVariable("customerId") String customerId){
+        return  reportSevice.findCustomerById(customerId);
+    }
 
 }

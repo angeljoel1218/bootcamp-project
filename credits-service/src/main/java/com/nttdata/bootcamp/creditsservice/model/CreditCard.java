@@ -20,13 +20,13 @@ public class CreditCard {
     @Id
     private String id;
 
-    @NotBlank(message = "Id Cliente es requerido")
+    @NotBlank(message = "The field id customer is required")
     private String idCustomer;
 
-    @NotBlank(message = "Id del producto es requerido")
+    @NotBlank(message = "The field id product is required")
     private  String idProduct;
 
-    @NotNull(message = "Monto limite es requerido")
+    @NotNull(message = "the field limit amount is required")
     private BigDecimal limitAmount;
 
     private String status;

@@ -1,15 +1,5 @@
 version: '3.9'
 services:
-  api-gateway:
-    container_name: api-gateway
-    build:
-      context: .
-      dockerfile: ./api-gateway/Dockerfile
-    image: api-gateway:latest
-    ports:
-      - '8080:8080'
-    networks:
-      - bootcamp
   config-server:
     container_name: config-server
     build:
@@ -20,6 +10,31 @@ services:
       - '8888:8888'
     networks:
       - bootcamp
+  discovery-service:
+    container_name: discovery-service
+    build:
+      context: .
+      dockerfile: ./discovery-service/Dockerfile
+    image: discovery-service:latest
+    ports:
+      - '9091:9091'
+    networks:
+      - bootcamp
+    depends_on:
+      - config-server
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
+    image: api-gateway:latest
+    ports:
+      - '8080:8080'
+    networks:
+      - bootcamp
+    depends_on:
+      - config-server
+      - discovery-service
   mongodb-service:
     image: mongo:5.0
     ports:
@@ -27,26 +42,6 @@ services:
     container_name: mongodb-service
     volumes:
       - ./db/:/data/db
-    networks:
-      - bootcamp
-  gateway-server:
-    container_name: gateway-server
-    build:
-      context: .
-      dockerfile: ./gateway-server/Dockerfile
-    image: gateway-server:latest
-    ports:
-      - '9090:9090'
-    networks:
-      - bootcamp
-  discovery-server:
-    container_name: discovery-server
-    build:
-      context: .
-      dockerfile: ./discovery-server/Dockerfile
-    image: discovery-server:latest
-    ports:
-      - '9091:9091'
     networks:
       - bootcamp
   product-service:
@@ -57,6 +52,7 @@ services:
     depends_on:
       - mongodb-service
       - config-server
+      - discovery-service
     image: product-service:latest
     ports:
       - '8081:8081'
@@ -70,6 +66,7 @@ services:
     depends_on:
       - mongodb-service
       - config-server
+      - discovery-service
     image: customer-service:latest
     ports:
       - '8082:8082'
@@ -83,6 +80,7 @@ services:
     depends_on:
       - mongodb-service
       - config-server
+      - discovery-service
     image: account-service:latest
     ports:
       - '8083:8083'
@@ -96,6 +94,7 @@ services:
     depends_on:
       - mongodb-service
       - config-server
+      - discovery-service
     image: credit-service:latest
     ports:
       - '8084:8084'

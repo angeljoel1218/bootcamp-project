@@ -38,8 +38,10 @@ public class ReportServiceImpl  implements  ReportSevice{
 
     @Override
     public Flux<Map<String, Object>> dailyBalance2(String accountId) {
+
         Map<String,Object> map= new HashMap<>();
         return accountFeignClient.listCurrentTransactions(accountId).map(tran->{
+
             String fecha= dateFormat.format(tran.getDateOfTransaction());
 
             BigDecimal monto= BigDecimal.ZERO;
