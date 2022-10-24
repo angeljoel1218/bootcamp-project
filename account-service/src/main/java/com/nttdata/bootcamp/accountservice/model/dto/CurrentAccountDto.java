@@ -3,13 +3,14 @@ package com.nttdata.bootcamp.accountservice.model.dto;
 import com.nttdata.bootcamp.accountservice.model.StateAccount;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
 public class CurrentAccountDto {
     private String id;
     private String number;
-    private Float balance;
+    private BigDecimal balance;
     private String coin;
     private String holderId;
     private String [] holders;

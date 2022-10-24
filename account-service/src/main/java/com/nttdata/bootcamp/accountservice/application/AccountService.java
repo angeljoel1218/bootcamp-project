@@ -15,5 +15,5 @@ public interface AccountService<T> {
     public Mono<Void> delete(String accountId);
     public Mono<String> deposit(OperationDto depositDto);
     public Mono<String> withdraw(OperationDto withdrawDto);
-
+    public Mono<String> wireTransfer(OperationDto withdrawDto);
 }

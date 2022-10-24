@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Document
@@ -18,7 +19,7 @@ public class FixedTermDepositAccount {
     @Id
     private String id;
     private String number;
-    private Float balance;
+    private BigDecimal balance;
     private String coin;
     private String holderId;
     private String productId;

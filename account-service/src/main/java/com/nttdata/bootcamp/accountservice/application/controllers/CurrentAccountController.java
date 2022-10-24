@@ -17,6 +17,7 @@ import javax.validation.Valid;
 
 @RefreshScope
 @RestController
+@RequestMapping("product")
 public class CurrentAccountController {
     @Autowired
     AccountService<CurrentAccountDto> accountService;
