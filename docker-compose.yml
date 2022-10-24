@@ -1,5 +1,15 @@
 version: '3.9'
 services:
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: .
+      dockerfile: ./api-gateway/Dockerfile
+    image: api-gateway:latest
+    ports:
+      - '8080:8080'
+    networks:
+      - bootcamp
   config-server:
     container_name: config-server
     build:

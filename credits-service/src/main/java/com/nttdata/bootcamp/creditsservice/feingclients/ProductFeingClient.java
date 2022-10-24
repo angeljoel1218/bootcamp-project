@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import reactivefeign.spring.config.ReactiveFeignClient;
 import reactor.core.publisher.Mono;
 
-@ReactiveFeignClient(value =  "${feign.service.product.name}",   url = "${feign.service.product.url}")
+@ReactiveFeignClient(value =  "${feign.service.product.name}",   url = "${feign.service.api.gateway}")
 public interface ProductFeingClient {
 
     @GetMapping("product-credit/{id}")
