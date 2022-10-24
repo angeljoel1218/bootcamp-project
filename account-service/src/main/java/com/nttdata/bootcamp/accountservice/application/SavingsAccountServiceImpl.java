@@ -3,8 +3,8 @@ package com.nttdata.bootcamp.accountservice.application;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperSavingsAccount;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
 import com.nttdata.bootcamp.accountservice.application.utils.DateUtil;
-import com.nttdata.bootcamp.accountservice.client.ProductClient;
-import com.nttdata.bootcamp.accountservice.client.CustomerClient;
+import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
+import com.nttdata.bootcamp.accountservice.feignclient.CustomerClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.SavingsAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.*;
@@ -42,11 +42,16 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
         accountDto.setCreatedAt(new Date());
         return customerClient.getClient(accountDto.getHolderId()).flatMap(client -> {
             if(client.getIdType().equals(TypeCustomer.COMPANY)) {
-                return Mono.error(new IllegalArgumentException("Client must be personal type"));
+                return Mono.error(new IllegalArgumentException("Customer must be personal type"));
             }
+
+            if(client.getIdType().equals(TypeCustomer.PERSONAL_VIP)) {
+
+            }
+
             return savingsAccountRepository.findByHolderId(accountDto.getHolderId()).flatMap(savingsAccount -> {
                 if (savingsAccount.getId() != null) {
-                    return Mono.error(new IllegalArgumentException("The client can only have one savings account"));
+                    return Mono.error(new IllegalArgumentException("The customer can only have one savings account"));
                 }
                 return this.save(accountDto);
             }).switchIfEmpty(Mono.defer(() -> this.save(accountDto)));
@@ -55,6 +60,9 @@ public class SavingsAccountServiceImpl implements AccountService<SavingsAccountD
 
     public Mono<SavingsAccountDto> save(SavingsAccountDto accountDto) {
         return productClient.getProductAccount(accountDto.getProductId()).flatMap(productAccountDto -> {
+            if (productAccountDto.getMinFixedAmount() <= accountDto.getBalance()) {
+                return Mono.error(new IllegalArgumentException("Insufficient minimum amount to open an account"));
+            }
             Mono<SavingsAccount> savingsAccountMono = mapperSavingsAccount.toSavingsAccount(accountDto)
                     .flatMap(savingsAccountRepository::insert);
 

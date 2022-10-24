@@ -19,6 +19,26 @@ services:
       - ./db/:/data/db
     networks:
       - bootcamp
+  gateway-server:
+    container_name: gateway-server
+    build:
+      context: .
+      dockerfile: ./gateway-server/Dockerfile
+    image: gateway-server:latest
+    ports:
+      - '9090:9090'
+    networks:
+      - bootcamp
+  discovery-server:
+    container_name: discovery-server
+    build:
+      context: .
+      dockerfile: ./discovery-server/Dockerfile
+    image: discovery-server:latest
+    ports:
+      - '9091:9091'
+    networks:
+      - bootcamp
   product-service:
     container_name: product-service
     build:

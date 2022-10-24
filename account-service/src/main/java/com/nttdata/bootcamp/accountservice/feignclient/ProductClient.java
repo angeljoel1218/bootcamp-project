@@ -1,0 +1,14 @@
+package com.nttdata.bootcamp.accountservice.feignclient;
+
+import com.nttdata.bootcamp.accountservice.model.dto.ProductDto;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import reactivefeign.spring.config.ReactiveFeignClient;
+import reactor.core.publisher.Mono;
+
+@ReactiveFeignClient(name = "${feign.service.product.name}", url = "${feign.service.product.url}")
+public interface ProductClient {
+    @RequestMapping(method = RequestMethod.GET, value = "/product/{id}")
+    Mono<ProductDto> getProductAccount(@PathVariable("id") String id);
+}

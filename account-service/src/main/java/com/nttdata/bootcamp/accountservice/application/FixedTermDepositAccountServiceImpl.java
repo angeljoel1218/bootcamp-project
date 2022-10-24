@@ -3,8 +3,8 @@ package com.nttdata.bootcamp.accountservice.application;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperFixedTermDeposit;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
 import com.nttdata.bootcamp.accountservice.application.utils.DateUtil;
-import com.nttdata.bootcamp.accountservice.client.ProductClient;
-import com.nttdata.bootcamp.accountservice.client.CustomerClient;
+import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
+import com.nttdata.bootcamp.accountservice.feignclient.CustomerClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.FixedTermDepositAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.*;
@@ -36,11 +36,11 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
         accountDto.setCreatedAt(new Date());
         return customerClient.getClient(accountDto.getHolderId()).flatMap(client -> {
             if(client.getIdType().equals(TypeCustomer.COMPANY)) {
-                return Mono.error(new IllegalArgumentException("Client must be personal type"));
+                return Mono.error(new IllegalArgumentException("Customer must be personal type"));
             }
             return fixedTermDepositAccountRepository.findByHolderId(accountDto.getHolderId()).flatMap(fixedTermDepositAccount -> {
                 if (fixedTermDepositAccount.getId() != null) {
-                    return Mono.error(new IllegalArgumentException("The client can only have one fixed term deposit account"));
+                    return Mono.error(new IllegalArgumentException("The customer can only have one fixed term deposit account"));
                 }
                 return this.save(accountDto);
             }).switchIfEmpty(Mono.defer(() -> this.save(accountDto)));
@@ -49,8 +49,9 @@ public class FixedTermDepositAccountServiceImpl implements AccountService<FixedT
 
     public Mono<FixedTermDepositAccountDto> save(FixedTermDepositAccountDto accountDto) {
         return productClient.getProductAccount(accountDto.getProductId()).flatMap(productAccountDto -> {
-            accountDto.setState(StateAccount.ACTIVE);
-            accountDto.setCreatedAt(new Date());
+            if (productAccountDto.getMinFixedAmount() <= accountDto.getBalance()) {
+                return Mono.error(new IllegalArgumentException("Insufficient minimum amount to open an account"));
+            }
             Mono<FixedTermDepositAccount> fixedTermDepositAccountMono = mapperFixedTermDeposit.toProductAccount(accountDto)
                     .flatMap(fixedTermDepositAccountRepository::insert);
             return fixedTermDepositAccountMono

@@ -7,11 +7,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="product-service" />
         <module name="config-server" />
+        <module name="discovery-server" />
+        <module name="customer-service" />
+        <module name="product-service" />
+        <module name="gateway-server" />
         <module name="account-service" />
         <module name="credits-service" />
-        <module name="customer-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -19,6 +21,8 @@
       <module name="config-server" target="11" />
       <module name="credits-service" target="11" />
       <module name="customer-service" target="11" />
+      <module name="discovery-server" target="11" />
+      <module name="gateway-server" target="11" />
       <module name="product-service" target="11" />
     </bytecodeTargetLevel>
   </component>
@@ -28,6 +32,8 @@
       <module name="config-server" options="-parameters" />
       <module name="credits-service" options="-parameters" />
       <module name="customer-service" options="-parameters" />
+      <module name="discovery-server" options="-parameters" />
+      <module name="gateway-server" options="-parameters" />
       <module name="product-service" options="-parameters" />
     </option>
   </component>

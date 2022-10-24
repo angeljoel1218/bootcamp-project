@@ -2,8 +2,8 @@ package com.nttdata.bootcamp.accountservice.application;
 
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperCurrentAccount;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
-import com.nttdata.bootcamp.accountservice.client.ProductClient;
-import com.nttdata.bootcamp.accountservice.client.CustomerClient;
+import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
+import com.nttdata.bootcamp.accountservice.feignclient.CustomerClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.CurrentAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.*;
@@ -36,7 +36,10 @@ public class CurrentAccountServiceImpl implements AccountService<CurrentAccountD
         return currentAccountRepository.findByHolderId(accountDto.getHolderId())
                 .flatMap(aa -> customerClient.getClient(accountDto.getHolderId()).flatMap(cl -> {
                     if(aa.getId() != null && cl.getIdType().equals(TypeCustomer.PERSONAL)) {
-                        return Mono.error(new IllegalArgumentException("The client can only have one savings account"));
+                        return Mono.error(new IllegalArgumentException("The customer can only have one savings account"));
+                    }
+                    if(cl.getIdType().equals(TypeCustomer.COMPANY_PYME)) {
+
                     }
                     return this.save(accountDto);
                 }).switchIfEmpty(Mono.error(new IllegalArgumentException("Customer not found"))))
@@ -45,6 +48,9 @@ public class CurrentAccountServiceImpl implements AccountService<CurrentAccountD
 
     public Mono<CurrentAccountDto> save(CurrentAccountDto accountDto) {
         return productClient.getProductAccount(accountDto.getProductId()).flatMap(pr -> {
+            if (pr.getMinFixedAmount() <= accountDto.getBalance()) {
+                return Mono.error(new IllegalArgumentException("Insufficient minimum amount to open an account"));
+            }
             return mapperCurrentAccount.toCurrentAccount(accountDto)
                     .flatMap(currentAccountRepository::insert)
                     .flatMap(mapperCurrentAccount::toDto);
