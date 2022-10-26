@@ -1,8 +1,8 @@
 package com.nttdata.bootcamp.accountservice.model.dto;
 
-import com.nttdata.bootcamp.accountservice.model.TypeAccount;
-import com.nttdata.bootcamp.accountservice.model.TypeAffectation;
-import com.nttdata.bootcamp.accountservice.model.TypeTransaction;
+import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
+import com.nttdata.bootcamp.accountservice.model.constant.TypeAffectation;
+import com.nttdata.bootcamp.accountservice.model.constant.TypeTransaction;
 import lombok.Data;
 
 import java.math.BigDecimal;

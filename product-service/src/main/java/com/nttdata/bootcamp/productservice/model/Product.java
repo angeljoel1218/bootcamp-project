@@ -1,5 +1,7 @@
 package com.nttdata.bootcamp.productservice.model;
 
+import com.nttdata.bootcamp.productservice.model.constant.Category;
+import com.nttdata.bootcamp.productservice.model.constant.ProductType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,5 +26,5 @@ public class Product {
     private Float openingAmount;
     private Float minFixedAmount;
     private Category category;
-    private String productTypeId;
+    private ProductType productTypeId;
 }

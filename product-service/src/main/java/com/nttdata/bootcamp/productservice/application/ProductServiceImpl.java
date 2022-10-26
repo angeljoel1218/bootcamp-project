@@ -1,7 +1,6 @@
 package com.nttdata.bootcamp.productservice.application;
 
 import com.nttdata.bootcamp.productservice.application.mappers.MapperProduct;
-import com.nttdata.bootcamp.productservice.application.mappers.MapperProductType;
 import com.nttdata.bootcamp.productservice.infrastructure.ProductRepository;
 import com.nttdata.bootcamp.productservice.model.dto.ProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,6 @@ import reactor.core.publisher.Mono;
 public class ProductServiceImpl implements ProductService{
     @Autowired
     MapperProduct mapperProduct;
-
-    @Autowired
-    MapperProductType mapperProductType;
 
     @Autowired
     ProductRepository productRepository;

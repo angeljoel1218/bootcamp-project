@@ -1,7 +1,7 @@
 package com.nttdata.bootcamp.accountservice.model.dto;
 
-import com.nttdata.bootcamp.accountservice.model.StateAccount;
-import com.nttdata.bootcamp.accountservice.model.TypeAccount;
+import com.nttdata.bootcamp.accountservice.model.constant.StateAccount;
+import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import lombok.Data;
 
 import java.math.BigDecimal;

@@ -1,7 +1,7 @@
 package com.nttdata.bootcamp.accountservice.model.dto;
 
-import com.nttdata.bootcamp.accountservice.model.TypeCustomer;
-import com.nttdata.bootcamp.accountservice.model.TypeProfile;
+import com.nttdata.bootcamp.accountservice.model.constant.TypeCustomer;
+import com.nttdata.bootcamp.accountservice.model.constant.TypeProfile;
 import lombok.*;
 
 @Data

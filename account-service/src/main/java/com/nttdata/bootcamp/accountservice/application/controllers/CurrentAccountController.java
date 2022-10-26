@@ -1,6 +1,6 @@
 package com.nttdata.bootcamp.accountservice.application.controllers;
 
-import com.nttdata.bootcamp.accountservice.application.AccountMultiService;
+import com.nttdata.bootcamp.accountservice.application.ManyAccountService;
 import com.nttdata.bootcamp.accountservice.application.OperationService;
 import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @RestController
 public class CurrentAccountController {
     @Autowired
-    AccountMultiService<CurrentAccountDto> accountService;
+    ManyAccountService<CurrentAccountDto> accountService;
 
     @Autowired
     OperationService<CurrentAccountDto> operationService;
@@ -52,21 +52,23 @@ public class CurrentAccountController {
         return accountService.listTransactions(accountId);
     }
 
-    @PutMapping("account/current-account/deposit")
-    public Mono<String> deposit(@RequestBody OperationDto depositDto){
-        return operationService.deposit(depositDto);
-    }
-
-        @PutMapping("account/current-account/withdraw")
-    public Mono<String> withdraw(@RequestBody OperationDto depositDto){
-        return operationService.withdraw(depositDto);
-    }
-
-
     @GetMapping("account/current-account/customer/{holderId}")
     public Flux<CurrentAccountDto> findByHolderId(@PathVariable("holderId") String holderId){
         return accountService.findByHolderId(holderId);
     }
 
+    @PutMapping("account/current-account/deposit")
+    public Mono<String> deposit(@RequestBody OperationDto operationDto){
+        return operationService.deposit(operationDto);
+    }
 
+    @PutMapping("account/current-account/withdraw")
+    public Mono<String> withdraw(@RequestBody OperationDto operationDto){
+        return operationService.withdraw(operationDto);
+    }
+
+    @PostMapping("account/current-account/transfer")
+    public Mono<String> transfer(@RequestBody OperationDto operationDto) {
+        return operationService.wireTransfer(operationDto);
+    }
 }

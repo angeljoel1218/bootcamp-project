@@ -1,8 +1,7 @@
 package com.nttdata.bootcamp.accountservice.application.controllers;
 
-import com.nttdata.bootcamp.accountservice.application.AccountOneService;
+import com.nttdata.bootcamp.accountservice.application.SingleAccountService;
 import com.nttdata.bootcamp.accountservice.application.OperationService;
-import com.nttdata.bootcamp.accountservice.model.dto.FixedTermAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import com.nttdata.bootcamp.accountservice.model.dto.SavingsAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
@@ -21,7 +20,7 @@ import javax.validation.Valid;
 @RestController
 public class SavingsController {
     @Autowired
-    AccountOneService<SavingsAccountDto> accountService;
+    SingleAccountService<SavingsAccountDto> accountService;
 
     @Autowired
     OperationService<SavingsAccountDto> operationService;

@@ -1,6 +1,6 @@
 package com.nttdata.bootcamp.accountservice.model.dto;
 
-import com.nttdata.bootcamp.accountservice.model.TypeAccount;
+import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import lombok.Data;
 
 @Data

@@ -1,8 +1,7 @@
 package com.nttdata.bootcamp.accountservice.application.controllers;
 
-import com.nttdata.bootcamp.accountservice.application.AccountOneService;
+import com.nttdata.bootcamp.accountservice.application.SingleAccountService;
 import com.nttdata.bootcamp.accountservice.application.OperationService;
-import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.FixedTermAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
@@ -21,7 +20,7 @@ import javax.validation.Valid;
 @RestController
 public class FixedTermAccountController {
     @Autowired
-    AccountOneService<FixedTermAccountDto> accountService;
+    SingleAccountService<FixedTermAccountDto> accountService;
     @Autowired
     OperationService<FixedTermAccountDto> operationService;
 
@@ -52,17 +51,6 @@ public class FixedTermAccountController {
         return accountService.listTransactions(accountId);
     }
 
-    @PutMapping("account/fixed-term-deposit/deposit")
-    public Mono<String> deposit(@RequestBody OperationDto depositDto){
-        return operationService.deposit(depositDto);
-    }
-
-    @PutMapping("account/fixed-term-deposit/withdraw")
-    public Mono<String> withdraw(@RequestBody OperationDto depositDto){
-        return operationService.withdraw(depositDto);
-    }
-
-
     @GetMapping("account/fixed-term-deposit/customer/{holderId}")
     public Mono<ResponseEntity<FixedTermAccountDto>> findByHolderId(@PathVariable("holderId") String holderId){
         return accountService.findByHolderId(holderId)
@@ -70,5 +58,20 @@ public class FixedTermAccountController {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(a))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("account/fixed-term-deposit/deposit")
+    public Mono<String> deposit(@RequestBody OperationDto operationDto){
+        return operationService.deposit(operationDto);
+    }
+
+    @PutMapping("account/fixed-term-deposit/withdraw")
+    public Mono<String> withdraw(@RequestBody OperationDto operationDto){
+        return operationService.withdraw(operationDto);
+    }
+
+    @PostMapping("account/fixed-term-deposit/transfer")
+    public Mono<String> transfer(@RequestBody OperationDto operationDto) {
+        return operationService.wireTransfer(operationDto);
     }
 }

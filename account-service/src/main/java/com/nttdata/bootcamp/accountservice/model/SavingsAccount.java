@@ -1,5 +1,7 @@
 package com.nttdata.bootcamp.accountservice.model;
 
+import com.nttdata.bootcamp.accountservice.model.constant.StateAccount;
+import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

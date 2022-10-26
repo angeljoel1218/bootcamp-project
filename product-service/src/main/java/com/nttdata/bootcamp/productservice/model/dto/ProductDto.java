@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.productservice.model.dto;
 
-import com.nttdata.bootcamp.productservice.model.Category;
+import com.nttdata.bootcamp.productservice.model.constant.Category;
+import com.nttdata.bootcamp.productservice.model.constant.ProductType;
 import lombok.Data;
 
 @Data
@@ -15,5 +16,5 @@ public class ProductDto {
     private Float openingAmount;
     private Float minFixedAmount;
     private Category category;
-    private String productTypeId;
+    private ProductType productTypeId;
 }
