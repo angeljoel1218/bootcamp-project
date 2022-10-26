@@ -41,7 +41,7 @@ spring:
         - id: product-service
           uri: lb://PRODUCT-SERVICE
           predicates:
-            - Path=/product-account/**
+            - Path=/product/**
           filters:
             - name: SCGWPreFilter
             - name: SCGWPostFilter
