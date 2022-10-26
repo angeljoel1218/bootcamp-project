@@ -19,7 +19,7 @@ import javax.validation.Valid;
 @Slf4j
 @RefreshScope
 @RestController
-@RequestMapping("customer")
+@RequestMapping("/customer")
 public class CustomerController {
 
 
