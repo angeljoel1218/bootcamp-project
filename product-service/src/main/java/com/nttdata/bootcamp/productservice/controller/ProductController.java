@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("product")
+@RequestMapping("/product")
 @RefreshScope
 public class ProductController {
     @Autowired
