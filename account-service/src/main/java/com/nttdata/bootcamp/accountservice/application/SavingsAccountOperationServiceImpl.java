@@ -2,8 +2,9 @@ package com.nttdata.bootcamp.accountservice.application;
 
 import com.nttdata.bootcamp.accountservice.application.exceptions.OperationAccountException;
 import com.nttdata.bootcamp.accountservice.application.utils.DateUtil;
-import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.*;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClientService;
 import com.nttdata.bootcamp.accountservice.model.*;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAffectation;
@@ -20,7 +21,7 @@ import java.util.Date;
 @Service
 public class SavingsAccountOperationServiceImpl implements OperationService<SavingsAccountDto>{
     @Autowired
-    ProductClient productClient;
+    ProductClientService productClient;
     @Autowired
     SavingsAccountRepository savingsAccountRepository;
     @Autowired
@@ -88,7 +89,7 @@ public class SavingsAccountOperationServiceImpl implements OperationService<Savi
                     }
                     BigDecimal finalCommission = commission;
 
-                    return this.transferBalanceService.saveTransferOut(operationDto).flatMap(operationDto1 -> {
+                    return this.transferBalanceService.saveTransferIn(operationDto).flatMap(operationDto1 -> {
                         savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));
                         savingsAccount.setUpdatedAt(new Date());
                         operationDto.setAccountId(savingsAccount.getId());

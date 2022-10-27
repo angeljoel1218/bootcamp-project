@@ -25,7 +25,7 @@ public class TransferBalanceService {
     TransactionRepository transactionRepository;
     @Autowired
     AccountRepository accountRepository;
-    public Mono<OperationDto> saveTransferOut(OperationDto operationDto) {
+    public Mono<OperationDto> saveTransferIn(OperationDto operationDto) {
         return accountRepository.findByNumber(operationDto.getDestAccountNumber()).flatMap(account -> {
             if (account.getTypeAccount().equals(TypeAccount.SAVINGS_ACCOUNT)) {
                 return savingsAccountRepository.findByNumberAndTypeAccount(operationDto.getDestAccountNumber(), TypeAccount.SAVINGS_ACCOUNT).flatMap(savingsAccount -> {

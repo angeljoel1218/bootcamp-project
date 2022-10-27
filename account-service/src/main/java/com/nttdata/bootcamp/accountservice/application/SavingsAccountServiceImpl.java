@@ -3,9 +3,7 @@ package com.nttdata.bootcamp.accountservice.application;
 import com.nttdata.bootcamp.accountservice.application.exceptions.SavingsAccountException;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperSavingsAccount;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
-import com.nttdata.bootcamp.accountservice.feignclient.CreditClient;
-import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
-import com.nttdata.bootcamp.accountservice.feignclient.CustomerClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.*;
 import com.nttdata.bootcamp.accountservice.infrastructure.SavingsAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.*;
@@ -15,6 +13,7 @@ import com.nttdata.bootcamp.accountservice.model.constant.TypeCustomer;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeProfile;
 import com.nttdata.bootcamp.accountservice.model.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreaker;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,13 +30,13 @@ public class SavingsAccountServiceImpl implements SingleAccountService<SavingsAc
     MapperTransaction mapperTransaction;
 
     @Autowired
-    ProductClient productClient;
+    ProductClientService productClientService;
 
     @Autowired
-    CustomerClient customerClient;
+    CustomerClientService customerClientService;
 
     @Autowired
-    CreditClient creditClient;
+    CreditClientService creditClientService;
 
     @Autowired
     SavingsAccountRepository savingsAccountRepository;
@@ -49,13 +48,13 @@ public class SavingsAccountServiceImpl implements SingleAccountService<SavingsAc
     public Mono<SavingsAccountDto> create(SavingsAccountDto accountDto) {
         accountDto.setState(StateAccount.ACTIVE);
         accountDto.setCreatedAt(new Date());
-        return customerClient.getClient(accountDto.getHolderId()).flatMap(client -> {
+        return customerClientService.getCustomer(accountDto.getHolderId()).flatMap(client -> {
             if(client.getTypeCustomer().equals(TypeCustomer.COMPANY)) {
                 return Mono.error(new SavingsAccountException("Customer must be personal type"));
             }
 
             if(client.getTypeProfile() != null && client.getTypeProfile().equals(TypeProfile.VIP)) {
-                return creditClient.getCreditCardCustomer(accountDto.getHolderId()).count()
+                return creditClientService.getCreditCardCustomer(accountDto.getHolderId()).count()
                         .flatMap(count -> {
                            if(count > 0) {
                                return this.findAndSave(accountDto);
@@ -76,7 +75,7 @@ public class SavingsAccountServiceImpl implements SingleAccountService<SavingsAc
         }).switchIfEmpty(Mono.defer(() -> this.save(accountDto)));
     }
     public Mono<SavingsAccountDto> save(SavingsAccountDto accountDto) {
-        return productClient.getProductAccount(accountDto.getProductId()).flatMap(productAccountDto -> {
+        return productClientService.getProductAccount(accountDto.getProductId()).flatMap(productAccountDto -> {
             if (accountDto.getBalance().compareTo(BigDecimal.valueOf(productAccountDto.getMinFixedAmount())) == -1) {
                 return Mono.error(new SavingsAccountException("Insufficient minimum amount to open an account"));
             }

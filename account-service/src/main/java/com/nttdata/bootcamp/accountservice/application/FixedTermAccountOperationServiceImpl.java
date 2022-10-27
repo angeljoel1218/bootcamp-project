@@ -2,9 +2,10 @@ package com.nttdata.bootcamp.accountservice.application;
 
 import com.nttdata.bootcamp.accountservice.application.exceptions.OperationAccountException;
 import com.nttdata.bootcamp.accountservice.application.utils.DateUtil;
-import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.FixedTermAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClientService;
 import com.nttdata.bootcamp.accountservice.model.Transaction;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAffectation;
@@ -21,7 +22,7 @@ import java.util.Date;
 @Service
 public class FixedTermAccountOperationServiceImpl implements OperationService<FixedTermAccountDto>{
     @Autowired
-    ProductClient productClient;
+    ProductClientService productClient;
     @Autowired
     FixedTermAccountRepository fixedTermAccountRepository;
     @Autowired
@@ -103,7 +104,7 @@ public class FixedTermAccountOperationServiceImpl implements OperationService<Fi
                                 return Mono.error(new OperationAccountException("There is not enough balance to execute the operation"));
                             }
                             BigDecimal finalCommission = commission;
-                            return transferBalanceService.saveTransferOut(operationDto).flatMap(operationDto1 -> {
+                            return transferBalanceService.saveTransferIn(operationDto).flatMap(operationDto1 -> {
                                 fixedTermAccount.setBalance(fixedTermAccount.getBalance().subtract(totalAmount));
                                 fixedTermAccount.setUpdatedAt(new Date());
                                 operationDto.setAccountId(fixedTermAccount.getId());

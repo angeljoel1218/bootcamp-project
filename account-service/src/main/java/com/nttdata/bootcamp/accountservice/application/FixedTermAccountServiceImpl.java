@@ -3,10 +3,12 @@ package com.nttdata.bootcamp.accountservice.application;
 import com.nttdata.bootcamp.accountservice.application.exceptions.FixedTermAccountException;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperFixedTerm;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
-import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
-import com.nttdata.bootcamp.accountservice.feignclient.CustomerClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.CustomerClientService;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.CustomerClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.FixedTermAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClientService;
 import com.nttdata.bootcamp.accountservice.model.*;
 import com.nttdata.bootcamp.accountservice.model.constant.StateAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
@@ -23,9 +25,9 @@ import java.util.Date;
 @Service
 public class FixedTermAccountServiceImpl implements SingleAccountService<FixedTermAccountDto> {
     @Autowired
-    CustomerClient customerClient;
+    CustomerClientService customerClient;
     @Autowired
-    ProductClient productClient;
+    ProductClientService productClient;
     @Autowired
     FixedTermAccountRepository fixedTermAccountRepository;
     @Autowired
@@ -38,7 +40,7 @@ public class FixedTermAccountServiceImpl implements SingleAccountService<FixedTe
     public Mono<FixedTermAccountDto> create(FixedTermAccountDto accountDto) {
         accountDto.setState(StateAccount.ACTIVE);
         accountDto.setCreatedAt(new Date());
-        return customerClient.getClient(accountDto.getHolderId()).flatMap(client -> {
+        return customerClient.getCustomer(accountDto.getHolderId()).flatMap(client -> {
             if(client.getTypeCustomer().equals(TypeCustomer.COMPANY)) {
                 return Mono.error(new FixedTermAccountException("Customer must be personal type"));
             }

@@ -3,9 +3,7 @@ package com.nttdata.bootcamp.accountservice.application;
 import com.nttdata.bootcamp.accountservice.application.exceptions.CurrentAccountException;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperCurrentAccount;
 import com.nttdata.bootcamp.accountservice.application.mappers.MapperTransaction;
-import com.nttdata.bootcamp.accountservice.feignclient.CreditClient;
-import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
-import com.nttdata.bootcamp.accountservice.feignclient.CustomerClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.*;
 import com.nttdata.bootcamp.accountservice.infrastructure.CurrentAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.constant.StateAccount;
@@ -24,11 +22,11 @@ import java.util.Date;
 @Service
 public class CurrentAccountServiceImpl implements ManyAccountService<CurrentAccountDto> {
     @Autowired
-    CustomerClient customerClient;
+    CustomerClientService customerClient;
     @Autowired
-    ProductClient productClient;
+    ProductClientService productClient;
     @Autowired
-    CreditClient creditClient;
+    CreditClientService creditClient;
     @Autowired
     CurrentAccountRepository currentAccountRepository;
     @Autowired
@@ -41,7 +39,7 @@ public class CurrentAccountServiceImpl implements ManyAccountService<CurrentAcco
     public Mono<CurrentAccountDto> create(CurrentAccountDto accountDto) {
         accountDto.setState(StateAccount.ACTIVE);
         accountDto.setCreatedAt(new Date());
-        return customerClient.getClient(accountDto.getHolderId()).flatMap(customerDto -> {
+        return customerClient.getCustomer(accountDto.getHolderId()).flatMap(customerDto -> {
             if(customerDto.getTypeProfile() != null && customerDto.getTypeProfile().equals(TypeProfile.PYME)) {
                 return creditClient.getCreditCardCustomer(accountDto.getHolderId()).count()
                         .flatMap(count -> {

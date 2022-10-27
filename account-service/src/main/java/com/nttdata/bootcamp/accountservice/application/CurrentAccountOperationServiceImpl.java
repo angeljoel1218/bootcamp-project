@@ -1,10 +1,12 @@
 package com.nttdata.bootcamp.accountservice.application;
 
 import com.nttdata.bootcamp.accountservice.application.exceptions.OperationAccountException;
-import com.nttdata.bootcamp.accountservice.feignclient.CustomerClient;
-import com.nttdata.bootcamp.accountservice.feignclient.ProductClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.CustomerClient;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.CustomerClientService;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClient;
 import com.nttdata.bootcamp.accountservice.infrastructure.CurrentAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
+import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClientService;
 import com.nttdata.bootcamp.accountservice.model.*;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAffectation;
@@ -22,9 +24,9 @@ import java.util.Date;
 @Service
 public class CurrentAccountOperationServiceImpl implements OperationService<CurrentAccountDto>{
     @Autowired
-    CustomerClient customerClient;
+    CustomerClientService customerClient;
     @Autowired
-    ProductClient productClient;
+    ProductClientService productClient;
     @Autowired
     CurrentAccountRepository currentAccountRepository;
     @Autowired
@@ -47,7 +49,7 @@ public class CurrentAccountOperationServiceImpl implements OperationService<Curr
     public Mono<String> withdraw(OperationDto withdrawDto) {
         return currentAccountRepository.findByNumberAndTypeAccount(withdrawDto.getOrigAccountNumber(), TypeAccount.CURRENT_ACCOUNT)
                 .flatMap(currentAccount -> {
-                    return customerClient.getClient(currentAccount.getHolderId()).flatMap(customerDto -> {
+                    return customerClient.getCustomer(currentAccount.getHolderId()).flatMap(customerDto -> {
                         if(customerDto.getTypeProfile() != null && customerDto.getTypeProfile().equals(TypeProfile.VIP)) {
                             return productClient.getProductAccount(currentAccount.getProductId()).flatMap(productDto -> {
                                 BigDecimal minFixedAmount = currentAccount.getBalance().subtract(withdrawDto.getAmount());
@@ -68,14 +70,14 @@ public class CurrentAccountOperationServiceImpl implements OperationService<Curr
     public Mono<String> wireTransfer(OperationDto operationDto) {
         return currentAccountRepository.findByNumberAndTypeAccount(operationDto.getOrigAccountNumber(), TypeAccount.CURRENT_ACCOUNT)
                 .flatMap(currentAccount -> {
-                    return customerClient.getClient(currentAccount.getHolderId()).flatMap(customerDto -> {
+                    return customerClient.getCustomer(currentAccount.getHolderId()).flatMap(customerDto -> {
                         if(customerDto.getTypeProfile() != null && customerDto.getTypeProfile().equals(TypeProfile.VIP)) {
                             return productClient.getProductAccount(currentAccount.getProductId()).flatMap(productDto -> {
                                 BigDecimal minFixedAmount = currentAccount.getBalance().subtract(operationDto.getAmount());
                                 if (minFixedAmount.compareTo(BigDecimal.valueOf(productDto.getMinFixedAmount())) == -1 ) {
                                     return Mono.error(new OperationAccountException("Error the account requires a minimum amount of balance allowed"));
                                 }
-                                return this.transferBalanceService.saveTransferOut(operationDto)
+                                return this.transferBalanceService.saveTransferIn(operationDto)
                                         .flatMap(operationDto1 -> {
                                             currentAccount.setBalance(currentAccount.getBalance().subtract(operationDto1.getAmount()));
                                             currentAccount.setUpdatedAt(new Date());
@@ -89,7 +91,7 @@ public class CurrentAccountOperationServiceImpl implements OperationService<Curr
                         if (operationDto.getAmount().compareTo(currentAccount.getBalance()) == 1 ) {
                             return Mono.error(new OperationAccountException("There is not enough balance to execute the operation"));
                         }
-                        return this.transferBalanceService.saveTransferOut(operationDto)
+                        return this.transferBalanceService.saveTransferIn(operationDto)
                                 .flatMap(operationDto1 -> {
                                     currentAccount.setBalance(currentAccount.getBalance().subtract(operationDto1.getAmount()));
                                     currentAccount.setUpdatedAt(new Date());
