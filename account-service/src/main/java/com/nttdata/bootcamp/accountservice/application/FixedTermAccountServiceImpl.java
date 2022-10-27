@@ -42,7 +42,7 @@ public class FixedTermAccountServiceImpl implements SingleAccountService<FixedTe
             if(client.getTypeCustomer().equals(TypeCustomer.COMPANY)) {
                 return Mono.error(new FixedTermAccountException("Customer must be personal type"));
             }
-            return fixedTermAccountRepository.countByHolderId(accountDto.getHolderId()).flatMap(count -> {
+            return fixedTermAccountRepository.countByHolderIdAndTypeAccount(accountDto.getHolderId(), TypeAccount.FIXED_TERM_ACCOUNT).flatMap(count -> {
                 if (count >= 1) {
                     return Mono.error(new FixedTermAccountException("The customer can only have one fixed term deposit account"));
                 }
@@ -64,12 +64,12 @@ public class FixedTermAccountServiceImpl implements SingleAccountService<FixedTe
     };
     @Override
     public Mono<FixedTermAccountDto> findByHolderId(String holderId) {
-        return fixedTermAccountRepository.findByHolderId(holderId)
+        return fixedTermAccountRepository.findByHolderIdAndTypeAccount(holderId, TypeAccount.FIXED_TERM_ACCOUNT)
                 .flatMap(mapperFixedTerm::toDto);
     }
     @Override
     public Mono<FixedTermAccountDto> findByNumber(String number) {
-        return fixedTermAccountRepository.findByNumber(number)
+        return fixedTermAccountRepository.findByNumberAndTypeAccount(number, TypeAccount.FIXED_TERM_ACCOUNT)
                 .flatMap(mapperFixedTerm::toDto);
     }
     @Override

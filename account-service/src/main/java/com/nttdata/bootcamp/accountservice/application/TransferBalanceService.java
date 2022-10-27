@@ -28,9 +28,8 @@ public class TransferBalanceService {
     public Mono<OperationDto> saveTransferOut(OperationDto operationDto) {
         return accountRepository.findByNumber(operationDto.getDestAccountNumber()).flatMap(account -> {
             if (account.getTypeAccount().equals(TypeAccount.SAVINGS_ACCOUNT)) {
-                return savingsAccountRepository.findByNumber(operationDto.getDestAccountNumber()).flatMap(savingsAccount -> {
+                return savingsAccountRepository.findByNumberAndTypeAccount(operationDto.getDestAccountNumber(), TypeAccount.SAVINGS_ACCOUNT).flatMap(savingsAccount -> {
                             operationDto.setAccountId(savingsAccount.getId());
-                            operationDto.setDestinationId(savingsAccount.getId());
                             savingsAccount.setUpdatedAt(new Date());
                             savingsAccount.setBalance(savingsAccount.getBalance().add(operationDto.getAmount()));
                             return savingsAccountRepository.save(savingsAccount);
@@ -38,9 +37,8 @@ public class TransferBalanceService {
                         .then(Mono.just(operationDto));
             }
             if (account.getTypeAccount().equals(TypeAccount.CURRENT_ACCOUNT)) {
-                return currentAccountRepository.findByNumber(operationDto.getDestAccountNumber()).flatMap(currentAccount -> {
+                return currentAccountRepository.findByNumberAndTypeAccount(operationDto.getDestAccountNumber(),TypeAccount.CURRENT_ACCOUNT).flatMap(currentAccount -> {
                             operationDto.setAccountId(currentAccount.getId());
-                            operationDto.setDestinationId(currentAccount.getId());
                             currentAccount.setUpdatedAt(new Date());
                             currentAccount.setBalance(currentAccount.getBalance().add(operationDto.getAmount()));
                             return currentAccountRepository.save(currentAccount);
@@ -48,9 +46,8 @@ public class TransferBalanceService {
                         .then(Mono.just(operationDto));
             }
             if (account.getTypeAccount().equals(TypeAccount.FIXED_TERM_ACCOUNT)) {
-                return fixedTermAccountRepository.findByNumber(operationDto.getDestAccountNumber()).flatMap(fixedTermAccount -> {
+                return fixedTermAccountRepository.findByNumberAndTypeAccount(operationDto.getDestAccountNumber(),TypeAccount.FIXED_TERM_ACCOUNT).flatMap(fixedTermAccount -> {
                             operationDto.setAccountId(fixedTermAccount.getId());
-                            operationDto.setDestinationId(fixedTermAccount.getId());
                             fixedTermAccount.setUpdatedAt(new Date());
                             fixedTermAccount.setBalance(fixedTermAccount.getBalance().add(operationDto.getAmount()));
                             return fixedTermAccountRepository.save(fixedTermAccount);
@@ -63,8 +60,8 @@ public class TransferBalanceService {
     public Mono<Transaction> saveTransaction(OperationDto withdrawDto, TypeAccount typeAccount){
         Transaction transaction = new Transaction();
         transaction.setAccountId(withdrawDto.getAccountId());
-        transaction.setOrigin(withdrawDto.getOriginId());
-        transaction.setDestination(withdrawDto.getDestinationId());
+        transaction.setOrigin(withdrawDto.getOrigAccountNumber());
+        transaction.setDestination(withdrawDto.getDestAccountNumber());
         transaction.setDateOfTransaction(new Date());
         transaction.setAmount(withdrawDto.getAmount());
         transaction.setType(TypeTransaction.TRANSFER);

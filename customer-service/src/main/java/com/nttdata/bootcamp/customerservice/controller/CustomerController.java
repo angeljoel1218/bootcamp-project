@@ -19,7 +19,7 @@ import javax.validation.Valid;
 @Slf4j
 @RefreshScope
 @RestController
-@RequestMapping("customer")
+@RequestMapping("/customer")
 public class CustomerController {
 
 
@@ -30,13 +30,13 @@ public class CustomerController {
     private CustomerService custumerService;
 
 
-    @PostMapping()
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public  Mono<CustomerDto> create(@RequestBody @Valid CustomerDto customerDto){
         return  custumerService.create(customerDto);
     }
 
-    @PostMapping("/{id}")
+    @PutMapping("/{id}")
     public  Mono<CustomerDto> update(@RequestBody @Valid CustomerDto customerDto, @PathVariable String id){
         return  custumerService.update(customerDto,id);
     }
@@ -47,7 +47,7 @@ public class CustomerController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public Mono<ResponseEntity<CustomerDto>> findById(@PathVariable("id") String id){
         return custumerService.findById(id)
                 .map(a -> ResponseEntity.ok()
@@ -56,7 +56,7 @@ public class CustomerController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping()
+    @GetMapping("/all")
     public Flux<CustomerDto> findAll(){
         log.info("Find All");
         log.info(demoString);

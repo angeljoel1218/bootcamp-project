@@ -10,6 +10,7 @@ import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAffectation;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeProfile;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeTransaction;
+import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Service
-public class CurrentAccountOperationServiceImpl implements OperationService{
+public class CurrentAccountOperationServiceImpl implements OperationService<CurrentAccountDto>{
     @Autowired
     CustomerClient customerClient;
     @Autowired
@@ -33,11 +34,10 @@ public class CurrentAccountOperationServiceImpl implements OperationService{
 
     @Override
     public Mono<String> deposit(OperationDto depositDto) {
-        return currentAccountRepository.findByNumber(depositDto.getOrigAccountNumber()).flatMap(currentAccount -> {
+        return currentAccountRepository.findByNumberAndTypeAccount(depositDto.getDestAccountNumber(), TypeAccount.CURRENT_ACCOUNT).flatMap(currentAccount -> {
             currentAccount.setBalance(currentAccount.getBalance().add(depositDto.getAmount()));
             currentAccount.setUpdatedAt(new Date());
             depositDto.setAccountId(currentAccount.getId());
-            depositDto.setDestinationId(currentAccount.getId());
             return currentAccountRepository.save(currentAccount)
                     .flatMap(ca -> this.saveTransaction(depositDto, TypeTransaction.DEPOSIT, TypeAffectation.INCREASE, TypeAccount.CURRENT_ACCOUNT))
                     .then(Mono.just("Deposit completed successfully"));
@@ -45,10 +45,10 @@ public class CurrentAccountOperationServiceImpl implements OperationService{
     }
     @Override
     public Mono<String> withdraw(OperationDto withdrawDto) {
-        return currentAccountRepository.findByNumber(withdrawDto.getOrigAccountNumber())
+        return currentAccountRepository.findByNumberAndTypeAccount(withdrawDto.getOrigAccountNumber(), TypeAccount.CURRENT_ACCOUNT)
                 .flatMap(currentAccount -> {
                     return customerClient.getClient(currentAccount.getHolderId()).flatMap(customerDto -> {
-                        if(customerDto.getTypeProfile().equals(TypeProfile.VIP)) {
+                        if(customerDto.getTypeProfile() != null && customerDto.getTypeProfile().equals(TypeProfile.VIP)) {
                             return productClient.getProductAccount(currentAccount.getProductId()).flatMap(productDto -> {
                                 BigDecimal minFixedAmount = currentAccount.getBalance().subtract(withdrawDto.getAmount());
                                 if (minFixedAmount.compareTo(BigDecimal.valueOf(productDto.getMinFixedAmount())) == -1 ) {
@@ -66,10 +66,10 @@ public class CurrentAccountOperationServiceImpl implements OperationService{
     }
     @Override
     public Mono<String> wireTransfer(OperationDto operationDto) {
-        return currentAccountRepository.findByNumber(operationDto.getOrigAccountNumber())
+        return currentAccountRepository.findByNumberAndTypeAccount(operationDto.getOrigAccountNumber(), TypeAccount.CURRENT_ACCOUNT)
                 .flatMap(currentAccount -> {
                     return customerClient.getClient(currentAccount.getHolderId()).flatMap(customerDto -> {
-                        if(customerDto.getTypeProfile().equals(TypeProfile.VIP)) {
+                        if(customerDto.getTypeProfile() != null && customerDto.getTypeProfile().equals(TypeProfile.VIP)) {
                             return productClient.getProductAccount(currentAccount.getProductId()).flatMap(productDto -> {
                                 BigDecimal minFixedAmount = currentAccount.getBalance().subtract(operationDto.getAmount());
                                 if (minFixedAmount.compareTo(BigDecimal.valueOf(productDto.getMinFixedAmount())) == -1 ) {
@@ -80,8 +80,6 @@ public class CurrentAccountOperationServiceImpl implements OperationService{
                                             currentAccount.setBalance(currentAccount.getBalance().subtract(operationDto1.getAmount()));
                                             currentAccount.setUpdatedAt(new Date());
                                             operationDto.setAccountId(currentAccount.getId());
-                                            operationDto.setOriginId(currentAccount.getId());
-                                            operationDto.setDestinationId(operationDto1.getDestinationId());
                                             return currentAccountRepository.save(currentAccount)
                                                     .flatMap(rs -> this.saveTransaction(operationDto, TypeTransaction.TRANSFER, TypeAffectation.DECREMENT, TypeAccount.SAVINGS_ACCOUNT))
                                                     .then(Mono.just("Transfer completed successfully"));
@@ -96,8 +94,6 @@ public class CurrentAccountOperationServiceImpl implements OperationService{
                                     currentAccount.setBalance(currentAccount.getBalance().subtract(operationDto1.getAmount()));
                                     currentAccount.setUpdatedAt(new Date());
                                     operationDto.setAccountId(currentAccount.getId());
-                                    operationDto.setOriginId(currentAccount.getId());
-                                    operationDto.setDestinationId(operationDto1.getDestinationId());
                                     return currentAccountRepository.save(currentAccount)
                                             .flatMap(rs -> this.saveTransaction(operationDto, TypeTransaction.TRANSFER, TypeAffectation.DECREMENT, TypeAccount.SAVINGS_ACCOUNT))
                                             .then(Mono.just("Transfer completed successfully"));
@@ -109,7 +105,6 @@ public class CurrentAccountOperationServiceImpl implements OperationService{
         currentAccount.setBalance(currentAccount.getBalance().subtract(withdrawDto.getAmount()));
         currentAccount.setUpdatedAt(new Date());
         withdrawDto.setAccountId(currentAccount.getId());
-        withdrawDto.setOriginId(currentAccount.getId());
         return currentAccountRepository.save(currentAccount)
                 .flatMap(ca -> this.saveTransaction(withdrawDto, TypeTransaction.WITHDRAW, TypeAffectation.DECREMENT, TypeAccount.CURRENT_ACCOUNT))
                 .then(Mono.just("Withdrawal completed successfully"));
@@ -117,8 +112,8 @@ public class CurrentAccountOperationServiceImpl implements OperationService{
     public Mono<Transaction> saveTransaction(OperationDto operationDto, TypeTransaction typeTxn, TypeAffectation typeAffectation, TypeAccount typeAccount){
         Transaction transaction = new Transaction();
         transaction.setAccountId(operationDto.getAccountId());
-        transaction.setOrigin(operationDto.getOriginId());
-        transaction.setDestination(operationDto.getDestinationId());
+        transaction.setOrigin(operationDto.getOrigAccountNumber());
+        transaction.setDestination(operationDto.getDestAccountNumber());
         transaction.setDateOfTransaction(new Date());
         transaction.setAmount(operationDto.getAmount());
         transaction.setType(typeTxn);

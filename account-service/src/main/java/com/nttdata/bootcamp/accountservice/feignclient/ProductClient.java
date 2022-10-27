@@ -9,6 +9,6 @@ import reactor.core.publisher.Mono;
 
 @ReactiveFeignClient(name = "${feign.service.product.name}", url = "${feign.service.product.url}")
 public interface ProductClient {
-    @RequestMapping(method = RequestMethod.GET, value = "/product/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/product/get/{id}")
     Mono<ProductDto> getProductAccount(@PathVariable("id") String id);
 }

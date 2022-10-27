@@ -16,6 +16,7 @@ public class TransactionDto {
     private String origin;
     private String destination;
     private Date dateOfTransaction;
+    private BigDecimal commission;
     private TypeTransaction type;
     private TypeAffectation affectation;
     private TypeAccount typeAccount;

@@ -42,10 +42,10 @@ public class CurrentAccountServiceImpl implements ManyAccountService<CurrentAcco
         accountDto.setState(StateAccount.ACTIVE);
         accountDto.setCreatedAt(new Date());
         return customerClient.getClient(accountDto.getHolderId()).flatMap(customerDto -> {
-            if(customerDto.getTypeProfile().equals(TypeProfile.PYME)) {
-                return creditClient.getCreditCardCustomer(accountDto.getHolderId())
-                        .flatMap(creditCardDto -> {
-                            if (creditCardDto.getId() != null) {
+            if(customerDto.getTypeProfile() != null && customerDto.getTypeProfile().equals(TypeProfile.PYME)) {
+                return creditClient.getCreditCardCustomer(accountDto.getHolderId()).count()
+                        .flatMap(count -> {
+                            if (count > 0) {
                                 return this.findAndSave(accountDto, customerDto);
                             }
                             return Mono.error(new CurrentAccountException("The customer must have a credit card to enable this account"));
@@ -76,12 +76,12 @@ public class CurrentAccountServiceImpl implements ManyAccountService<CurrentAcco
         });
     };
     public Flux<CurrentAccountDto> findByHolderId(String holderId) {
-        return currentAccountRepository.findByHolderId(holderId)
+        return currentAccountRepository.findByHolderIdAndTypeAccount(holderId, TypeAccount.CURRENT_ACCOUNT)
                 .flatMap(mapperCurrentAccount::toDto);
     }
     @Override
     public Mono<CurrentAccountDto> findByNumber(String number) {
-        return currentAccountRepository.findByNumber(number)
+        return currentAccountRepository.findByNumberAndTypeAccount(number, TypeAccount.CURRENT_ACCOUNT)
                 .flatMap(mapperCurrentAccount::toDto);
     }
     @Override

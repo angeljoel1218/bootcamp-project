@@ -54,10 +54,10 @@ public class SavingsAccountServiceImpl implements SingleAccountService<SavingsAc
                 return Mono.error(new SavingsAccountException("Customer must be personal type"));
             }
 
-            if(client.getTypeProfile().equals(TypeProfile.VIP)) {
-                return creditClient.getCreditCardCustomer(accountDto.getHolderId())
-                        .flatMap(creditCardDto -> {
-                           if(creditCardDto.getId() != null) {
+            if(client.getTypeProfile() != null && client.getTypeProfile().equals(TypeProfile.VIP)) {
+                return creditClient.getCreditCardCustomer(accountDto.getHolderId()).count()
+                        .flatMap(count -> {
+                           if(count > 0) {
                                return this.findAndSave(accountDto);
                            }
                            return Mono.error(new SavingsAccountException("The customer must have a credit card to enable this account"));
@@ -68,7 +68,7 @@ public class SavingsAccountServiceImpl implements SingleAccountService<SavingsAc
         }).switchIfEmpty(Mono.error(new SavingsAccountException("Customer not found")));
     }
     public Mono<SavingsAccountDto> findAndSave(SavingsAccountDto accountDto) {
-        return savingsAccountRepository.findByHolderId(accountDto.getHolderId()).flatMap(savingsAccount -> {
+        return savingsAccountRepository.findByHolderIdAndTypeAccount(accountDto.getHolderId(), TypeAccount.SAVINGS_ACCOUNT).flatMap(savingsAccount -> {
             if (savingsAccount.getId() != null) {
                 return Mono.error(new SavingsAccountException("The customer can only have one savings account"));
             }
@@ -77,7 +77,7 @@ public class SavingsAccountServiceImpl implements SingleAccountService<SavingsAc
     }
     public Mono<SavingsAccountDto> save(SavingsAccountDto accountDto) {
         return productClient.getProductAccount(accountDto.getProductId()).flatMap(productAccountDto -> {
-            if (accountDto.getBalance().compareTo(BigDecimal.valueOf(productAccountDto.getMinFixedAmount())) >= 0) {
+            if (accountDto.getBalance().compareTo(BigDecimal.valueOf(productAccountDto.getMinFixedAmount())) == -1) {
                 return Mono.error(new SavingsAccountException("Insufficient minimum amount to open an account"));
             }
             accountDto.setTypeAccount(TypeAccount.SAVINGS_ACCOUNT);
@@ -89,12 +89,12 @@ public class SavingsAccountServiceImpl implements SingleAccountService<SavingsAc
     };
     @Override
     public Mono<SavingsAccountDto> findByHolderId(String holderId) {
-        return savingsAccountRepository.findByHolderId(holderId)
+        return savingsAccountRepository.findByHolderIdAndTypeAccount(holderId, TypeAccount.SAVINGS_ACCOUNT)
                 .flatMap(mapperSavingsAccount::toDto);
     }
     @Override
     public Mono<SavingsAccountDto> findByNumber(String number) {
-        return savingsAccountRepository.findByNumber(number)
+        return savingsAccountRepository.findByNumberAndTypeAccount(number, TypeAccount.SAVINGS_ACCOUNT)
                 .flatMap(mapperSavingsAccount::toDto);
     }
     @Override

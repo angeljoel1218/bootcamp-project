@@ -18,27 +18,27 @@ import javax.validation.Valid;
 
 @RefreshScope
 @RestController
-public class SavingsController {
+public class SavingsAccountController {
     @Autowired
     SingleAccountService<SavingsAccountDto> accountService;
 
     @Autowired
     OperationService<SavingsAccountDto> operationService;
 
-    @PostMapping("account/savings")
+    @PostMapping("account/savings-account")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<SavingsAccountDto> create(@Valid @RequestBody SavingsAccountDto savingsAccountDto){
         return accountService.create(savingsAccountDto);
     }
 
-    @DeleteMapping("account/savings/{id}")
+    @DeleteMapping("account/savings-account/{id}")
     public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
         return accountService.delete(id)
                 .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)))
                 .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("account/savings/{number}")
+    @GetMapping("account/savings-account/{number}")
     public Mono<ResponseEntity<SavingsAccountDto>> findByNumber(@PathVariable String number){
         return accountService.findByNumber(number)
                 .map(a -> ResponseEntity.ok()
@@ -47,22 +47,22 @@ public class SavingsController {
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("account/savings/{accountId}/transactions")
+    @GetMapping("account/savings-account/{accountId}/transactions")
     public Flux<TransactionDto> listTransactions(@PathVariable String accountId){
         return accountService.listTransactions(accountId);
     }
 
-    @PutMapping("account/savings/deposit")
+    @PutMapping("account/savings-account/deposit")
     public Mono<String> deposit(@RequestBody OperationDto depositDto){
         return operationService.deposit(depositDto);
     }
 
-    @PutMapping("account/savings/withdraw")
+    @PutMapping("account/savings-account/withdraw")
     public Mono<String> withdraw(@RequestBody OperationDto depositDto){
         return operationService.withdraw(depositDto);
     }
 
-    @PostMapping("account/savings/transfer")
+    @PostMapping("account/savings-account/transfer")
     public Mono<String> wireTransfer(@RequestBody OperationDto depositDto){
         return operationService.wireTransfer(depositDto);
     }

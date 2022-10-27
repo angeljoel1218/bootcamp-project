@@ -14,13 +14,13 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("product")
 @RefreshScope
+@RequestMapping("/product")
 public class ProductController {
     @Autowired
     ProductService productService;
 
-    @PostMapping()
+    @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<ProductDto> create(@Valid @RequestBody ProductDto productDto) {
         return productService.create(productDto);
@@ -42,7 +42,7 @@ public class ProductController {
                 .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public Mono<ResponseEntity<ProductDto>> findById(@PathVariable String id) {
         return productService.findById(id)
                 .map(a -> ResponseEntity.ok()

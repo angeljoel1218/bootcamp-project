@@ -12,7 +12,5 @@ public class OperationDto {
     private String destAccountNumber;
     private String accountId;
     private String operation;
-    private String originId;
-    private String destinationId;
     private String holderId;
 }

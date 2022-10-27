@@ -9,6 +9,6 @@ import reactor.core.publisher.Mono;
 
 @ReactiveFeignClient(name = "${feign.service.clients.name}", url = "${feign.service.clients.url}")
 public interface CustomerClient {
-    @RequestMapping(method = RequestMethod.GET, value = "/customer/{id}")
+    @RequestMapping(method = RequestMethod.GET, value = "/customer/get/{id}")
     Mono<CustomerDto> getClient(@PathVariable("id") String id);
 }

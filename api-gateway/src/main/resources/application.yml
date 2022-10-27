@@ -5,6 +5,10 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:9091/eureka
+  instance:
+    prefer-ip-address: true
+    hostname: ${COMPUTERNAME:localhost}
+
 spring:
   config:
     import:
@@ -20,14 +24,14 @@ spring:
         - id: account-service
           uri: lb://ACCOUNT-SERVICE
           predicates:
-            - Path=/current-account/**
+            - Path=/account/**
           filters:
           - name: SCGWPreFilter
           - name: SCGWPostFilter
         - id: credit-service
           uri: lb://CREDIT-SERVICE
           predicates:
-            - Path=/creditcard/**,/credits/**
+            - Path=/credit/**
           filters:
           - name: SCGWPreFilter
           - name: SCGWPostFilter
@@ -41,7 +45,7 @@ spring:
         - id: product-service
           uri: lb://PRODUCT-SERVICE
           predicates:
-            - Path=/product-account/**
+            - Path=/product/**
           filters:
             - name: SCGWPreFilter
             - name: SCGWPostFilter
@@ -52,4 +56,3 @@ spring:
           filters:
             - name: SCGWPreFilter
             - name: SCGWPostFilter
-

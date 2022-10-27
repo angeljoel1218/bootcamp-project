@@ -9,6 +9,7 @@ import com.nttdata.bootcamp.accountservice.model.Transaction;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAffectation;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeTransaction;
+import com.nttdata.bootcamp.accountservice.model.dto.FixedTermAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Service
-public class FixedTermAccountOperationServiceImpl implements OperationService{
+public class FixedTermAccountOperationServiceImpl implements OperationService<FixedTermAccountDto>{
     @Autowired
     ProductClient productClient;
     @Autowired
@@ -30,7 +31,7 @@ public class FixedTermAccountOperationServiceImpl implements OperationService{
 
     @Override
     public Mono<String> deposit(OperationDto depositDto) {
-        return fixedTermAccountRepository.findByNumber(depositDto.getOrigAccountNumber()).flatMap(fixedTermAccount -> {
+        return fixedTermAccountRepository.findByNumberAndTypeAccount(depositDto.getDestAccountNumber(),TypeAccount.FIXED_TERM_ACCOUNT).flatMap(fixedTermAccount -> {
             if(fixedTermAccount.getDayOfOperation() != DateUtil.getCurrentDay()) {
                 return Mono.error(new OperationAccountException("Date not allowed to perform operations"));
             }
@@ -44,8 +45,8 @@ public class FixedTermAccountOperationServiceImpl implements OperationService{
                     fixedTermAccount.setUpdatedAt(new Date());
                     fixedTermAccount.setBalance(totalAmount);
                     depositDto.setAccountId(fixedTermAccount.getId());
-                    depositDto.setDestinationId(fixedTermAccount.getId());
                     depositDto.setCommission(commission);
+                    depositDto.setAmount(depositDto.getAmount().subtract(commission));
                     return fixedTermAccountRepository.save(fixedTermAccount)
                             .flatMap(ft -> this.saveTransaction(depositDto, TypeTransaction.DEPOSIT, TypeAffectation.INCREASE))
                             .then(Mono.just("Deposit completed successfully"));
@@ -55,7 +56,7 @@ public class FixedTermAccountOperationServiceImpl implements OperationService{
     }
     @Override
     public Mono<String> withdraw(OperationDto withdrawDto) {
-        return fixedTermAccountRepository.findByNumber(withdrawDto.getOrigAccountNumber()).flatMap(fixedTermAccount -> {
+        return fixedTermAccountRepository.findByNumberAndTypeAccount(withdrawDto.getOrigAccountNumber(), TypeAccount.FIXED_TERM_ACCOUNT).flatMap(fixedTermAccount -> {
             if(fixedTermAccount.getDayOfOperation() != DateUtil.getCurrentDay()) {
                 return Mono.error(new OperationAccountException("Date not allowed to perform operations"));
             }
@@ -72,8 +73,8 @@ public class FixedTermAccountOperationServiceImpl implements OperationService{
                     fixedTermAccount.setUpdatedAt(new Date());
                     fixedTermAccount.setBalance(fixedTermAccount.getBalance().subtract(totalAmount));
                     withdrawDto.setAccountId(fixedTermAccount.getId());
-                    withdrawDto.setOriginId(fixedTermAccount.getId());
                     withdrawDto.setCommission(commission);
+                    withdrawDto.setAmount(withdrawDto.getAmount().add(commission));
                     return fixedTermAccountRepository.save(fixedTermAccount)
                             .flatMap(ft-> this.saveTransaction(withdrawDto, TypeTransaction.WITHDRAW, TypeAffectation.DECREMENT))
                             .then(Mono.just("Withdrawal completed successfully"));
@@ -83,7 +84,7 @@ public class FixedTermAccountOperationServiceImpl implements OperationService{
     }
     @Override
     public Mono<String> wireTransfer(OperationDto operationDto) {
-        return fixedTermAccountRepository.findByNumber(operationDto.getOrigAccountNumber())
+        return fixedTermAccountRepository.findByNumberAndTypeAccount(operationDto.getOrigAccountNumber(), TypeAccount.FIXED_TERM_ACCOUNT)
                 .flatMap(fixedTermAccount -> {
                     if(fixedTermAccount.getDayOfOperation() != DateUtil.getCurrentDay()) {
                         return Mono.error(new OperationAccountException("Date not allowed to perform operations"));
@@ -106,8 +107,7 @@ public class FixedTermAccountOperationServiceImpl implements OperationService{
                                 fixedTermAccount.setBalance(fixedTermAccount.getBalance().subtract(totalAmount));
                                 fixedTermAccount.setUpdatedAt(new Date());
                                 operationDto.setAccountId(fixedTermAccount.getId());
-                                operationDto.setOriginId(fixedTermAccount.getId());
-                                operationDto.setDestinationId(operationDto1.getDestinationId());
+                                operationDto.setAmount(operationDto.getAmount().add(finalCommission));
                                 operationDto.setCommission(finalCommission);
                                 return fixedTermAccountRepository.save(fixedTermAccount)
                                         .flatMap(ft-> this.saveTransaction(operationDto, TypeTransaction.TRANSFER, TypeAffectation.DECREMENT))
@@ -120,8 +120,8 @@ public class FixedTermAccountOperationServiceImpl implements OperationService{
     public Mono<Transaction> saveTransaction(OperationDto operationDto, TypeTransaction typeTxn, TypeAffectation typeAffectation){
         Transaction transaction = new Transaction();
         transaction.setAccountId(operationDto.getAccountId());
-        transaction.setOrigin(operationDto.getOriginId());
-        transaction.setDestination(operationDto.getDestinationId());
+        transaction.setOrigin(operationDto.getOrigAccountNumber());
+        transaction.setDestination(operationDto.getDestAccountNumber());
         transaction.setDateOfTransaction(new Date());
         transaction.setAmount(operationDto.getAmount());
         transaction.setType(typeTxn);

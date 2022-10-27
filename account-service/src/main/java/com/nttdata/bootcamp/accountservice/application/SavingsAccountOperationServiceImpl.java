@@ -9,6 +9,7 @@ import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAffectation;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeTransaction;
 import com.nttdata.bootcamp.accountservice.model.dto.OperationDto;
+import com.nttdata.bootcamp.accountservice.model.dto.SavingsAccountDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Service
-public class SavingsAccountOperationServiceImpl implements OperationService{
+public class SavingsAccountOperationServiceImpl implements OperationService<SavingsAccountDto>{
     @Autowired
     ProductClient productClient;
     @Autowired
@@ -28,17 +29,17 @@ public class SavingsAccountOperationServiceImpl implements OperationService{
     TransferBalanceService transferBalanceService;
     @Override
     public Mono<String> deposit(OperationDto depositDto) {
-        return savingsAccountRepository.findByNumber(depositDto.getOrigAccountNumber()).flatMap(savingsAccount -> {
+        return savingsAccountRepository.findByNumberAndTypeAccount(depositDto.getDestAccountNumber(), TypeAccount.SAVINGS_ACCOUNT).flatMap(savingsAccount -> {
             return productClient.getProductAccount(savingsAccount.getProductId()).flatMap(productAccountDto -> {
                 return transactionRepository.countByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId()).flatMap(count -> {
                     BigDecimal commission = BigDecimal.ZERO;
-                    if(productAccountDto.getMaxMovements() < count) {
+                    if(productAccountDto.getMaxMovements() <= count) {
                         commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
                     }
                     savingsAccount.setBalance(savingsAccount.getBalance().add(depositDto.getAmount()).subtract(commission));
                     savingsAccount.setUpdatedAt(new Date());
                     depositDto.setAccountId(savingsAccount.getId());
-                    depositDto.setDestinationId(savingsAccount.getId());
+                    depositDto.setAmount(depositDto.getAmount().subtract(commission));
                     depositDto.setCommission(commission);
                     return savingsAccountRepository.save(savingsAccount)
                             .flatMap(sa -> this.saveTransaction(depositDto, TypeTransaction.DEPOSIT, TypeAffectation.INCREASE, TypeAccount.SAVINGS_ACCOUNT))
@@ -49,11 +50,11 @@ public class SavingsAccountOperationServiceImpl implements OperationService{
     }
     @Override
     public Mono<String> withdraw(OperationDto withdrawDto) {
-        return savingsAccountRepository.findByNumber(withdrawDto.getOrigAccountNumber()).flatMap(savingsAccount -> {
+        return savingsAccountRepository.findByNumberAndTypeAccount(withdrawDto.getOrigAccountNumber(),TypeAccount.SAVINGS_ACCOUNT).flatMap(savingsAccount -> {
             return productClient.getProductAccount(savingsAccount.getProductId()).flatMap(productAccountDto -> {
                 return transactionRepository.countByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId()).flatMap(count-> {
                     BigDecimal commission = BigDecimal.ZERO;
-                    if(productAccountDto.getMaxMovements() < count) {
+                    if(productAccountDto.getMaxMovements() <= count) {
                         commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
                     }
                     BigDecimal totalAmount = withdrawDto.getAmount().add(commission);
@@ -63,7 +64,7 @@ public class SavingsAccountOperationServiceImpl implements OperationService{
                     savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));
                     savingsAccount.setUpdatedAt(new Date());
                     withdrawDto.setAccountId(savingsAccount.getId());
-                    withdrawDto.setOriginId(savingsAccount.getId());
+                    withdrawDto.setAmount(withdrawDto.getAmount().add(commission));
                     withdrawDto.setCommission(commission);
                     return savingsAccountRepository.save(savingsAccount)
                             .flatMap(sa -> this.saveTransaction(withdrawDto, TypeTransaction.WITHDRAW, TypeAffectation.DECREMENT, TypeAccount.SAVINGS_ACCOUNT))
@@ -74,14 +75,11 @@ public class SavingsAccountOperationServiceImpl implements OperationService{
     }
     @Override
     public Mono<String> wireTransfer(OperationDto operationDto) {
-        return savingsAccountRepository.findByNumber(operationDto.getOrigAccountNumber()).flatMap(savingsAccount -> {
-            if(!savingsAccount.getHolderId().equals(operationDto.getHolderId())) {
-              return Mono.error(new OperationAccountException("Account not found"));
-            }
+        return savingsAccountRepository.findByNumberAndTypeAccount(operationDto.getOrigAccountNumber(),TypeAccount.SAVINGS_ACCOUNT).flatMap(savingsAccount -> {
             return productClient.getProductAccount(savingsAccount.getProductId()).flatMap(productAccountDto -> {
                 return transactionRepository.countByDateOfTransactionBetweenAndAccountId(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId()).flatMap(count-> {
                     BigDecimal commission = BigDecimal.ZERO;
-                    if(productAccountDto.getMaxMovements() < count) {
+                    if(productAccountDto.getMaxMovements() <= count) {
                         commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
                     }
                     BigDecimal totalAmount = operationDto.getAmount().add(commission);
@@ -89,12 +87,12 @@ public class SavingsAccountOperationServiceImpl implements OperationService{
                         return Mono.error(new OperationAccountException("There is not enough balance to execute the operation"));
                     }
                     BigDecimal finalCommission = commission;
+
                     return this.transferBalanceService.saveTransferOut(operationDto).flatMap(operationDto1 -> {
                         savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));
                         savingsAccount.setUpdatedAt(new Date());
                         operationDto.setAccountId(savingsAccount.getId());
-                        operationDto.setOriginId(savingsAccount.getId());
-                        operationDto.setDestinationId(operationDto1.getDestinationId());
+                        operationDto.setAmount(operationDto.getAmount().add(finalCommission));
                         operationDto.setCommission(finalCommission);
                         return savingsAccountRepository.save(savingsAccount)
                                 .flatMap(rs -> this.saveTransaction(operationDto, TypeTransaction.TRANSFER, TypeAffectation.DECREMENT, TypeAccount.SAVINGS_ACCOUNT))
@@ -107,8 +105,8 @@ public class SavingsAccountOperationServiceImpl implements OperationService{
     public Mono<Transaction> saveTransaction(OperationDto operationDto, TypeTransaction typeTxn, TypeAffectation typeAffectation, TypeAccount typeAccount){
         Transaction transaction = new Transaction();
         transaction.setAccountId(operationDto.getAccountId());
-        transaction.setOrigin(operationDto.getOriginId());
-        transaction.setDestination(operationDto.getDestinationId());
+        transaction.setOrigin(operationDto.getOrigAccountNumber());
+        transaction.setDestination(operationDto.getDestAccountNumber());
         transaction.setDateOfTransaction(new Date());
         transaction.setAmount(operationDto.getAmount());
         transaction.setType(typeTxn);
