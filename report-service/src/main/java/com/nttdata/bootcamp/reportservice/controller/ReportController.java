@@ -1,8 +1,7 @@
 package com.nttdata.bootcamp.reportservice.controller;
 
 import com.nttdata.bootcamp.reportservice.application.ReportSevice;
-import com.nttdata.bootcamp.reportservice.model.CustomerDto;
-import com.nttdata.bootcamp.reportservice.model.TransactionDto;
+import com.nttdata.bootcamp.reportservice.model.dto.CustomerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,5 +28,10 @@ public class ReportController {
                                                                     @RequestParam Date startDate,
                                                                     @RequestParam Date endDate){
         return  ResponseEntity.ok(reportSevice.productsCommissionByDates(startDate,endDate,customerId)) ;
+    }
+
+    @GetMapping(value = "/customer-fin/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Mono<CustomerDto>>  findCustomerById( @PathVariable("id") String id){
+        return  ResponseEntity.ok(reportSevice.findCustomerById(id)) ;
     }
 }

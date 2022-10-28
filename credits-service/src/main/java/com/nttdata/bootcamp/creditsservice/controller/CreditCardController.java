@@ -11,13 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
 import javax.validation.Valid;
 
 @Slf4j
 @RefreshScope
 @RestController
-@RequestMapping("credit/card")
+@RequestMapping("/credit/card")
 public class CreditCardController {
 
     @Autowired
@@ -25,7 +24,7 @@ public class CreditCardController {
 
     @GetMapping()
     public Flux<CreditCard> findAll(){
-        return   creditCardService.findAll();
+        return creditCardService.findAll();
     }
 
     @GetMapping("/{id}")
@@ -51,21 +50,18 @@ public class CreditCardController {
 
 
     @PostMapping("/payment")
-    public  Mono<ResponseEntity<TransactionCreditCard>> payment(@RequestBody TransactionCreditCard transactionCredit, @PathVariable String id){
+    public  Mono<ResponseEntity<String>> payment(@RequestBody TransactionCreditCard transactionCredit){
         return creditCardService.payment(transactionCredit).map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
             log.info("Error:" + e.getMessage());
             return Mono.just(ResponseEntity.badRequest().build());
-
         }).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/charge")
-    public  Mono<ResponseEntity<TransactionCreditCard>> charge(@RequestBody TransactionCreditCard transactionCredit, @PathVariable String id){
-
+    public  Mono<ResponseEntity<String>> charge(@RequestBody TransactionCreditCard transactionCredit){
         return creditCardService.charge(transactionCredit).map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
             log.info("Error:" + e.getMessage());
             return Mono.just(ResponseEntity.badRequest().build());
-
         }).defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
@@ -75,8 +71,13 @@ public class CreditCardController {
         return  creditCardService.findByIdCustomer(id);
     }
 
-    @GetMapping("/customer/transaction/{idCredito}")
-    public Flux<TransactionCreditCard>  findTransactionByIdCredit(@PathVariable("idCredito") String id){
-        return  creditCardService.findTransactionByIdCredit(id);
+    @GetMapping("/customer/transaction/{idCredit}")
+    public Flux<TransactionCreditCard>  findTransactionByIdCredit(@PathVariable("idCredit") String idCredit){
+        return  creditCardService.findTransactionByIdCredit(idCredit);
+    }
+
+    @GetMapping("/customer-debts/{idCustomer}")
+    public Mono<Boolean>  findCustomerDebs(@PathVariable("idCustomer") String idCustomer){
+        return  creditCardService.findIsCustomerHaveDebs(idCustomer);
     }
 }

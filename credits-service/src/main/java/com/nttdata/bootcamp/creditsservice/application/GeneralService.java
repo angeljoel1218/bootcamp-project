@@ -11,5 +11,7 @@ public interface GeneralService <T>{
     Flux<T> findAll();
     Flux<T> findByIdCustomer(String id);
 
+    Mono<Boolean> findIsCustomerHaveDebs(String idCustomer);
+
 
 }

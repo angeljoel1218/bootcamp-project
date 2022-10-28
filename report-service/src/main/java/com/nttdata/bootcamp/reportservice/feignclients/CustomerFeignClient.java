@@ -1,6 +1,6 @@
 package com.nttdata.bootcamp.reportservice.feignclients;
 
-import com.nttdata.bootcamp.reportservice.model.CustomerDto;
+import com.nttdata.bootcamp.reportservice.model.dto.CustomerDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import reactivefeign.spring.config.ReactiveFeignClient;

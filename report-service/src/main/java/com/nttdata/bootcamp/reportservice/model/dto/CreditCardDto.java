@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.reportservice.model;
+package com.nttdata.bootcamp.reportservice.model.dto;
 
 import lombok.*;
 

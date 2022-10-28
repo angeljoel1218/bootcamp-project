@@ -29,6 +29,14 @@ public class CreditCard {
     @NotNull(message = "the field limit amount is required")
     private BigDecimal limitAmount;
 
+    private BigDecimal amountUsed;
+
+    @NotNull(message = "the field closing day is required")
+    private Integer closingDay;
+
+    @NotNull(message = "the field day of pay")
+    private Integer dayOfPay;
+
     private String status;
 
 }

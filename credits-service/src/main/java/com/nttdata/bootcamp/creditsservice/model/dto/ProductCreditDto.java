@@ -1,6 +1,6 @@
 package com.nttdata.bootcamp.creditsservice.model.dto;
 
-import com.nttdata.bootcamp.creditsservice.model.Category;
+import com.nttdata.bootcamp.creditsservice.model.constant.Category;
 import lombok.Data;
 
 @Data

@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 @ReactiveFeignClient(value =  "${feign.service.product.name}", fallback = ProductFeignClientFallBack.class)
 public interface ProductFeignClient {
 
-    @GetMapping("/product/get/{id}")
+    @GetMapping("product/get/{id}")
     public Mono<ProductCreditDto>  findById (@PathVariable("id") String id);
 
 }

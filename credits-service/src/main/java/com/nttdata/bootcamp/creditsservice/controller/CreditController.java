@@ -2,7 +2,9 @@ package com.nttdata.bootcamp.creditsservice.controller;
 
 import com.nttdata.bootcamp.creditsservice.application.CreditService;
 import com.nttdata.bootcamp.creditsservice.model.Credit;
-import com.nttdata.bootcamp.creditsservice.model.PaymentCredit;
+import com.nttdata.bootcamp.creditsservice.model.CreditDues;
+import com.nttdata.bootcamp.creditsservice.model.dto.CreditDuesDto;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -45,7 +47,7 @@ public class CreditController {
     }
 
     @PostMapping("/payment")
-    public Mono<ResponseEntity<PaymentCredit>> payment(@RequestBody PaymentCredit paymentCredit){
+    public Mono<ResponseEntity<CreditDues>> payment(@RequestBody CreditDuesDto paymentCredit){
         return creditService.payment(paymentCredit).map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
             log.info("Error:" + e.getMessage());
             return Mono.just(ResponseEntity.badRequest().build());
@@ -53,12 +55,12 @@ public class CreditController {
     }
 
     @GetMapping("/customer/{id}")
-    public Flux<Credit> findCustomerById(@PathVariable("id") String id){
+    public Flux<Credit> findByIdCustomer(@PathVariable("id") String id){
             return  creditService.findByIdCustomer(id);
     }
 
-    @GetMapping("/customer/payment/{idCredito}")
-    public Flux<PaymentCredit> findPaymentByIdCredit(@PathVariable("idCredito") String id){
-        return creditService.findPaymentByIdCredit(id);
+    @GetMapping("/dues/{idCredit}")
+    public Flux<CreditDues> findCreditDuesByIdCredit(@PathVariable("idCredit") String id){
+        return creditService.findCreditDuesByIdCredit(id);
     }
 }

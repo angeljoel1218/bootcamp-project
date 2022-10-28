@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Document(collection = "m_credit" )
@@ -15,20 +16,33 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Data
 public class Credit {
-
     @Id
     private String id;
 
-    @NotBlank(message = "Id del cliente es requerido")
+    @NotBlank(message = "The id customer is required")
     private String idCustomer;
 
-    @NotBlank(message = "Id del producto es requerido")
+    @NotBlank(message = "The Id product is required")
     private  String idProduct;
 
-    private BigDecimal amount;
+    @NotNull(message = "Amount credit is required")
+    private BigDecimal amountCredit;
 
-    private  Integer dues;
+    @NotNull(message = "day of pay is required")
+    private Integer dayOfPay;
+
+    @NotNull(message = "Nro of dues is required")
+    private Integer dues;
+
+    @NotNull(message = "interval dues is required")
+    private Integer intervalDues;
+
+    @NotNull(message = "Interest amount is required")
+    private BigDecimal interestAmount;
+
 
     private String status;
+
+    private BigDecimal amountPayed;
 
 }
