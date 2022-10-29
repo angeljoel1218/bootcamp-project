@@ -1,8 +1,14 @@
 package com.nttdata.bootcamp.reportservice.application;
 
+import com.nttdata.bootcamp.reportservice.application.utils.DateUtil;
 import com.nttdata.bootcamp.reportservice.feignclients.AccountFeignClient;
 import com.nttdata.bootcamp.reportservice.feignclients.CreditFeignClient;
 import com.nttdata.bootcamp.reportservice.feignclients.CustomerFeignClient;
+import com.nttdata.bootcamp.reportservice.feignclients.ProductFeignClient;
+import com.nttdata.bootcamp.reportservice.model.ProductConsumer;
+import com.nttdata.bootcamp.reportservice.model.constan.ProductType;
+import com.nttdata.bootcamp.reportservice.model.constan.TypeAccount;
+import com.nttdata.bootcamp.reportservice.model.dto.CreditDto;
 import com.nttdata.bootcamp.reportservice.model.dto.CreditDuesDto;
 import com.nttdata.bootcamp.reportservice.model.dto.CustomerDto;
 import com.nttdata.bootcamp.reportservice.model.dto.TransactionDto;
@@ -14,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,32 +40,34 @@ public class ReportServiceImpl  implements  ReportSevice{
 
   @Autowired
   CreditFeignClient creditFeignClient;
+
+  @Autowired
+  ProductFeignClient productFeignClient;
+
+
   @Override
   public Flux<Map<String, Object>> dailyBalance(String customerId) {
-    return Flux.concat(
-      accountFeignClient.findByHolderId(customerId).map(t -> {
+    return    accountFeignClient.findAccountByHolderId(customerId).map(t -> {
           Map<String, Object> map = new  LinkedHashMap<>();
           map.put("Number Account", t.getNumber());
           map.put("balances per day", listTransactions(t.getId()));
           return map;
-        }),
+        });
 
-      creditFeignClient.findByIdCustomer(customerId).map(t -> {
-          Map<String, Object> map = new  LinkedHashMap<>();
-          map.put("Id credit ", t.getId());
-          map.put("Dues Credit", listDuesCredit(t.getId()));
-          return map;
-        })
-      );
   }
   @Override
-  public Flux<Map<String, Object>> productsCommissionByDates(Date startData, Date endDate, String customerId) {
-
-    return  accountFeignClient.findByHolderId(customerId).map(t -> {
+  public Flux<Mono<Map<String, Object>>> productsCommissionByDates(Date startData, Date endDate, String customerId) {
+    return  accountFeignClient.findAccountByHolderId(customerId).map(t -> {
       Map<String, Object> map = new  LinkedHashMap<>();
       map.put("Number Account",t.getNumber());
-      map.put("Commission", listCommision(t.getId(), startData, endDate));
-      return map;
+       return  accountFeignClient.findTransactionByAccountId(t.getId())
+                .filter(cf -> cf.getCommission().compareTo(BigDecimal.ZERO) > 0 &&
+                    cf.getDateOfTransaction().after(startData) &&
+                    cf.getDateOfTransaction().before(endDate)).collectList()
+                    .map(listCommisions->{
+                        map.put("Commission",listCommisions);
+                        return map;
+         });
     });
 
   }
@@ -77,8 +87,8 @@ public class ReportServiceImpl  implements  ReportSevice{
     List<TransactionDto> transacciones = new ArrayList<>();
     accountFeignClient.findTransactionByAccountId(accountId).collectList().subscribe(transacciones::addAll);
     Map<Date, BigDecimal> mapSaldos = new LinkedHashMap<>();
-    Date startDate = getStartOfMonth();
-    Date endDate = getEndOfMonth();
+    Date startDate = DateUtil.getStartOfMonth();
+    Date endDate = DateUtil.getEndOfMonth();
     while (startDate.before(endDate)){
 
       mapSaldos.put(startDate, getSaldo(transacciones, startDate, mapSaldos));
@@ -91,11 +101,9 @@ public class ReportServiceImpl  implements  ReportSevice{
 
 
   private  List<CreditDuesDto> listDuesCredit(String idCredit) {
-
-    List<CreditDuesDto> creditDuesDtos = new ArrayList<>();
-    creditFeignClient.findCreditDuesByIdCredit(idCredit).collectList().subscribe(creditDuesDtos::addAll);
-
-    return creditDuesDtos;
+    List<CreditDuesDto> list  =  new ArrayList<>();
+    creditFeignClient.findCreditDuesByIdCredit(idCredit).collectList().subscribe(list::addAll);
+    return list;
   }
 
 
@@ -115,32 +123,87 @@ public class ReportServiceImpl  implements  ReportSevice{
         return saldoInicial.add(saldoDia) ;
     }
 
-    public static Date getStartOfMonth() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-
-    public static Date getEndOfMonth() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
 
 
 
     @Override
     public Mono<CustomerDto> findCustomerById(String id) {
-        return customerFeignClient.findById(id);
+        return customerFeignClient.findCustomerById(id);
+    }
+
+    @Override
+    public Flux<Map<String,Object>> findProductsByCustomer(String customerId) {
+      return Flux.concat(
+
+        /*Accounts*/
+         accountFeignClient.findAccountByHolderId(customerId).map(account->{
+           Map<String,Object> objectMap = new LinkedHashMap<>();
+           objectMap.put("Type", account.getTypeAccount());
+           objectMap.put("Number", account.getNumber());
+           objectMap.put("Balance", account.getBalance());
+           return objectMap ;
+         }),
+
+         /*Credits */
+
+         creditFeignClient.findCreditByIdCustomer(customerId).map(credit->{
+           Map<String,Object> objectMap = new LinkedHashMap<>();
+           objectMap.put("Type", "Credit");
+           objectMap.put("Id", credit.getId());
+           objectMap.put("Amount", credit.getAmountCredit());
+           objectMap.put("Amount Payed", credit.getAmountPayed());
+           return objectMap ;
+         }),
+
+        /*Credit card*/
+          creditFeignClient.findCreditCardByIdCustomer(customerId).map(credit->{
+            Map<String,Object> objectMap = new LinkedHashMap<>();
+            objectMap.put("Type", "Credit Card");
+            objectMap.put("Id", credit.getId());
+            objectMap.put("Limit amount", credit.getLimitAmount());
+            objectMap.put("Amount used", credit.getAmountUsed());
+            return  objectMap;
+          })
+
+         );
+
+    }
+    @Override
+    public Mono<ProductConsumer> findProductConsumerByDateBetween(String idProduct, Date startData, Date endDate) {
+        return productFeignClient.findById(idProduct).flatMap(product->{
+            ProductConsumer pc= new  ProductConsumer();
+            pc.setProductDto(product);
+
+            Mono<ProductConsumer> mono  = null;
+
+            if(Arrays.asList(ProductType.PERSONAL_CREDIT, ProductType.BUSINESS_CREDIT).contains(product.getProductTypeId())){
+                mono = creditFeignClient.findCreditByCreateDateBetweenAndIdProduct(startData,endDate,idProduct)
+                    .collectList().map(t-> {
+                        pc.setProducts(t);
+                        return pc;
+                    });
+            }
+
+            if(Arrays.asList(ProductType.PERSONAL_CREDIT_CARD, ProductType.BUSINESS_CREDIT_CARD).contains(product.getProductTypeId())){
+                mono = creditFeignClient.findByCreditCardCreateDateBetweenAndIdProduct(startData,endDate,idProduct)
+                    .collectList().map(t-> {
+                        pc.setProducts(t);
+                        return pc;
+                    });
+            }
+
+            if(Arrays.asList(ProductType.SAVINGS_ACCOUNT, ProductType.CURRENT_ACCOUNT, ProductType.FIXED_TERM_ACCOUNT).contains(product.getProductTypeId())){
+                mono =Mono.just(new ProductConsumer());
+            }
+
+
+            return mono;
+        });
+    }
+
+    @Override
+    public Flux<CreditDto> find(String idProduct, Date startData, Date endDate) {
+      log.info("toy aca");
+        return   creditFeignClient.findCreditByCreateDateBetweenAndIdProduct(startData,endDate,idProduct);
     }
 }

@@ -4,6 +4,7 @@ import com.nttdata.bootcamp.accountservice.application.exceptions.ServiceUnavail
 import com.nttdata.bootcamp.accountservice.model.dto.ProductDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 public class ProductClientService {

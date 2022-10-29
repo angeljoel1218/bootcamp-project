@@ -4,6 +4,7 @@ import com.nttdata.bootcamp.accountservice.application.exceptions.ServiceUnavail
 import com.nttdata.bootcamp.accountservice.model.dto.CreditCardDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.circuitbreaker.ReactiveCircuitBreakerFactory;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 public class CreditClientService {

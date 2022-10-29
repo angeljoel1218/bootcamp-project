@@ -9,16 +9,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import javax.naming.ServiceUnavailableException;
+
 @Log4j2
 @Component
 public class CustomerFeignClientFallBack implements CustomerFeignClient {
 
-	@Value("${feign.service.customer.name}")
-	private String productService;
 
 	@Override
 	public Mono<CustomerDto> findById(String id) {
-		log.info("findById customer  not found!" +productService);
+		log.info("findById customer  not found!");
 
 		return null;
 	}

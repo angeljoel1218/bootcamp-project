@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.creditsservice.model.dto;
 
 import com.nttdata.bootcamp.creditsservice.model.constant.Category;
+import com.nttdata.bootcamp.creditsservice.model.constant.ProductType;
 import lombok.Data;
 
 @Data
@@ -15,5 +16,6 @@ public class ProductCreditDto {
     private Float openingAmount;
     private Float minFixedAmount;
     private Category category;
-    private String productTypeId;
+    private ProductType productTypeId;
+
 }

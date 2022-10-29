@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Document(collection = "m_credit" )
 @Getter
@@ -44,5 +45,7 @@ public class Credit {
     private String status;
 
     private BigDecimal amountPayed;
+
+    private Date createDate;
 
 }

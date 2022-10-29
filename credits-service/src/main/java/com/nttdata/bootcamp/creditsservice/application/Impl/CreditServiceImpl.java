@@ -1,5 +1,6 @@
-package com.nttdata.bootcamp.creditsservice.application;
+package com.nttdata.bootcamp.creditsservice.application.Impl;
 
+import com.nttdata.bootcamp.creditsservice.application.CreditService;
 import com.nttdata.bootcamp.creditsservice.application.exceptions.CreditException;
 import com.nttdata.bootcamp.creditsservice.application.mappers.MapperCredit;
 import com.nttdata.bootcamp.creditsservice.application.utils.DateUtil;
@@ -10,6 +11,7 @@ import com.nttdata.bootcamp.creditsservice.infrastructure.CreditDuesRepository;
 import com.nttdata.bootcamp.creditsservice.model.*;
 import com.nttdata.bootcamp.creditsservice.model.constant.Category;
 import com.nttdata.bootcamp.creditsservice.model.constant.CreditStatus;
+import com.nttdata.bootcamp.creditsservice.model.constant.ProductType;
 import com.nttdata.bootcamp.creditsservice.model.dto.CreditDuesDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
@@ -49,14 +51,20 @@ public class CreditServiceImpl implements CreditService {
         return customerFeignClient.findById(credit.getIdCustomer()).flatMap(customer->{
             return productFeignClient.findById(credit.getIdProduct()).filter(p->p.getCategory() == Category.ACTIVE).flatMap(product->{
                 return creditRepository.findByIdCustomer(credit.getIdCustomer()).count().flatMap(countAccounts->{
-                    List<String> errors= new ArrayList<>();
+
                     if(countAccounts > 0 && customer.isItsPersonal()){
-                        errors.add("cannot have more than one credit");
-                    };
-                    if(!errors.isEmpty()){
                         return Mono.error(new CreditException("cannot have more than one credit"));
                     }
 
+                    if(customer.isItsPersonal() &&  product.getProductTypeId() != ProductType.PERSONAL_CREDIT){
+                        return   Mono.error(new InterruptedException("this product is not personal credit"));
+                    }
+                    if(customer.isItsCompany() &&  product.getProductTypeId() != ProductType.BUSINESS_CREDIT){
+                        return Mono.error(new InterruptedException("this product is not business credit"));
+                    }
+
+                    credit.setStatus("active");
+                    credit.setCreateDate(new Date());
                     return  Mono.just(credit).flatMap(creditRepository::insert).flatMap(this::createCreditDuesByCredit);
                 });
             }).switchIfEmpty(Mono.error(new CreditException("Product type active not found")));
@@ -110,7 +118,7 @@ public class CreditServiceImpl implements CreditService {
 
     @Override
     public Mono<Void> delete(String id) {
-        return creditRepository .deleteById(id).then(creditDuesRepository.deleteByIdCredit(id));
+        return creditRepository.findById(id).then(creditDuesRepository.deleteById(id));
     }
 
     @Override
@@ -128,8 +136,6 @@ public class CreditServiceImpl implements CreditService {
         log.info("Nro Dues"+creditDuesDto.getNroDues());
         return creditDuesRepository.findByIdCreditAndNroDues(creditDuesDto.getIdCredit(), creditDuesDto.getNroDues())
           .flatMap(t->{
-              log.info("somteintg"+t.getTotalAmount());
-              log.info("creditDuesDto"+t.getAmount());
               if(creditDuesDto.getAmount().compareTo(t.getTotalAmount()) != 0){
                   log.info("The amount of the due must be");
                   return Mono.error(new CreditException(String.format("The amount of the due must be %s",t.getTotalAmount().toString())));
@@ -166,6 +172,11 @@ public class CreditServiceImpl implements CreditService {
                    return t.getExpirationDate().before(DateUtil.getStartCurrentDate()) ? true :  false;
                });
            }).switchIfEmpty(Mono.just(Boolean.FALSE));
+    }
+
+    @Override
+    public Flux<Credit> findByCreateDateBetweenAndIdProduct(Date start, Date end,  String idProduct) {
+        return creditRepository.findByCreateDateBetweenAndIdProduct(start,end, idProduct);
     }
 
     @Override

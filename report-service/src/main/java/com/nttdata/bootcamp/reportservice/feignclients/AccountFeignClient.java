@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 public interface AccountFeignClient {
 
     @GetMapping("account/customer/{holderId}")
-    public  Flux<AccountDto>  findByHolderId (@PathVariable("holderId") String id);
+    public  Flux<AccountDto>  findAccountByHolderId (@PathVariable("holderId") String id);
 
     @GetMapping("account/transaction/{accountId}")
     public Flux<TransactionDto> findTransactionByAccountId (@PathVariable("accountId") String id);

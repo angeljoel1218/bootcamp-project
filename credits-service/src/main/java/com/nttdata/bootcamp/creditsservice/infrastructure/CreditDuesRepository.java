@@ -8,13 +8,11 @@ import reactor.core.publisher.Mono;
 
 public interface CreditDuesRepository extends ReactiveMongoRepository<CreditDues, String> {
 
-    Flux<CreditDues> findByIdCredit(String id);
+    Flux<CreditDues> findByIdCredit(String idCredit);
 
     Mono<CreditDues> findByIdCreditAndNroDues(String idCredit, Integer nroDues);
 
-    Mono<Void> deleteByIdCredit(String id);
-
-
+    Mono<Void> deleteByIdCredit(String idCredit);
 
     Mono<CreditDues> findFirstByIdCreditAndStatusOrderByExpirationDateAsc(String idCredit, CreditStatus status);
 
