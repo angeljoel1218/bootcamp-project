@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Document(collection = "credit_card" )
 @Getter
@@ -29,6 +30,16 @@ public class CreditCard {
     @NotNull(message = "the field limit amount is required")
     private BigDecimal limitAmount;
 
+    private BigDecimal amountUsed;
+
+    @NotNull(message = "the field closing day is required")
+    private Integer closingDay;
+
+    @NotNull(message = "the field day of pay")
+    private Integer dayOfPay;
+
     private String status;
+
+    private Date createDate;
 
 }

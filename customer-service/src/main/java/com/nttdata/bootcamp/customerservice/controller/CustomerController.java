@@ -23,9 +23,6 @@ import javax.validation.Valid;
 public class CustomerController {
 
 
-    @Value("${message.demo}")
-    private String demoString;
-
     @Autowired
     private CustomerService custumerService;
 
@@ -58,8 +55,6 @@ public class CustomerController {
 
     @GetMapping("/all")
     public Flux<CustomerDto> findAll(){
-        log.info("Find All");
-        log.info(demoString);
         return   custumerService.findAll();
     }
 

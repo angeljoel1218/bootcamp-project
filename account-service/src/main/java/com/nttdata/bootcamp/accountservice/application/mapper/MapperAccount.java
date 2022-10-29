@@ -5,6 +5,7 @@ import com.nttdata.bootcamp.accountservice.model.dto.AccountDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
+
 @Component
 public class MapperAccount {
     public Mono<AccountDto> toDto(Account account) {

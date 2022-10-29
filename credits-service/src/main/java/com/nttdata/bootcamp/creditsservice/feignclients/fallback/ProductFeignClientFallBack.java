@@ -14,9 +14,6 @@ import java.util.List;
 @Component
 public class ProductFeignClientFallBack implements ProductFeignClient {
 
-	@Value("${feign.service.product.name}")
-	private String productService;
-	{}
 	@Override
 	public Mono<ProductCreditDto> findById(String id) {
 		log.info("findById product Credit not found!");

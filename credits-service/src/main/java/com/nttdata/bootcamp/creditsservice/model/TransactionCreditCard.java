@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.creditsservice.model;
 
+import com.nttdata.bootcamp.creditsservice.model.constant.TypeTransaction;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -21,7 +22,7 @@ public class TransactionCreditCard {
     @NotNull
     private  String idCredit;
 
-    private String coments;
+    private String description;
 
     @NotNull
     private BigDecimal amount;

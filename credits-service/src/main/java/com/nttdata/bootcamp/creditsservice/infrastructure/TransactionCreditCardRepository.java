@@ -7,4 +7,6 @@ import reactor.core.publisher.Flux;
 public interface TransactionCreditCardRepository extends ReactiveMongoRepository<TransactionCreditCard, String> {
 
     Flux<TransactionCreditCard> findByIdCredit(String idCredit);
+
+    Flux<TransactionCreditCard> findByIdCreditOrderByDateDesc(String idCredit);
 }

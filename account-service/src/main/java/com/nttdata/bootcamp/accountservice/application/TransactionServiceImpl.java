@@ -1,7 +1,6 @@
 package com.nttdata.bootcamp.accountservice.application;
 
 import com.nttdata.bootcamp.accountservice.infrastructure.AccountRepository;
-import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,8 +19,6 @@ public class TransactionServiceImpl implements TransactionService<TransactionDto
     TransactionFixedTermAccountService<FixedTermAccountDto> transactionFixedTermAccountService;
     @Autowired
     AccountRepository accountRepository;
-    @Autowired
-    TransactionRepository transactionRepository;
 
     @Override
     public Mono<TransactionDto> deposit(DepositDto depositDto) {

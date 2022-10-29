@@ -5,6 +5,7 @@ import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import lombok.Data;
 
 import java.math.BigDecimal;
+
 import java.util.Date;
 
 @Data
