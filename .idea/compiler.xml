@@ -12,6 +12,7 @@
         <module name="api-gateway" />
         <module name="product-service" />
         <module name="report-service" />
+        <module name="card-service" />
         <module name="account-service" />
         <module name="credits-service" />
         <module name="discovery-service" />
@@ -20,6 +21,7 @@
     <bytecodeTargetLevel>
       <module name="account-service" target="11" />
       <module name="api-gateway" target="11" />
+      <module name="card-service" target="11" />
       <module name="config-server" target="11" />
       <module name="credits-service" target="11" />
       <module name="customer-service" target="11" />
@@ -32,6 +34,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="account-service" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
+      <module name="card-service" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="credits-service" options="-parameters" />
       <module name="customer-service" options="-parameters" />

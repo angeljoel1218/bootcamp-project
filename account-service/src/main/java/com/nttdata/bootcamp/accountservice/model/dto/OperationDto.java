@@ -8,9 +8,8 @@ import java.math.BigDecimal;
 public class OperationDto {
     private BigDecimal amount;
     private BigDecimal commission;
-    private String origAccountNumber;
-    private String destAccountNumber;
+    private String sourceAccount;
+    private String targetAccount;
     private String accountId;
     private String operation;
-    private String holderId;
 }

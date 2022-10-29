@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class FixedTermAccountDto {
+public class FixedTermAccountDto extends AccountDto{
     private String id;
     private String number;
     private BigDecimal balance;

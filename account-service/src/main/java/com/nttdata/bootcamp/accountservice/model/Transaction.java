@@ -25,9 +25,9 @@ public class Transaction {
     private BigDecimal amount;
     private BigDecimal commission;
     private String accountId;
-    private String origin;
-    private String destination;
-    private Date dateOfTransaction;
+    private String sourceAccount;
+    private String targetAccount;
+    private Date date;
     private TypeTransaction type;
     private TypeAffectation affectation;
     private TypeAccount typeAccount;

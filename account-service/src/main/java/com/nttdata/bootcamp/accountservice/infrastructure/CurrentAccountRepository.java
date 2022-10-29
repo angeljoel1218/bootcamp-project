@@ -7,7 +7,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface CurrentAccountRepository extends ReactiveMongoRepository<CurrentAccount, String> {
-    Flux<CurrentAccount> findByHolderIdAndTypeAccount(String id, TypeAccount typeAccount);
     Mono<Long> countByHolderId(String id);
     Mono<CurrentAccount> findByNumberAndTypeAccount(String number, TypeAccount typeAccount);
 }
