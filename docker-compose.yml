@@ -72,21 +72,20 @@ services:
       - '8082:8082'
     networks:
       - bootcamp
-    # escape=
- #   container_name: account-service
-
-  #  build:
-   #   context: .
-    #  dockerfile: ./account-service/Dockerfile
-    #depends_on:
-     # - mongodb-service
-      #- config-server
-      #- discovery-service
-    #image: account-service:latest
-    #ports:
-    #  - '8083:8083'
-    #networks:
-     # - bootcamp
+  account-service:
+    container_name: account-service
+    build:
+      context: .
+      dockerfile: ./account-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - config-server
+      - discovery-service
+    image: account-service:latest
+    ports:
+      - '8083:8083'
+    networks:
+      - bootcamp
   credit-service:
     container_name: credit-service
     build:
