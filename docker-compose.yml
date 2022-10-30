@@ -36,7 +36,7 @@ services:
       - config-server
       - discovery-service
   mongodb-service:
-    image: mongo:5.0
+    image: mongo
     ports:
       - '27017:27017'
     container_name: mongodb-service
@@ -72,20 +72,21 @@ services:
       - '8082:8082'
     networks:
       - bootcamp
-  account-service:
-    container_name: account-service
-    build:
-      context: .
-      dockerfile: ./account-service/Dockerfile
-    depends_on:
-      - mongodb-service
-      - config-server
-      - discovery-service
-    image: account-service:latest
-    ports:
-      - '8083:8083'
-    networks:
-      - bootcamp
+    # escape=
+ #   container_name: account-service
+
+  #  build:
+   #   context: .
+    #  dockerfile: ./account-service/Dockerfile
+    #depends_on:
+     # - mongodb-service
+      #- config-server
+      #- discovery-service
+    #image: account-service:latest
+    #ports:
+    #  - '8083:8083'
+    #networks:
+     # - bootcamp
   credit-service:
     container_name: credit-service
     build:
@@ -108,7 +109,6 @@ services:
     depends_on:
       - product-service
       - customer-service
-      - account-service
       - credit-service
       - discovery-service
     image: report-service:latest
