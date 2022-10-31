@@ -17,7 +17,6 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 @Slf4j
-@RefreshScope
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {

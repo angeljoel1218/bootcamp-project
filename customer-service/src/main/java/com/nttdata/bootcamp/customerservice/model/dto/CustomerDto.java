@@ -36,4 +36,24 @@ public class CustomerDto {
     private boolean itsCompany;
     private boolean itsPersonal;
 
+    public CustomerDto(TypeCustomer typeCustomer, String name, String lastName, String businessName, String emailAddress, String numberDocument, TypeProfile typeProfile) {
+        this.typeCustomer = typeCustomer;
+        this.name = name;
+        this.lastName = lastName;
+        this.businessName = businessName;
+        this.emailAddress = emailAddress;
+        this.numberDocument = numberDocument;
+        this.typeProfile = typeProfile;
+    }
+
+    public CustomerDto(String id,TypeCustomer typeCustomer, String name, String lastName, String businessName, String emailAddress, String numberDocument, TypeProfile typeProfile) {
+        this.id = id;
+        this.typeCustomer = typeCustomer;
+        this.name = name;
+        this.lastName = lastName;
+        this.businessName = businessName;
+        this.emailAddress = emailAddress;
+        this.numberDocument = numberDocument;
+        this.typeProfile = typeProfile;
+    }
 }
