@@ -22,7 +22,7 @@ jobs:
       with:
        username: ${{ secrets.DOCKER_HUB_USERNAME }}
        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-       repository: abejarano7/discovery-service
+       repository: abejarano7/customer-service
        tags: ${{github.run_number}}
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v2
@@ -32,6 +32,6 @@ jobs:
     - name: Publish to azure
       uses: azure/webapps-deploy@v2
       with:
-        app-name: discovery-service-37
+        app-name: customer-service-37
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ github.workspace }}/target/*.jar
+        images: abejarano7/customer-service:${{github.run_number}}
