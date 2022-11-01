@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+@RefreshScope
 @RestController
 @RequestMapping("/product")
 public class ProductController {

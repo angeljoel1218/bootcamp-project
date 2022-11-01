@@ -1,15 +1,16 @@
 package com.nttdata.bootcamp.customerservice.model;
 
-import lombok.*;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
+/**
+ * Some javadoc.
+ * Customer
+ */
 @Document(collection = "costumer")
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Data
 public class Customer {
 
   @Id
