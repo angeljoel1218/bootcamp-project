@@ -23,7 +23,7 @@ public class CardServiceApplication {
 	@LoadBalanced
 	public WebClient loadBalancedWebClientBuilder() {
 		return WebClient.builder()
-				.baseUrl("http://localhost:8080")
+				.baseUrl("${webclient.baseurl}")
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}

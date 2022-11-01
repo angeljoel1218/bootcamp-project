@@ -2,8 +2,10 @@ package com.nttdata.bootcamp.productservice.model.dto;
 
 import com.nttdata.bootcamp.productservice.model.constant.Category;
 import com.nttdata.bootcamp.productservice.model.constant.ProductType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+@AllArgsConstructor
 @Data
 public class ProductDto {
     private String id;

@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class CardServiceImpl implements CardService{
@@ -45,16 +42,20 @@ public class CardServiceImpl implements CardService{
                                 });
                     }
                 })
-                .then(mapperCard.toCard(cardDto)
+                .then(Mono.just(cardDto).map(mapperCard::toCard)
                         .flatMap(cardRepository::insert)
-                        .flatMap(card -> mapperCard.toDto(card)));
+                        .map(mapperCard::toDto));
     }
 
     @Override
     public Mono<BankAccountDto> attachAccount(String cardId, AttachAccountDto attachAccountDto) {
         return cardRepository.findById(cardId)
+                .switchIfEmpty(Mono.error(new CardException("The card not found")))
                 .flatMap(card -> {
                     List<BankAccount> accounts = card.getAccounts();
+                    if (Objects.isNull(accounts)) {
+                        accounts = new ArrayList<>();
+                    }
                     BankAccount bankAccount = new BankAccount();
                     bankAccount.setAccountNumber(attachAccountDto.getAccountNumber());
                     bankAccount.setOrder(accounts.size() + 1);
@@ -69,7 +70,7 @@ public class CardServiceImpl implements CardService{
     @Override
     public Flux<CardMovementDto> listMovements(String cardId) {
         return cardMovementRepository.findByCardId(cardId)
-                .flatMap(mapperCard::toCardMovementDto);
+                .map(mapperCard::toCardMovementDto);
     }
 
     @Override

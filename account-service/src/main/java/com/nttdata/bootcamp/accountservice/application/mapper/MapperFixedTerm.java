@@ -8,15 +8,13 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class MapperFixedTerm {
-    public Mono<FixedTermAccountDto> toDto(FixedTermAccount fixedTermAccount) {
+    public FixedTermAccountDto toDto(FixedTermAccount fixedTermAccount) {
         ModelMapper modelMapper = new ModelMapper();
-        FixedTermAccountDto fixedTermAccountDto = modelMapper.map(fixedTermAccount, FixedTermAccountDto.class);
-        return Mono.just(fixedTermAccountDto);
+        return modelMapper.map(fixedTermAccount, FixedTermAccountDto.class);
     }
 
-    public Mono<FixedTermAccount> toProductAccount(FixedTermAccountDto fixedTermAccountDto) {
+    public FixedTermAccount toProductAccount(FixedTermAccountDto fixedTermAccountDto) {
         ModelMapper modelMapper = new ModelMapper();
-        FixedTermAccount fixedTermAccount = modelMapper.map(fixedTermAccountDto, FixedTermAccount.class);
-        return Mono.just(fixedTermAccount);
+        return modelMapper.map(fixedTermAccountDto, FixedTermAccount.class);
     }
 }

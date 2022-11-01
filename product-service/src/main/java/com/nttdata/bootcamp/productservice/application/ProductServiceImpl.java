@@ -18,28 +18,20 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Mono<ProductDto> create(ProductDto productDto) {
-        return mapperProduct.toProduct(productDto)
+        return Mono.just(productDto)
+                .map(mapperProduct::toProduct)
                 .flatMap(productRepository::insert)
-                .flatMap(mapperProduct::toDto);
+                .map(mapperProduct::toDto);
     }
 
     @Override
     public Mono<ProductDto> update(String id, ProductDto productDto) {
         return productRepository.findById(id)
-                .flatMap(product -> {
-                    product.setCode(productDto.getCode());
-                    product.setName(productDto.getName());
-                    product.setMaintenance(productDto.getMaintenance());
-                    product.setMaxMovements(productDto.getMaxMovements());
-                    product.setMaxNumberCredits(productDto.getMaxNumberCredits());
-                    product.setCommissionAmount(productDto.getCommissionAmount());
-                    product.setOpeningAmount(productDto.getOpeningAmount());
-                    product.setMinFixedAmount(productDto.getMinFixedAmount());
-                    product.setCategory(productDto.getCategory());
-                    product.setProductTypeId(productDto.getProductTypeId());
-                    return productRepository.save(product);
-                })
-                .flatMap(mapperProduct::toDto);
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Product not found")))
+                .flatMap(product -> Mono.just(productDto).map(mapperProduct::toProduct))
+                .doOnNext(product -> product.setId(id))
+                .flatMap(productRepository::save)
+                .map(mapperProduct::toDto);
     }
 
     @Override
@@ -51,12 +43,12 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Mono<ProductDto> findById(String id) {
         return productRepository.findById(id)
-                .flatMap(mapperProduct::toDto);
+                .map(mapperProduct::toDto);
     }
 
     @Override
     public Flux<ProductDto> findAll() {
         return productRepository.findAll()
-                .flatMap(mapperProduct::toDto);
+                .map(mapperProduct::toDto);
     }
 }

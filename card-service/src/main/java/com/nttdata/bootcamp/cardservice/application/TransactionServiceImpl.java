@@ -8,12 +8,10 @@ import com.nttdata.bootcamp.cardservice.infrastructure.CardRepository;
 import com.nttdata.bootcamp.cardservice.infrastructure.feignclient.AccountService;
 import com.nttdata.bootcamp.cardservice.model.BankAccount;
 import com.nttdata.bootcamp.cardservice.model.Card;
-import com.nttdata.bootcamp.cardservice.model.CardMovement;
 import com.nttdata.bootcamp.cardservice.model.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
 
 import java.util.Objects;
 
@@ -72,15 +70,14 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
     public Mono<CardMovementDto> saveCardMovement(TransactionDto transactionDto, WithdrawDto withdrawDto, String cardId) {
-        CardMovement cardMovement = new CardMovement();
-        cardMovement.setAmount(withdrawDto.getAmount());
-        cardMovement.setCardId(cardId);
-        cardMovement.setAccountNumber(withdrawDto.getAccountNumber());
-        cardMovement.setTransactionId(transactionDto.getId());
-        cardMovement.setEntity(withdrawDto.getEntity());
-        cardMovement.setDetail(withdrawDto.getDetail());
-        cardMovement.setOperationDate(transactionDto.getDate());
-        return cardMovementRepository.insert(cardMovement)
-                .flatMap(mapperCard::toCardMovementDto);
+        return Mono.just(withdrawDto)
+                .map(mapperCard::toCardMovement)
+                .doOnNext(cardMovement -> {
+                    cardMovement.setCardId(cardId);
+                    cardMovement.setOperationDate(transactionDto.getDate());
+                    cardMovement.setTransactionId(transactionDto.getId());
+                })
+                .flatMap(cardMovementRepository::insert)
+                .map(mapperCard::toCardMovementDto);
     }
 }

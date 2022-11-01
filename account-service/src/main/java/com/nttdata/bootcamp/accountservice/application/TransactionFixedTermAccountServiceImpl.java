@@ -151,6 +151,6 @@ public class TransactionFixedTermAccountServiceImpl implements TransactionFixedT
     @Override
     public Flux<TransactionDto> listTransactions(String accountId) {
         return transactionRepository.findByAccountIdAndTypeAccount(accountId, TypeAccount.FIXED_TERM_ACCOUNT)
-                .flatMap(mapperTransaction::toDto);
+                .map(mapperTransaction::toDto);
     }
 }

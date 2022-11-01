@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@RefreshScope
 @RestController
+@RefreshScope
 @RequestMapping("credit")
 public class CreditController {
     @Autowired
@@ -41,13 +41,10 @@ public class CreditController {
     }
 
     @PostMapping()
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public Mono<ResponseEntity<Credit>> create(@RequestBody @Valid Credit creditMono){
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<Credit> create(@RequestBody @Valid Credit creditMono){
         Map<String, Object> response = new HashMap<>();
-        return creditService.create(creditMono).map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
-            log.info("Error:" + e.getMessage());
-            return Mono.just(ResponseEntity.badRequest().build());
-        }).defaultIfEmpty(ResponseEntity.notFound().build());
+        return creditService.create(creditMono);
     }
 
     @PostMapping("/payment")
@@ -72,7 +69,6 @@ public class CreditController {
     public Flux<Credit> findByCreateDateBetweenAndIdProduct(@RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date startDate,
                                                             @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date endDate,
                                                             @RequestParam String idProduct){
-        log.info("sssss");
         return creditService.findByCreateDateBetweenAndIdProduct(startDate,endDate,idProduct);
     }
 }

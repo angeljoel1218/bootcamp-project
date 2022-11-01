@@ -129,7 +129,7 @@ public class TransactionCurrentAccountServiceImpl implements TransactionCurrentA
     @Override
     public Flux<TransactionDto> listTransactions(String accountId) {
         return transactionRepository.findByAccountIdAndTypeAccount(accountId, TypeAccount.CURRENT_ACCOUNT)
-                .flatMap(mapperTransaction::toDto);
+                .map(mapperTransaction::toDto);
     }
 
     public Mono<TransactionDto> execWithdraw(CurrentAccount currentAccount, WithdrawDto withdrawDto) {

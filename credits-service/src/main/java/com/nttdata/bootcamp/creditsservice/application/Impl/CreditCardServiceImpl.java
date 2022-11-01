@@ -101,8 +101,6 @@ public class CreditCardServiceImpl implements CreditCardService {
           transactionCredit.setType(TypeTransaction.PAYMENT);
           credit.setAmountUsed(totalUse);
 
-          log.info("am here today");
-
           return creditCardRepository.save(credit)
               .flatMap(updateCredit->Mono.just(transactionCredit).flatMap(transactionCreditRepository::insert)
                 .flatMap( createTrans-> payMonthlyStatus(updateCredit, createTrans)))

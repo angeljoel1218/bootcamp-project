@@ -68,9 +68,10 @@ public class CurrentAccountServiceImpl implements CurrentAccountService<CurrentA
                 })
                 .flatMap(pr -> {
                     accountDto.setTypeAccount(TypeAccount.CURRENT_ACCOUNT);
-                    return mapperCurrentAccount.toCurrentAccount(accountDto)
+                    return Mono.just(accountDto)
+                            .map(mapperCurrentAccount::toCurrentAccount)
                             .flatMap(currentAccountRepository::insert)
-                            .flatMap(mapperCurrentAccount::toDto);
+                            .map(mapperCurrentAccount::toDto);
                 });
     };
 

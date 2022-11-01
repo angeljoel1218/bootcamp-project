@@ -55,6 +55,6 @@ public class TransferBalanceService {
         transaction.setTypeAccount(typeAccount);
         transaction.setCommission(operationDto.getCommission());
         return transactionRepository.insert(transaction)
-                .flatMap(mapperTransaction::toDto);
+                .map(mapperTransaction::toDto);
     }
 }

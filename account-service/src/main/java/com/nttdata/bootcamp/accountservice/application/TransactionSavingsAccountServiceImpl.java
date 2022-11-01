@@ -137,6 +137,6 @@ public class TransactionSavingsAccountServiceImpl implements TransactionSavingsA
     @Override
     public Flux<TransactionDto> listTransactions(String accountId) {
         return transactionRepository.findByAccountIdAndTypeAccount(accountId, TypeAccount.SAVINGS_ACCOUNT)
-                .flatMap(mapperTransaction::toDto);
+                .map(mapperTransaction::toDto);
     }
 }

@@ -48,12 +48,12 @@ public class AccountServiceImpl implements AccountService<AccountDto>{
     @Override
     public Flux<AccountDto> findByHolderId(String holderId) {
         return accountRepository.findByHolderId(holderId)
-                .flatMap(mapperAccount::toDto);
+                .map(mapperAccount::toDto);
     }
     @Override
     public Mono<AccountDto> findByNumber(String number) {
         return accountRepository.findByNumber(number)
-                .flatMap(mapperAccount::toDto);
+                .map(mapperAccount::toDto);
     }
     @Override
     public Mono<Void> delete(String accountId) {

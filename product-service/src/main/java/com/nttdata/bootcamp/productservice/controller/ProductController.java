@@ -13,8 +13,8 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
-@RestController
 @RefreshScope
+@RestController
 @RequestMapping("/product")
 public class ProductController {
     @Autowired
@@ -36,10 +36,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
-        return productService.delete(id)
-                .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)))
-                .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
+    public Mono<Void> delete(@PathVariable String id) {
+        return productService.delete(id);
     }
 
     @GetMapping("/get/{id}")

@@ -57,10 +57,10 @@ public class FixedTermAccountServiceImpl implements FixedTermAccountService<Fixe
                 })
                 .flatMap(productAccountDto -> {
                     accountDto.setTypeAccount(TypeAccount.FIXED_TERM_ACCOUNT);
-                    Mono<FixedTermAccount> fixedTermDepositAccountMono = mapperFixedTerm.toProductAccount(accountDto)
-                            .flatMap(fixedTermAccountRepository::insert);
-                    return fixedTermDepositAccountMono
-                            .flatMap(mapperFixedTerm::toDto);
+                    return Mono.just(accountDto)
+                            .map(mapperFixedTerm::toProductAccount)
+                            .flatMap(fixedTermAccountRepository::insert)
+                            .map(mapperFixedTerm::toDto);
                 });
     };
     @Override

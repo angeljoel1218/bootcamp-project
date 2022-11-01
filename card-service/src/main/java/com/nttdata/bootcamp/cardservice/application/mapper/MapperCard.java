@@ -6,22 +6,21 @@ import com.nttdata.bootcamp.cardservice.model.CardMovement;
 import com.nttdata.bootcamp.cardservice.model.dto.BankAccountDto;
 import com.nttdata.bootcamp.cardservice.model.dto.CardDto;
 import com.nttdata.bootcamp.cardservice.model.dto.CardMovementDto;
+import com.nttdata.bootcamp.cardservice.model.dto.WithdrawDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
 public class MapperCard {
-    public Mono<CardDto> toDto(Card card) {
+    public CardDto toDto(Card card) {
         ModelMapper modelMapper = new ModelMapper();
-        CardDto cardDto = modelMapper.map(card, CardDto.class);
-        return Mono.just(cardDto);
+        return modelMapper.map(card, CardDto.class);
     }
 
-    public Mono<Card> toCard(CardDto cardDto) {
+    public Card toCard(CardDto cardDto) {
         ModelMapper modelMapper = new ModelMapper();
-        Card card = modelMapper.map(cardDto, Card.class);
-        return Mono.just(card);
+        return modelMapper.map(cardDto, Card.class);
     }
 
     public BankAccountDto toBankAccountDto(BankAccount bankAccount) {
@@ -29,9 +28,13 @@ public class MapperCard {
         return modelMapper.map(bankAccount, BankAccountDto.class);
     }
 
-    public Mono<CardMovementDto> toCardMovementDto(CardMovement cardMovement) {
+    public CardMovementDto toCardMovementDto(CardMovement cardMovement) {
         ModelMapper modelMapper = new ModelMapper();
-        CardMovementDto cardMovementDto = modelMapper.map(cardMovement, CardMovementDto.class);
-        return Mono.just(cardMovementDto);
+        return modelMapper.map(cardMovement, CardMovementDto.class);
+    }
+
+    public CardMovement toCardMovement(WithdrawDto withdrawDto) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(withdrawDto, CardMovement.class);
     }
 }

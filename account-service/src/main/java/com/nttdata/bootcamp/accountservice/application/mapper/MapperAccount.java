@@ -8,15 +8,13 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class MapperAccount {
-    public Mono<AccountDto> toDto(Account account) {
+    public AccountDto toDto(Account account) {
         ModelMapper modelMapper = new ModelMapper();
-        AccountDto accountDto = modelMapper.map(account, AccountDto.class);
-        return Mono.just(accountDto);
+        return modelMapper.map(account, AccountDto.class);
     }
 
-    public Mono<Account> toAccount(AccountDto accountDto) {
+    public Account toAccount(AccountDto accountDto) {
         ModelMapper modelMapper = new ModelMapper();
-        Account account = modelMapper.map(accountDto, Account.class);
-        return Mono.just(account);
+        return modelMapper.map(accountDto, Account.class);
     }
 }

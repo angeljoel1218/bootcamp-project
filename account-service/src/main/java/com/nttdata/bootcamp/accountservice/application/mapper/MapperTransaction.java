@@ -7,15 +7,13 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 @Component
 public class MapperTransaction {
-    public Mono<TransactionDto> toDto(Transaction transaction) {
+    public TransactionDto toDto(Transaction transaction) {
         ModelMapper modelMapper = new ModelMapper();
-        TransactionDto transactionDto = modelMapper.map(transaction, TransactionDto.class);
-        return Mono.just(transactionDto);
+        return modelMapper.map(transaction, TransactionDto.class);
     }
 
-    public Mono<Transaction> toTransaction(TransactionDto transactionDto) {
+    public Transaction toTransaction(TransactionDto transactionDto) {
         ModelMapper modelMapper = new ModelMapper();
-        Transaction transaction = modelMapper.map(transactionDto, Transaction.class);
-        return Mono.just(transaction);
+        return modelMapper.map(transactionDto, Transaction.class);
     }
 }

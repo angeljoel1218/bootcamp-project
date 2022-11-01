@@ -16,7 +16,6 @@ public class MapperGeneric <T> {
     }
 
     public AccountDto toAccountDto(T accountDto) {
-        AccountDto accountDto1 = modelMapper.map(accountDto, AccountDto.class);
-        return accountDto1;
+        return modelMapper.map(accountDto, AccountDto.class);
     }
 }

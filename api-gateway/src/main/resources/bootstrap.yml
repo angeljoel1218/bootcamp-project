@@ -8,15 +8,13 @@ eureka:
   instance:
     prefer-ip-address: true
     hostname: ${COMPUTERNAME:localhost}
-
 spring:
-  config:
-    import:
-      optional:
-        configserver: http://config-server:8888
   application:
     name: api-gateway
   cloud:
+    config:
+      enable: 'true'
+      uri: http://config-server:8888
     gateway:
       default-filters:
       - name: SCGWGlobalFilter

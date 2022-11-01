@@ -26,11 +26,11 @@ public class GeneralAccountServiceImpl implements GeneralAccountService{
 
   @Override
   public Flux<AccountDto> findByHolderId(String holderId) {
-    return accountRepository.findByHolderId(holderId).flatMap(mapperAccount::toDto);
+    return accountRepository.findByHolderId(holderId).map(mapperAccount::toDto);
   }
 
   @Override
   public Flux<TransactionDto> findTransactionByAccountId(String accountId) {
-    return transactionRepository.findByAccountId(accountId).flatMap(mapperTransaction::toDto);
+    return transactionRepository.findByAccountId(accountId).map(mapperTransaction::toDto);
   }
 }

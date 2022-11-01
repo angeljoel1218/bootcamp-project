@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
-@RefreshScope
 @RestController
+@RefreshScope
 @RequestMapping("/credit/card")
 public class CreditCardController {
 
@@ -33,12 +33,15 @@ public class CreditCardController {
     }
 
     @GetMapping("/{id}")
-    public Mono<CreditCard> findById(@PathVariable("id") String id){
-        return creditCardService.findById(id);
+    public Mono<ResponseEntity<CreditCard>> findById(@PathVariable("id") String id){
+        return creditCardService.findById(id).map(a -> ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(a))
+            .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping()
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.CREATED)
     public  Mono<CreditCard> create(@RequestBody @Valid CreditCard creditMono){
         return  creditCardService.create(creditMono);
     }

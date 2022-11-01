@@ -79,9 +79,10 @@ public class SavingsAccountServiceImpl implements SavingsAccountService<SavingsA
                 })
                 .flatMap(productAccountDto -> {
                     accountDto.setTypeAccount(TypeAccount.SAVINGS_ACCOUNT);
-                    Mono<SavingsAccount> savingsAccountMono = mapperSavingsAccount.toSavingsAccount(accountDto)
-                            .flatMap(savingsAccountRepository::insert);
-                    return savingsAccountMono.flatMap(mapperSavingsAccount::toDto);
+                    return Mono.just(accountDto)
+                            .map(mapperSavingsAccount::toSavingsAccount)
+                            .flatMap(savingsAccountRepository::insert)
+                            .map(mapperSavingsAccount::toDto);
                 });
     };
     @Override
