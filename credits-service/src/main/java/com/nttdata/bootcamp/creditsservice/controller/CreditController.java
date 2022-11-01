@@ -24,6 +24,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RefreshScope
 @RequestMapping("credit")
 public class CreditController {
     @Autowired

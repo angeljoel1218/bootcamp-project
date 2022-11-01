@@ -20,6 +20,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RefreshScope
 @RequestMapping("/credit/card")
 public class CreditCardController {
 
