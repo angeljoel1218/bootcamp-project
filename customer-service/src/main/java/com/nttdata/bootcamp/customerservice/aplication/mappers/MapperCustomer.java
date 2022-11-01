@@ -28,7 +28,7 @@ public class MapperCustomer {
     dto.setItsPyme(Objects.equals(TypeProfile.PYME, dto.getTypeProfile()));
     dto.setItsCompany(Objects.equals(TypeCustomer.COMPANY, dto.getTypeCustomer()));
     dto.setItsPersonal(Objects.equals(TypeCustomer.PERSONAL, dto.getTypeCustomer()));
-    return dto;
+  return dto;
   }
 
 

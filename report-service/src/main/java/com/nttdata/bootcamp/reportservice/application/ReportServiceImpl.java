@@ -136,7 +136,7 @@ public class ReportServiceImpl  implements  ReportSevice{
       return Flux.concat(
 
         /*Accounts*/
-         accountFeignClient.findAccountByHolderId(customerId).map(account->{
+         accountFeignClient.findAccountByHolderId(customerId).map(account -> {
            Map<String,Object> objectMap = new LinkedHashMap<>();
            objectMap.put("Type", account.getTypeAccount());
            objectMap.put("Number", account.getNumber());
@@ -146,7 +146,7 @@ public class ReportServiceImpl  implements  ReportSevice{
 
          /*Credits */
 
-         creditFeignClient.findCreditByIdCustomer(customerId).map(credit->{
+         creditFeignClient.findCreditByIdCustomer(customerId).map(credit -> {
            Map<String,Object> objectMap = new LinkedHashMap<>();
            objectMap.put("Type", "Credit");
            objectMap.put("Id", credit.getId());
@@ -156,7 +156,7 @@ public class ReportServiceImpl  implements  ReportSevice{
          }),
 
         /*Credit card*/
-          creditFeignClient.findCreditCardByIdCustomer(customerId).map(credit->{
+          creditFeignClient.findCreditCardByIdCustomer(customerId).map(credit -> {
             Map<String,Object> objectMap = new LinkedHashMap<>();
             objectMap.put("Type", "Credit Card");
             objectMap.put("Id", credit.getId());

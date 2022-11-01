@@ -6,15 +6,21 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * javadoc.
+ * Bank
+ * @since 2022
+ */
 public interface CreditDuesRepository extends ReactiveMongoRepository<CreditDues, String> {
 
-    Flux<CreditDues> findByIdCredit(String idCredit);
+  Flux<CreditDues> findByIdCredit(String idCredit);
 
-    Mono<CreditDues> findByIdCreditAndNroDues(String idCredit, Integer nroDues);
+  Mono<CreditDues> findByIdCreditAndNroDues(String idCredit, Integer nroDues);
 
-    Mono<Void> deleteByIdCredit(String idCredit);
+  Mono<Void> deleteByIdCredit(String idCredit);
 
-    Mono<CreditDues> findFirstByIdCreditAndStatusOrderByExpirationDateAsc(String idCredit, CreditStatus status);
+  Mono<CreditDues> findFirstByIdCreditAndStatusOrderByExpirationDateAsc(String idCredit,
+                                                                        CreditStatus status);
 
 
 }

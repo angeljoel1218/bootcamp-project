@@ -1,9 +1,13 @@
 package com.nttdata.bootcamp.creditsservice.model.dto;
 
+import java.math.BigDecimal;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
+/**
+ * javadoc.
+ * Bank
+ * @since 2022
+ */
 @Data
 public class CreditDuesDto {
 

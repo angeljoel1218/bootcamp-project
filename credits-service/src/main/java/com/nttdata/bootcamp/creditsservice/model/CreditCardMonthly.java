@@ -1,17 +1,19 @@
 package com.nttdata.bootcamp.creditsservice.model;
 
-
 import com.nttdata.bootcamp.creditsservice.model.constant.CreditStatus;
+import java.math.BigDecimal;
+import java.util.Date;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
-import java.util.Date;
+/**
+ * javadoc.
+ * Bank
+ * @since 2022
+ */
 
-@Document(collection = "credit_card_monthly" )
-@Getter
-@Setter
+@Document(collection = "credit_card_monthly")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

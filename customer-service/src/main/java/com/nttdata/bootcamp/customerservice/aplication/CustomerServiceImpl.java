@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 /**
  * Some javadoc.
  *
- * @author Alex Bejarano
  * @since 2022
  */
 @Service
@@ -24,33 +23,33 @@ public class CustomerServiceImpl implements CustomerService {
 
   @Override
   public Mono<CustomerDto> create(CustomerDto  customerDto) {
-    return Mono.just(customerDto).map(mapperCustomer::toCustomer)
-      .flatMap(costumerRepository::insert)
-      .map(mapperCustomer::toDto);
+  return Mono.just(customerDto).map(mapperCustomer::toCustomer)
+  .flatMap(costumerRepository::insert)
+  .map(mapperCustomer::toDto);
   }
 
   @Override
   public Mono<CustomerDto> update(CustomerDto customerDto, String id) {
-    return costumerRepository.findById(id)
-      .flatMap(c -> Mono.just(customerDto).map(mapperCustomer::toCustomer))
-      .doOnNext(c -> c.setId(id))
-      .flatMap(costumerRepository::save)
-      .map(mapperCustomer::toDto);
+  return costumerRepository.findById(id)
+  .flatMap(c -> Mono.just(customerDto).map(mapperCustomer::toCustomer))
+  .doOnNext(c -> c.setId(id))
+  .flatMap(costumerRepository::save)
+  .map(mapperCustomer::toDto);
   }
 
   @Override
   public Mono<Void> delete(String id) {
-    return  costumerRepository.findById(id).flatMap(costumerRepository::delete);
+  return  costumerRepository.findById(id).flatMap(costumerRepository::delete);
   }
 
   @Override
   public Flux<CustomerDto> findAll() {
-    return costumerRepository.findAll().map(mapperCustomer::toDto);
+  return costumerRepository.findAll().map(mapperCustomer::toDto);
   }
 
   @Override
   public Mono<CustomerDto> findById(String id) {
-    return costumerRepository.findById(id).map(mapperCustomer::toDto);
+  return costumerRepository.findById(id).map(mapperCustomer::toDto);
   }
 
 }

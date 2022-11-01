@@ -16,6 +16,7 @@ import java.util.List;
 @Log4j2
 public class AccountFeignClientFallBack implements AccountFeignClient {
 
+
     @Override
     public Flux<AccountDto> findAccountByHolderId(String id) {
         log.info("findAccountByHolderId service no available  {}", id);

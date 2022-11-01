@@ -5,12 +5,19 @@ import com.nttdata.bootcamp.creditsservice.model.constant.CreditStatus;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 
-public interface CreditCardMonthlyRepository extends ReactiveMongoRepository<CreditCardMonthly,String> {
+/**
+ * javadoc.
+ * Bank
+ * @since 2022
+ */
+public interface CreditCardMonthlyRepository
+    extends ReactiveMongoRepository<CreditCardMonthly, String> {
 
   Mono<CreditCardMonthly> findFirstByIdCreditCardOrderByEndDateDesc(String idCreditCard);
 
 
-  Mono<CreditCardMonthly> findFirstByIdCreditCardAndStatusOrderByEndDateAsc(String idCreditCard, CreditStatus status);
+  Mono<CreditCardMonthly> findFirstByIdCreditCardAndStatusOrderByEndDateAsc(String idCreditCard,
+                                                                            CreditStatus status);
 
 
 }
