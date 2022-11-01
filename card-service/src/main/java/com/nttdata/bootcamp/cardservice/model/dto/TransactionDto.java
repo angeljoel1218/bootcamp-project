@@ -1,13 +1,24 @@
 package com.nttdata.bootcamp.cardservice.model.dto;
 
+import com.nttdata.bootcamp.cardservice.model.constant.TypeAccount;
+import com.nttdata.bootcamp.cardservice.model.constant.TypeAffectation;
+import com.nttdata.bootcamp.cardservice.model.constant.TypeTransaction;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 public class TransactionDto {
-    private String cardNumber;
+    private String id;
+    private String operation;
     private BigDecimal amount;
-    private String detail;
-    private String entity;
+    private BigDecimal commission;
+    private String accountId;
+    private String sourceAccount;
+    private String targetAccount;
+    private Date date;
+    private TypeTransaction type;
+    private TypeAffectation affectation;
+    private TypeAccount typeAccount;
 }

@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 public class CustomerClientService {
     @Autowired
     CustomerClient customerClient;
-
+    @Autowired
     ReactiveCircuitBreakerFactory reactiveCircuitBreakerFactory;
 
     public Mono<CustomerDto> getCustomer(String id) {

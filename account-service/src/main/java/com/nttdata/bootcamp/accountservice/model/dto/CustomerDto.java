@@ -4,6 +4,8 @@ import com.nttdata.bootcamp.accountservice.model.constant.TypeCustomer;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeProfile;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class CustomerDto {
     private String id;
@@ -15,4 +17,8 @@ public class CustomerDto {
     private String status;
     private TypeCustomer typeCustomer;
     private TypeProfile typeProfile;
+    private boolean itsVip;
+    private boolean itsPyme;
+    private boolean itsCompany;
+    private boolean itsPersonal;
 }

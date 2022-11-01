@@ -56,3 +56,7 @@ spring:
           filters:
             - name: SCGWPreFilter
             - name: SCGWPostFilter
+        - id: card-service
+          uri: lb://CARD-SERVICE
+          predicates:
+            - Path=/card/**

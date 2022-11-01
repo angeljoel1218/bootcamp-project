@@ -106,14 +106,25 @@ services:
       context: .
       dockerfile: ./report-service/Dockerfile
     depends_on:
-      - product-service
-      - customer-service
-      - account-service
-      - credit-service
+      - config-server
       - discovery-service
     image: report-service:latest
     ports:
       - '8085:8085'
+    networks:
+      - bootcamp
+  card-service:
+    container_name: card-service
+    build:
+      context: .
+      dockerfile: ./card-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - config-server
+      - discovery-service
+    image: card-service:latest
+    ports:
+      - '8086:8086'
     networks:
       - bootcamp
 networks:

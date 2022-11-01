@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 
 @Document("cards")
 @Getter
@@ -23,5 +24,5 @@ public class Card {
     private String cvv;
     private CardType cardType;
     private String holderId;
-    private BankAccount[] accounts;
+    private List<BankAccount> accounts;
 }

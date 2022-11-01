@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.accountservice.application;
 
+import com.nttdata.bootcamp.accountservice.application.exception.InsufficientBalanceException;
 import com.nttdata.bootcamp.accountservice.application.exception.TransactionException;
 import com.nttdata.bootcamp.accountservice.application.mapper.MapperTransaction;
 import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.CustomerClientService;
@@ -59,7 +60,7 @@ public class TransactionCurrentAccountServiceImpl implements TransactionCurrentA
                 .switchIfEmpty(Mono.error(new TransactionException("Account number does not exist")))
                 .doOnNext(currentAccount -> {
                     if (withdrawDto.getAmount().compareTo(currentAccount.getBalance()) == 1 ) {
-                        throw new TransactionException("There is not enough balance to execute the operation");
+                        throw new InsufficientBalanceException("There is not enough balance to execute the operation");
                     }
                 })
                 .flatMap(currentAccount -> customerClient.getCustomer(currentAccount.getHolderId())
@@ -71,7 +72,7 @@ public class TransactionCurrentAccountServiceImpl implements TransactionCurrentA
                                         .doOnNext(productDto -> {
                                             BigDecimal minFixedAmount = currentAccount.getBalance().subtract(withdrawDto.getAmount());
                                             if (minFixedAmount.compareTo(BigDecimal.valueOf(productDto.getMinFixedAmount())) == -1 ) {
-                                                throw new TransactionException("Error the account requires a minimum amount of balance allowed");
+                                                throw new InsufficientBalanceException("Error the account requires a minimum amount of balance allowed");
                                             }
                                         })
                                         .flatMap(productDto -> this.execWithdraw(currentAccount, withdrawDto));
@@ -85,7 +86,7 @@ public class TransactionCurrentAccountServiceImpl implements TransactionCurrentA
                 .switchIfEmpty(Mono.error(new TransactionException("Account number does not exist")))
                 .doOnNext(currentAccount -> {
                     if (transferDto.getAmount().compareTo(currentAccount.getBalance()) == 1 ) {
-                        throw new TransactionException("There is not enough balance to execute the operation");
+                        throw new InsufficientBalanceException("There is not enough balance to execute the operation");
                     }
                 })
                 .flatMap(currentAccount -> {
@@ -104,7 +105,7 @@ public class TransactionCurrentAccountServiceImpl implements TransactionCurrentA
                                                 .doOnNext(productDto -> {
                                                     BigDecimal minFixedAmount = currentAccount.getBalance().subtract(transferDto.getAmount());
                                                     if (minFixedAmount.compareTo(BigDecimal.valueOf(productDto.getMinFixedAmount())) == -1 ) {
-                                                        throw new TransactionException("Error the account requires a minimum amount of balance allowed");
+                                                        throw new InsufficientBalanceException("Error the account requires a minimum amount of balance allowed");
                                                     }
                                                 })
                                                 .flatMap(productDto -> this.transferBalanceService.balanceToTargetAccount(transferDto)

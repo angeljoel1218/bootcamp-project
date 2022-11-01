@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.accountservice.application;
 
+import com.nttdata.bootcamp.accountservice.application.exception.InsufficientBalanceException;
 import com.nttdata.bootcamp.accountservice.application.exception.TransactionException;
 import com.nttdata.bootcamp.accountservice.application.helper.DateUtil;
 import com.nttdata.bootcamp.accountservice.application.mapper.MapperTransaction;
@@ -91,7 +92,7 @@ public class TransactionFixedTermAccountServiceImpl implements TransactionFixedT
                                                 }
                                                 BigDecimal totalAmount = withdrawDto.getAmount().add(commission);
                                                 if (totalAmount.compareTo(fixedTermAccount.getBalance()) == 1) {
-                                                    throw new TransactionException("There is not enough balance to execute the operation");
+                                                    throw new InsufficientBalanceException("There is not enough balance to execute the operation");
                                                 }
                                                 operationDto.setCommission(commission);
                                                 operationDto.setAmount(withdrawDto.getAmount().add(commission));
@@ -111,7 +112,7 @@ public class TransactionFixedTermAccountServiceImpl implements TransactionFixedT
                         throw new TransactionException("Date not allowed to perform operations");
                     }
                     if (transferDto.getAmount().compareTo(fixedTermAccount.getBalance()) == 1) {
-                        throw new TransactionException("There is not enough balance to execute the operation");
+                        throw new InsufficientBalanceException("There is not enough balance to execute the operation");
                     }
                 })
                 .flatMap(fixedTermAccount -> {
@@ -131,7 +132,7 @@ public class TransactionFixedTermAccountServiceImpl implements TransactionFixedT
                                             }
                                             BigDecimal totalAmount = transferDto.getAmount().add(commission);
                                             if (totalAmount.compareTo(fixedTermAccount.getBalance()) == 1) {
-                                                throw new TransactionException("There is not enough balance to execute the operation");
+                                                throw new InsufficientBalanceException("There is not enough balance to execute the operation");
                                             }
                                             BigDecimal finalCommission = commission;
                                             fixedTermAccount.setBalance(fixedTermAccount.getBalance().subtract(totalAmount));

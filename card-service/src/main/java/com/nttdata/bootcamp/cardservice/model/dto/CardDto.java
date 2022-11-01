@@ -5,6 +5,7 @@ import com.nttdata.bootcamp.cardservice.model.constant.CardType;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class CardDto {
@@ -14,5 +15,5 @@ public class CardDto {
     private String cvv;
     private CardType cardType;
     private String holderId;
-    private BankAccount[] accounts;
+    private List<BankAccount> accounts;
 }

@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.accountservice.application;
 
+import com.nttdata.bootcamp.accountservice.application.exception.InsufficientBalanceException;
 import com.nttdata.bootcamp.accountservice.application.exception.TransactionException;
 import com.nttdata.bootcamp.accountservice.application.helper.DateUtil;
 import com.nttdata.bootcamp.accountservice.application.mapper.MapperTransaction;
@@ -79,7 +80,7 @@ public class TransactionSavingsAccountServiceImpl implements TransactionSavingsA
                                             }
                                             BigDecimal totalAmount = withdrawDto.getAmount().add(commission);
                                             if (totalAmount.compareTo(savingsAccount.getBalance()) == 1) {
-                                                throw new TransactionException("There is not enough balance to execute the operation");
+                                                throw new InsufficientBalanceException("There is not enough balance to execute the operation");
                                             }
                                             savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));
                                             savingsAccount.setUpdatedAt(new Date());
@@ -114,7 +115,7 @@ public class TransactionSavingsAccountServiceImpl implements TransactionSavingsA
                                             }
                                             BigDecimal totalAmount = transferDto.getAmount().add(commission);
                                             if (totalAmount.compareTo(savingsAccount.getBalance()) == 1) {
-                                                throw new TransactionException("There is not enough balance to execute the operation");
+                                                throw new InsufficientBalanceException("There is not enough balance to execute the operation");
                                             }
                                             BigDecimal finalCommission = commission;
                                             savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));

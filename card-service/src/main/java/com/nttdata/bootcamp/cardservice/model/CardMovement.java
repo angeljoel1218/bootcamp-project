@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Document("card_movements")
 @Getter
@@ -22,6 +23,6 @@ public class CardMovement {
     private String detail;
     private String entity;
     private BigDecimal amount;
-    private String operationDate;
+    private Date operationDate;
     private String transactionId;
 }
