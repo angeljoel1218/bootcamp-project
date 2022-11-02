@@ -62,7 +62,7 @@ public class AccountServiceImpl implements AccountService<AccountDto> {
   public Flux<AccountDto> findByCreateDateBetweenAndProductId(Date startDate,
                                                               Date endDate, String productId) {
 
-    return accountRepository.findByCreateAtBetweenAndProductId(startDate,
+    return accountRepository.findByCreatedAtBetweenAndProductId(startDate,
       endDate, productId).map(mapperAccount::toDto);
 
   }

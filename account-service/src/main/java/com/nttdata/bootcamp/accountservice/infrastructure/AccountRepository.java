@@ -12,5 +12,5 @@ public interface AccountRepository extends ReactiveMongoRepository<Account, Stri
 
   Flux<Account> findByHolderId(String holderId);
 
-  public  Flux<Account> findByCreateAtBetweenAndProductId(Date start, Date end, String productId);
+  public  Flux<Account> findByCreatedAtBetweenAndProductId(Date start, Date end, String productId);
 }
