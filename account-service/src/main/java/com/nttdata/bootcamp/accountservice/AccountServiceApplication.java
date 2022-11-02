@@ -5,6 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import reactivefeign.spring.config.EnableReactiveFeignClients;
 
+/**
+ * javadoc.
+ * @since 2022
+ */
 @SpringBootApplication
 @EnableReactiveFeignClients
 @EnableEurekaClient

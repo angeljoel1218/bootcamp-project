@@ -6,10 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import reactor.core.publisher.Mono;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * javadoc.
+ * @since 2022
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
   @ExceptionHandler(InsufficientBalanceException.class)

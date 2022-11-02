@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
  * javadoc.
  * @since 2022
  */
+
 public interface AccountService<T> extends GenericAccountService<T> {
   public Mono<T> findByNumber(String number);
 

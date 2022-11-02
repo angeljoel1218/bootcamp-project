@@ -15,6 +15,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
+/**
+ * javadoc.
+ * @since 2022
+ */
 @RefreshScope
 @RestController
 public class AccountController {
