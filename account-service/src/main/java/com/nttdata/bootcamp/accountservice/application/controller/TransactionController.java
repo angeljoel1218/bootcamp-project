@@ -1,6 +1,6 @@
 package com.nttdata.bootcamp.accountservice.application.controller;
 
-import com.nttdata.bootcamp.accountservice.application.TransactionService;
+import com.nttdata.bootcamp.accountservice.application.service.TransactionService;
 import com.nttdata.bootcamp.accountservice.model.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

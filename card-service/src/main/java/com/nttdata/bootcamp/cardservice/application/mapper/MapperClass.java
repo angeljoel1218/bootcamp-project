@@ -3,16 +3,12 @@ package com.nttdata.bootcamp.cardservice.application.mapper;
 import com.nttdata.bootcamp.cardservice.model.BankAccount;
 import com.nttdata.bootcamp.cardservice.model.Card;
 import com.nttdata.bootcamp.cardservice.model.CardMovement;
-import com.nttdata.bootcamp.cardservice.model.dto.BankAccountDto;
-import com.nttdata.bootcamp.cardservice.model.dto.CardDto;
-import com.nttdata.bootcamp.cardservice.model.dto.CardMovementDto;
-import com.nttdata.bootcamp.cardservice.model.dto.WithdrawDto;
+import com.nttdata.bootcamp.cardservice.model.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
 @Component
-public class MapperCard {
+public class MapperClass {
     public CardDto toDto(Card card) {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(card, CardDto.class);
@@ -36,5 +32,20 @@ public class MapperCard {
     public CardMovement toCardMovement(WithdrawDto withdrawDto) {
         ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(withdrawDto, CardMovement.class);
+    }
+
+    public WithdrawDto toWithdrawDto(PaymentDto paymentDto) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(paymentDto, WithdrawDto.class);
+    }
+
+    public CreditDuesRequestDto toCreditDuesRequestDto(PaymentDto paymentDto) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(paymentDto, CreditDuesRequestDto.class);
+    }
+
+    public TransactionCreditDto toTransactionCreditDto(PaymentDto paymentDto) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(paymentDto, TransactionCreditDto.class);
     }
 }

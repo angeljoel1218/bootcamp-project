@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.accountservice.application;
+package com.nttdata.bootcamp.accountservice.application.service;
 
 import com.nttdata.bootcamp.accountservice.model.dto.AccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;

@@ -2,12 +2,14 @@ package com.nttdata.bootcamp.cardservice.application;
 
 import com.nttdata.bootcamp.cardservice.application.exception.CardException;
 import com.nttdata.bootcamp.cardservice.application.exception.InsufficientBalanceException;
-import com.nttdata.bootcamp.cardservice.application.mapper.MapperCard;
+import com.nttdata.bootcamp.cardservice.application.mapper.MapperClass;
 import com.nttdata.bootcamp.cardservice.infrastructure.CardMovementRepository;
 import com.nttdata.bootcamp.cardservice.infrastructure.CardRepository;
-import com.nttdata.bootcamp.cardservice.infrastructure.feignclient.AccountService;
+import com.nttdata.bootcamp.cardservice.infrastructure.webclient.AccountService;
+import com.nttdata.bootcamp.cardservice.infrastructure.webclient.CreditClient;
 import com.nttdata.bootcamp.cardservice.model.BankAccount;
 import com.nttdata.bootcamp.cardservice.model.Card;
+import com.nttdata.bootcamp.cardservice.model.constant.TypeCredit;
 import com.nttdata.bootcamp.cardservice.model.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +26,36 @@ public class TransactionServiceImpl implements TransactionService{
     @Autowired
     AccountService accountService;
     @Autowired
-    MapperCard mapperCard;
+    CreditClient creditClient;
+    @Autowired
+    MapperClass mapperClass;
     @Override
     public Mono<CardMovementDto> payment(PaymentDto paymentDto) {
-        return null;
+        return cardRepository.findByNumber(paymentDto.getCardNumber())
+                .switchIfEmpty(Mono.error(new CardException("The number card does not exist")))
+                .doOnNext(card -> {
+                    if (!paymentDto.getTypeCredit().equals(TypeCredit.CREDIT)
+                            && !paymentDto.getTypeCredit().equals(TypeCredit.CREDIT_CARD))
+                    {
+                        throw new CardException("Type credit not exist");
+                    }
+                })
+                .flatMap(card -> {
+                    WithdrawDto withdrawDto = mapperClass.toWithdrawDto(paymentDto);
+                    return this.execTransaction(withdrawDto, card, 1)
+                            .flatMap(transactionDto -> this.saveCardMovement(transactionDto, withdrawDto, card.getId()));
+                })
+                .flatMap(cardMovementDto -> {
+                    if (paymentDto.getTypeCredit().equals(TypeCredit.CREDIT)) {
+                        CreditDuesRequestDto creditDuesRequestDto = mapperClass.toCreditDuesRequestDto(paymentDto);
+                        return creditClient.paymentCredit(creditDuesRequestDto)
+                                .map(s -> cardMovementDto);
+                    }
+                    TransactionCreditDto transactionCreditDto = mapperClass.toTransactionCreditDto(paymentDto);
+                    transactionCreditDto.setDescription(paymentDto.getDetail());
+                    return creditClient.paymentCreditCard(transactionCreditDto)
+                            .map(creditDuesDto -> cardMovementDto);
+                });
     }
 
     @Override
@@ -71,13 +99,13 @@ public class TransactionServiceImpl implements TransactionService{
 
     public Mono<CardMovementDto> saveCardMovement(TransactionDto transactionDto, WithdrawDto withdrawDto, String cardId) {
         return Mono.just(withdrawDto)
-                .map(mapperCard::toCardMovement)
+                .map(mapperClass::toCardMovement)
                 .doOnNext(cardMovement -> {
                     cardMovement.setCardId(cardId);
                     cardMovement.setOperationDate(transactionDto.getDate());
                     cardMovement.setTransactionId(transactionDto.getId());
                 })
                 .flatMap(cardMovementRepository::insert)
-                .map(mapperCard::toCardMovementDto);
+                .map(mapperClass::toCardMovementDto);
     }
 }

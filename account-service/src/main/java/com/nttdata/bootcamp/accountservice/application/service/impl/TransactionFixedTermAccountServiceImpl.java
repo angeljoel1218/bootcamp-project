@@ -1,9 +1,10 @@
-package com.nttdata.bootcamp.accountservice.application;
+package com.nttdata.bootcamp.accountservice.application.service.impl;
 
 import com.nttdata.bootcamp.accountservice.application.exception.InsufficientBalanceException;
 import com.nttdata.bootcamp.accountservice.application.exception.TransactionException;
 import com.nttdata.bootcamp.accountservice.application.helper.DateUtil;
 import com.nttdata.bootcamp.accountservice.application.mapper.MapperTransaction;
+import com.nttdata.bootcamp.accountservice.application.service.TransactionFixedTermAccountService;
 import com.nttdata.bootcamp.accountservice.infrastructure.FixedTermAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClientService;

@@ -1,7 +1,8 @@
-package com.nttdata.bootcamp.accountservice.application;
+package com.nttdata.bootcamp.accountservice.application.service.impl;
 
 import com.nttdata.bootcamp.accountservice.application.mapper.MapperAccount;
 import com.nttdata.bootcamp.accountservice.application.mapper.MapperTransaction;
+import com.nttdata.bootcamp.accountservice.application.service.GeneralAccountService;
 import com.nttdata.bootcamp.accountservice.infrastructure.AccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.TransactionRepository;
 import com.nttdata.bootcamp.accountservice.model.dto.AccountDto;
@@ -9,7 +10,7 @@ import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Flux;
 
-public class GeneralAccountServiceImpl implements GeneralAccountService{
+public class GeneralAccountServiceImpl implements GeneralAccountService {
 
   @Autowired
   AccountRepository accountRepository;

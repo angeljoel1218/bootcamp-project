@@ -1,11 +1,11 @@
-package com.nttdata.bootcamp.accountservice.application;
+package com.nttdata.bootcamp.accountservice.application.service.impl;
 
 import com.nttdata.bootcamp.accountservice.application.exception.AccountException;
 import com.nttdata.bootcamp.accountservice.application.mapper.MapperFixedTerm;
+import com.nttdata.bootcamp.accountservice.application.service.FixedTermAccountService;
 import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.CustomerClientService;
 import com.nttdata.bootcamp.accountservice.infrastructure.FixedTermAccountRepository;
 import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClientService;
-import com.nttdata.bootcamp.accountservice.model.*;
 import com.nttdata.bootcamp.accountservice.model.constant.StateAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeCustomer;

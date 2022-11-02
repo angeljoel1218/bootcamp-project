@@ -1,10 +1,10 @@
 package com.nttdata.bootcamp.cardservice.application;
 
 import com.nttdata.bootcamp.cardservice.application.exception.CardException;
-import com.nttdata.bootcamp.cardservice.application.mapper.MapperCard;
+import com.nttdata.bootcamp.cardservice.application.mapper.MapperClass;
 import com.nttdata.bootcamp.cardservice.infrastructure.CardMovementRepository;
 import com.nttdata.bootcamp.cardservice.infrastructure.CardRepository;
-import com.nttdata.bootcamp.cardservice.infrastructure.feignclient.AccountService;
+import com.nttdata.bootcamp.cardservice.infrastructure.webclient.AccountService;
 import com.nttdata.bootcamp.cardservice.model.BankAccount;
 import com.nttdata.bootcamp.cardservice.model.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class CardServiceImpl implements CardService{
     @Autowired
     AccountService accountService;
     @Autowired
-    MapperCard mapperCard;
+    MapperClass mapperClass;
     @Override
     public Mono<CardDto> registerCard(CardDto cardDto) {
         return accountService.findByHolderId(cardDto.getHolderId())
@@ -42,9 +42,9 @@ public class CardServiceImpl implements CardService{
                                 });
                     }
                 })
-                .then(Mono.just(cardDto).map(mapperCard::toCard)
+                .then(Mono.just(cardDto).map(mapperClass::toCard)
                         .flatMap(cardRepository::insert)
-                        .map(mapperCard::toDto));
+                        .map(mapperClass::toDto));
     }
 
     @Override
@@ -63,14 +63,14 @@ public class CardServiceImpl implements CardService{
                     bankAccount.setIsDefault(bankAccount.getOrder() == 1);
                     card.getAccounts().add(bankAccount);
                     return cardRepository.save(card)
-                            .thenReturn(mapperCard.toBankAccountDto(bankAccount));
+                            .thenReturn(mapperClass.toBankAccountDto(bankAccount));
                 });
     }
 
     @Override
     public Flux<CardMovementDto> listMovements(String cardId) {
         return cardMovementRepository.findByCardId(cardId)
-                .map(mapperCard::toCardMovementDto);
+                .map(mapperClass::toCardMovementDto);
     }
 
     @Override
