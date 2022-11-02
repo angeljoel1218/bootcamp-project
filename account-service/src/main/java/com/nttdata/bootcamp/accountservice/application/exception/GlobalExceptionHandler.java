@@ -12,26 +12,26 @@ import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(InsufficientBalanceException.class)
-    public Mono<ResponseEntity<ApiError>> handleInsufficientBalanceException
-            (InsufficientBalanceException ex) {
-        List<String> errors = new ArrayList<>();
-        errors.add(ex.getLocalizedMessage());
-        ApiError apiError = new ApiError();
-        apiError.setCode(ResponseCode.INSUFFICIENT_BALANCE);
-        apiError.setMessage(ex.getMessage());
-        apiError.setErrors(errors);
-        return Mono.just(ResponseEntity.badRequest().body(apiError));
-    }
+  @ExceptionHandler(InsufficientBalanceException.class)
+  public Mono<ResponseEntity<ApiError>> handleInsufficientBalanceException(
+      InsufficientBalanceException ex) {
+    List<String> errors = new ArrayList<>();
+    errors.add(ex.getLocalizedMessage());
+    ApiError apiError = new ApiError();
+    apiError.setCode(ResponseCode.INSUFFICIENT_BALANCE);
+    apiError.setMessage(ex.getMessage());
+    apiError.setErrors(errors);
+    return Mono.just(ResponseEntity.badRequest().body(apiError));
+  }
 
-    @ExceptionHandler(Exception.class)
-    public Mono<ResponseEntity<ApiError>> handleGlobalException(Exception ex){
-        List<String> errors = new ArrayList<>();
-        errors.add(ex.getLocalizedMessage());
-        ApiError apiError = new ApiError();
-        apiError.setCode(ResponseCode.INVALID_DATA);
-        apiError.setMessage(ex.getMessage());
-        apiError.setErrors(errors);
-        return Mono.just(ResponseEntity.internalServerError().body(apiError));
-    }
+  @ExceptionHandler(Exception.class)
+  public Mono<ResponseEntity<ApiError>> handleGlobalException(Exception ex) {
+    List<String> errors = new ArrayList<>();
+    errors.add(ex.getLocalizedMessage());
+    ApiError apiError = new ApiError();
+    apiError.setCode(ResponseCode.INVALID_DATA);
+    apiError.setMessage(ex.getMessage());
+    apiError.setErrors(errors);
+    return Mono.just(ResponseEntity.internalServerError().body(apiError));
+  }
 }

@@ -18,16 +18,16 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FixedTermAccount {
-    @Id
-    private String id;
-    private String number;
-    private BigDecimal balance;
-    private String coin;
-    private String holderId;
-    private String productId;
-    private Integer dayOfOperation;
-    private Date createdAt;
-    private Date updatedAt;
-    private StateAccount state;
-    private TypeAccount typeAccount;
+  @Id
+  private String id;
+  private String number;
+  private BigDecimal balance;
+  private String coin;
+  private String holderId;
+  private String productId;
+  private Integer dayOfOperation;
+  private Date createdAt;
+  private Date updatedAt;
+  private StateAccount state;
+  private TypeAccount typeAccount;
 }

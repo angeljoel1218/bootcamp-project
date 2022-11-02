@@ -10,13 +10,13 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class CustomerClientService {
-    @Autowired
-    CustomerClient customerClient;
-    @Autowired
-    ReactiveCircuitBreakerFactory reactiveCircuitBreakerFactory;
+  @Autowired
+  CustomerClient customerClient;
+  @Autowired
+  ReactiveCircuitBreakerFactory reactiveCircuitBreakerFactory;
 
-    public Mono<CustomerDto> getCustomer(String id) {
-        return reactiveCircuitBreakerFactory.create("${circuitbreaker.instances.name}")
+  public Mono<CustomerDto> getCustomer(String id) {
+    return reactiveCircuitBreakerFactory.create("${circuitbreaker.instances.name}")
                 .run(customerClient.getCustomer(id), throwable -> Mono.error(new ServiceUnavailableException("The service is not available, try in a few minutes please")));
-    }
+  }
 }

@@ -2,6 +2,8 @@ package com.nttdata.bootcamp.accountservice.application.controller;
 
 import com.nttdata.bootcamp.accountservice.application.AccountService;
 import com.nttdata.bootcamp.accountservice.model.dto.AccountDto;
+import java.util.Date;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-import java.util.Date;
 
 @RefreshScope
 @RestController

@@ -47,8 +47,8 @@ public class CreditCardController {
 
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
-  public  Mono<CreditCard> create(@RequestBody @Valid CreditCard creditMono) {
-    return  creditCardService.create(creditMono);
+  public  Mono<CreditCard> create(@RequestBody @Valid CreditCard creditCard) {
+    return  creditCardService.create(creditCard);
   }
 
   @PutMapping("/{id}")
@@ -65,9 +65,9 @@ public class CreditCardController {
 
   @PostMapping("/payment")
   public  Mono<ResponseEntity<String>> payment(
-      @RequestBody TransactionCreditCard transactionCredit) {
+      @RequestBody TransactionCreditCard transactionCreditCard) {
 
-    return creditCardService.payment(transactionCredit)
+    return creditCardService.payment(transactionCreditCard)
       .map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
         log.info("Error:" + e.getMessage());
         return Mono.just(ResponseEntity.badRequest().build());
@@ -77,9 +77,9 @@ public class CreditCardController {
 
   @PostMapping("/charge")
   public  Mono<ResponseEntity<String>> charge(
-      @RequestBody TransactionCreditCard transactionCredit) {
+      @RequestBody TransactionCreditCard transactionCreditCard) {
 
-    return creditCardService.charge(transactionCredit)
+    return creditCardService.charge(transactionCreditCard)
       .map(c -> ResponseEntity.ok().body(c)).onErrorResume(e -> {
         log.info("Error:" + e.getMessage());
         return Mono.just(ResponseEntity.badRequest().build());

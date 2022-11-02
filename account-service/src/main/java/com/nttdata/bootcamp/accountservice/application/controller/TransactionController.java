@@ -11,26 +11,26 @@ import reactor.core.publisher.Mono;
 @RefreshScope
 @RestController
 public class TransactionController {
-    @Autowired
-    TransactionService<TransactionDto> transactionService;
+  @Autowired
+  TransactionService<TransactionDto> transactionService;
 
-    @PutMapping("account/transaction/deposit")
-    public Mono<TransactionDto> deposit(@RequestBody DepositDto depositDto){
-        return transactionService.deposit(depositDto);
-    }
+  @PutMapping("account/transaction/deposit")
+  public Mono<TransactionDto> deposit(@RequestBody DepositDto depositDto) {
+    return transactionService.deposit(depositDto);
+  }
 
-    @PutMapping("account/transaction/withdraw")
-    public Mono<TransactionDto> withdraw(@RequestBody WithdrawDto withdrawDto){
-        return transactionService.withdraw(withdrawDto);
-    }
+  @PutMapping("account/transaction/withdraw")
+  public Mono<TransactionDto> withdraw(@RequestBody WithdrawDto withdrawDto) {
+    return transactionService.withdraw(withdrawDto);
+  }
 
-    @PostMapping("account/transaction/transfer")
-    public Mono<TransactionDto> transfer(@RequestBody TransactionRequestDto transactionRequestDto) {
-        return transactionService.wireTransfer(transactionRequestDto);
-    }
+  @PostMapping("account/transaction/transfer")
+  public Mono<TransactionDto> transfer(@RequestBody TransactionRequestDto transactionRequestDto) {
+    return transactionService.wireTransfer(transactionRequestDto);
+  }
 
-    @GetMapping("account/transaction/{accountId}/list")
-    public Flux<TransactionDto> listTransaction(@PathVariable("accountId") String accountId) {
-        return transactionService.listTransactions(accountId);
-    }
+  @GetMapping("account/transaction/{accountId}/list")
+  public Flux<TransactionDto> listTransaction(@PathVariable("accountId") String accountId) {
+    return transactionService.listTransactions(accountId);
+  }
 }

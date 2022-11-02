@@ -8,13 +8,16 @@ import com.nttdata.bootcamp.accountservice.model.dto.AccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.FixedTermAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.SavingsAccountDto;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Date;
-
+/**
+ * javadoc.
+ * @since 2022
+ */
 @Service
 public class AccountServiceImpl implements AccountService<AccountDto> {
   @Autowired

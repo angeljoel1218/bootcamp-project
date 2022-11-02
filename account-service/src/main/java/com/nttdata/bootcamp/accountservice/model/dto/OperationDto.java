@@ -6,10 +6,10 @@ import java.math.BigDecimal;
 
 @Data
 public class OperationDto {
-    private BigDecimal amount;
-    private BigDecimal commission;
-    private String sourceAccount;
-    private String targetAccount;
-    private String accountId;
-    private String operation;
+  private BigDecimal amount;
+  private BigDecimal commission;
+  private String sourceAccount;
+  private String targetAccount;
+  private String accountId;
+  private String operation;
 }

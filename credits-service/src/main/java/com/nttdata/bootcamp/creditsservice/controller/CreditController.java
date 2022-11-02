@@ -45,9 +45,8 @@ public class CreditController {
 
   @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)
-  public Mono<Credit> create(@RequestBody @Valid Credit creditMono) {
-    Map<String, Object> response = new HashMap<>();
-    return creditService.create(creditMono);
+  public Mono<Credit> create(@RequestBody @Valid Credit credit) {
+    return creditService.create(credit);
   }
 
   @PostMapping("/payment")

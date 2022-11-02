@@ -18,125 +18,132 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * javadoc.
+ * @since 2022
+ */
 @Service
 public class TransactionSavingsAccountServiceImpl implements TransactionSavingsAccountService<SavingsAccountDto> {
-    @Autowired
-    ProductClientService productClient;
-    @Autowired
-    SavingsAccountRepository savingsAccountRepository;
-    @Autowired
-    TransactionRepository transactionRepository;
-    @Autowired
-    TransferBalanceService transferBalanceService;
-    @Autowired
-    MapperTransaction mapperTransaction;
-    @Override
-    public Mono<TransactionDto> deposit(DepositDto depositDto) {
-        return savingsAccountRepository.findByNumberAndTypeAccount(depositDto.getTargetAccount(), TypeAccount.SAVINGS_ACCOUNT)
-                .switchIfEmpty(Mono.error(new TransactionException("Account number does not exist")))
-                .flatMap(savingsAccount -> {
-                    OperationDto operationDto = new OperationDto();
-                    operationDto.setAccountId(savingsAccount.getId());
-                    operationDto.setTargetAccount(depositDto.getTargetAccount());
-                    operationDto.setOperation(depositDto.getOperation());
-                    return productClient.getProductAccount(savingsAccount.getProductId())
-                            .switchIfEmpty(Mono.error(new TransactionException("Product does not exist")))
-                            .flatMap(productAccountDto -> {
-                                return transactionRepository.countByDateBetweenAndAccountIdAndTypeNot(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId(), TypeTransaction.ENTRY_TRANSFER)
-                                        .doOnNext(count -> {
-                                            BigDecimal commission = BigDecimal.ZERO;
-                                            if(productAccountDto.getMaxMovements() <= count) {
-                                                commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
-                                            }
-                                            savingsAccount.setBalance(savingsAccount.getBalance().add(depositDto.getAmount()).subtract(commission));
-                                            savingsAccount.setUpdatedAt(new Date());
-                                            operationDto.setAmount(depositDto.getAmount().subtract(commission));
-                                            operationDto.setCommission(commission);
-                                        })
-                                        .flatMap(count -> {
-                                            return savingsAccountRepository.save(savingsAccount)
-                                                    .flatMap(sa -> this.transferBalanceService.saveTransaction(operationDto, TypeTransaction.DEPOSIT, TypeAffectation.INCREASE, TypeAccount.SAVINGS_ACCOUNT));
-                                        });
-                            });
-                });
-    }
-    @Override
-    public Mono<TransactionDto> withdraw(WithdrawDto withdrawDto) {
-        return savingsAccountRepository.findByNumberAndTypeAccount(withdrawDto.getAccountNumber(),TypeAccount.SAVINGS_ACCOUNT)
-                .switchIfEmpty(Mono.error(new TransactionException("Account number does not exist")))
-                .flatMap(savingsAccount -> {
-                    OperationDto operationDto = new OperationDto();
-                    operationDto.setAccountId(savingsAccount.getId());
-                    operationDto.setSourceAccount(withdrawDto.getAccountNumber());
-                    operationDto.setOperation(withdrawDto.getOperation());
-                    return productClient.getProductAccount(savingsAccount.getProductId())
-                            .switchIfEmpty(Mono.error(new TransactionException("Product does not exist")))
-                            .flatMap(productAccountDto -> {
-                                return transactionRepository.countByDateBetweenAndAccountIdAndTypeNot(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId(), TypeTransaction.ENTRY_TRANSFER)
-                                        .doOnNext(count -> {
-                                            BigDecimal commission = BigDecimal.ZERO;
-                                            if(productAccountDto.getMaxMovements() <= count) {
-                                                commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
-                                            }
-                                            BigDecimal totalAmount = withdrawDto.getAmount().add(commission);
-                                            if (totalAmount.compareTo(savingsAccount.getBalance()) == 1) {
-                                                throw new InsufficientBalanceException("There is not enough balance to execute the operation");
-                                            }
-                                            savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));
-                                            savingsAccount.setUpdatedAt(new Date());
-                                            operationDto.setAmount(withdrawDto.getAmount().add(commission));
-                                            operationDto.setCommission(commission);
-                                        })
-                                        .flatMap(count-> {
-                                            return savingsAccountRepository.save(savingsAccount)
-                                                    .flatMap(sa -> this.transferBalanceService.saveTransaction(operationDto, TypeTransaction.WITHDRAW, TypeAffectation.DECREMENT, TypeAccount.SAVINGS_ACCOUNT));
-                                        });
-                                });
-                            });
-    }
-    @Override
-    public Mono<TransactionDto> wireTransfer(TransactionRequestDto transferDto) {
-        return savingsAccountRepository.findByNumberAndTypeAccount(transferDto.getSourceAccount(),TypeAccount.SAVINGS_ACCOUNT)
-                .switchIfEmpty(Mono.error(new TransactionException("Account number does not exist")))
-                .flatMap(savingsAccount -> {
-                    OperationDto operationDto = new OperationDto();
-                    operationDto.setAccountId(savingsAccount.getId());
-                    operationDto.setSourceAccount(transferDto.getSourceAccount());
-                    operationDto.setTargetAccount(transferDto.getTargetAccount());
-                    operationDto.setOperation(transferDto.getOperation());
-                    return productClient.getProductAccount(savingsAccount.getProductId())
-                            .switchIfEmpty(Mono.error(new TransactionException("Product does not exist")))
-                            .flatMap(productAccountDto -> {
-                                return transactionRepository.countByDateBetweenAndAccountIdAndTypeNot(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId(), TypeTransaction.ENTRY_TRANSFER)
-                                        .doOnNext(count -> {
-                                            BigDecimal commission = BigDecimal.ZERO;
-                                            if(productAccountDto.getMaxMovements() <= count) {
-                                                commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
-                                            }
-                                            BigDecimal totalAmount = transferDto.getAmount().add(commission);
-                                            if (totalAmount.compareTo(savingsAccount.getBalance()) == 1) {
-                                                throw new InsufficientBalanceException("There is not enough balance to execute the operation");
-                                            }
-                                            BigDecimal finalCommission = commission;
-                                            savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));
-                                            savingsAccount.setUpdatedAt(new Date());
-                                            operationDto.setAmount(transferDto.getAmount().add(finalCommission));
-                                            operationDto.setCommission(finalCommission);
-                                        })
-                                        .flatMap(count-> {
-                                            return this.transferBalanceService.balanceToTargetAccount(transferDto)
-                                                    .flatMap(operationDto1 -> {
-                                                        return savingsAccountRepository.save(savingsAccount)
-                                                                .flatMap(rs -> this.transferBalanceService.saveTransaction(operationDto, TypeTransaction.OUTPUT_TRANSFER, TypeAffectation.DECREMENT, TypeAccount.SAVINGS_ACCOUNT));
-                                                    });
-                                            });
-                            });
-                });
-    }
+  @Autowired
+  ProductClientService productClient;
+  @Autowired
+  SavingsAccountRepository savingsAccountRepository;
+  @Autowired
+  TransactionRepository transactionRepository;
+  @Autowired
+  TransferBalanceService transferBalanceService;
+  @Autowired
+  MapperTransaction mapperTransaction;
 
-    @Override
-    public Flux<TransactionDto> listTransactions(String accountId) {
-        return transactionRepository.findByAccountIdAndTypeAccount(accountId, TypeAccount.SAVINGS_ACCOUNT)
-                .map(mapperTransaction::toDto);
-    }
+  @Override
+  public Mono<TransactionDto> deposit(DepositDto depositDto) {
+    return savingsAccountRepository.findByNumberAndTypeAccount(depositDto.getTargetAccount(), TypeAccount.SAVINGS_ACCOUNT)
+        .switchIfEmpty(Mono.error(new TransactionException("Account number does not exist")))
+        .flatMap(savingsAccount -> {
+          OperationDto operationDto = new OperationDto();
+          operationDto.setAccountId(savingsAccount.getId());
+          operationDto.setTargetAccount(depositDto.getTargetAccount());
+          operationDto.setOperation(depositDto.getOperation());
+          return productClient.getProductAccount(savingsAccount.getProductId())
+              .switchIfEmpty(Mono.error(new TransactionException("Product does not exist")))
+              .flatMap(productAccountDto -> {
+                return transactionRepository.countByDateBetweenAndAccountIdAndTypeNot(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId(), TypeTransaction.ENTRY_TRANSFER)
+                    .doOnNext(count -> {
+                      BigDecimal commission = BigDecimal.ZERO;
+                      if (productAccountDto.getMaxMovements() <= count) {
+                        commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
+                      }
+                      savingsAccount.setBalance(savingsAccount.getBalance().add(depositDto.getAmount()).subtract(commission));
+                      savingsAccount.setUpdatedAt(new Date());
+                      operationDto.setAmount(depositDto.getAmount().subtract(commission));
+                      operationDto.setCommission(commission);
+                    })
+                    .flatMap(count -> {
+                      return savingsAccountRepository.save(savingsAccount)
+                          .flatMap(sa -> this.transferBalanceService.saveTransaction(operationDto, TypeTransaction.DEPOSIT, TypeAffectation.INCREASE, TypeAccount.SAVINGS_ACCOUNT));
+                    });
+              });
+        });
+  }
+
+  @Override
+  public Mono<TransactionDto> withdraw(WithdrawDto withdrawDto) {
+    return savingsAccountRepository.findByNumberAndTypeAccount(withdrawDto.getAccountNumber(), TypeAccount.SAVINGS_ACCOUNT)
+        .switchIfEmpty(Mono.error(new TransactionException("Account number does not exist")))
+        .flatMap(savingsAccount -> {
+          OperationDto operationDto = new OperationDto();
+          operationDto.setAccountId(savingsAccount.getId());
+          operationDto.setSourceAccount(withdrawDto.getAccountNumber());
+          operationDto.setOperation(withdrawDto.getOperation());
+          return productClient.getProductAccount(savingsAccount.getProductId())
+              .switchIfEmpty(Mono.error(new TransactionException("Product does not exist")))
+              .flatMap(productAccountDto -> {
+                return transactionRepository.countByDateBetweenAndAccountIdAndTypeNot(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId(), TypeTransaction.ENTRY_TRANSFER)
+                    .doOnNext(count -> {
+                      BigDecimal commission = BigDecimal.ZERO;
+                      if (productAccountDto.getMaxMovements() <= count) {
+                        commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
+                      }
+                      BigDecimal totalAmount = withdrawDto.getAmount().add(commission);
+                      if (totalAmount.compareTo(savingsAccount.getBalance()) > 0) {
+                        throw new InsufficientBalanceException("There is not enough balance to execute the operation");
+                      }
+                      savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));
+                      savingsAccount.setUpdatedAt(new Date());
+                      operationDto.setAmount(withdrawDto.getAmount().add(commission));
+                      operationDto.setCommission(commission);
+                    })
+                    .flatMap(count -> {
+                      return savingsAccountRepository.save(savingsAccount)
+                          .flatMap(sa -> this.transferBalanceService.saveTransaction(operationDto, TypeTransaction.WITHDRAW, TypeAffectation.DECREMENT, TypeAccount.SAVINGS_ACCOUNT));
+                    });
+              });
+        });
+  }
+
+  @Override
+  public Mono<TransactionDto> wireTransfer(TransactionRequestDto transferDto) {
+    return savingsAccountRepository.findByNumberAndTypeAccount(transferDto.getSourceAccount(), TypeAccount.SAVINGS_ACCOUNT)
+        .switchIfEmpty(Mono.error(new TransactionException("Account number does not exist")))
+        .flatMap(savingsAccount -> {
+          OperationDto operationDto = new OperationDto();
+          operationDto.setAccountId(savingsAccount.getId());
+          operationDto.setSourceAccount(transferDto.getSourceAccount());
+          operationDto.setTargetAccount(transferDto.getTargetAccount());
+          operationDto.setOperation(transferDto.getOperation());
+          return productClient.getProductAccount(savingsAccount.getProductId())
+              .switchIfEmpty(Mono.error(new TransactionException("Product does not exist")))
+              .flatMap(productAccountDto -> {
+                return transactionRepository.countByDateBetweenAndAccountIdAndTypeNot(DateUtil.getStartOfMonth(), DateUtil.getEndOfMonth(), savingsAccount.getId(), TypeTransaction.ENTRY_TRANSFER)
+                    .doOnNext(count -> {
+                      BigDecimal commission = BigDecimal.ZERO;
+                      if (productAccountDto.getMaxMovements() <= count) {
+                        commission = commission.add(BigDecimal.valueOf(productAccountDto.getCommissionAmount()));
+                      }
+                      BigDecimal totalAmount = transferDto.getAmount().add(commission);
+                      if (totalAmount.compareTo(savingsAccount.getBalance()) > 0) {
+                        throw new InsufficientBalanceException("There is not enough balance to execute the operation");
+                      }
+                      BigDecimal finalCommission = commission;
+                      savingsAccount.setBalance(savingsAccount.getBalance().subtract(totalAmount));
+                      savingsAccount.setUpdatedAt(new Date());
+                      operationDto.setAmount(transferDto.getAmount().add(finalCommission));
+                      operationDto.setCommission(finalCommission);
+                    })
+                    .flatMap(count -> {
+                      return this.transferBalanceService.balanceToTargetAccount(transferDto)
+                          .flatMap(operationDto1 -> {
+                            return savingsAccountRepository.save(savingsAccount)
+                                .flatMap(rs -> this.transferBalanceService.saveTransaction(operationDto, TypeTransaction.OUTPUT_TRANSFER, TypeAffectation.DECREMENT, TypeAccount.SAVINGS_ACCOUNT));
+                          });
+                    });
+              });
+        });
+  }
+
+  @Override
+  public Flux<TransactionDto> listTransactions(String accountId) {
+    return transactionRepository.findByAccountIdAndTypeAccount(accountId, TypeAccount.SAVINGS_ACCOUNT)
+        .map(mapperTransaction::toDto);
+  }
 }

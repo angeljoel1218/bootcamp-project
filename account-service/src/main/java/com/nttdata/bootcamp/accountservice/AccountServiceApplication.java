@@ -9,9 +9,7 @@ import reactivefeign.spring.config.EnableReactiveFeignClients;
 @EnableReactiveFeignClients
 @EnableEurekaClient
 public class AccountServiceApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(AccountServiceApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(AccountServiceApplication.class, args);
+  }
 }

@@ -1,7 +1,8 @@
 package com.nttdata.bootcamp.accountservice.application.exception;
 
-public class InsufficientBalanceException extends RuntimeException{
-    public InsufficientBalanceException(String message) {
-        super(message);
-    }
+public class InsufficientBalanceException extends RuntimeException {
+  public InsufficientBalanceException(String message) {
+    super(message);
+  }
+
 }

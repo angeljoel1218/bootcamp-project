@@ -8,17 +8,17 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class CustomerDto {
-    private String id;
-    private String name;
-    private String lastName;
-    private String businessName;
-    private String emailAddress;
-    private String numberDocument;
-    private String status;
-    private TypeCustomer typeCustomer;
-    private TypeProfile typeProfile;
-    private boolean itsVip;
-    private boolean itsPyme;
-    private boolean itsCompany;
-    private boolean itsPersonal;
+  private String id;
+  private String name;
+  private String lastName;
+  private String businessName;
+  private String emailAddress;
+  private String numberDocument;
+  private String status;
+  private TypeCustomer typeCustomer;
+  private TypeProfile typeProfile;
+  private boolean itsVip;
+  private boolean itsPyme;
+  private boolean itsCompany;
+  private boolean itsPersonal;
 }

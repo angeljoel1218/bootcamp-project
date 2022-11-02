@@ -9,6 +9,6 @@ import reactor.core.publisher.Flux;
 
 @ReactiveFeignClient(name = "${feign.service.credit.name}")
 public interface CreditClient {
-    @RequestMapping(method = RequestMethod.GET, value = "/credit/card/customer/{id}")
-    Flux<CreditCardDto> getCreditCardCustomer(@PathVariable("id") String id);
+  @RequestMapping(method = RequestMethod.GET, value = "/credit/card/customer/{id}")
+  Flux<CreditCardDto> getCreditCardCustomer(@PathVariable("id") String id);
 }

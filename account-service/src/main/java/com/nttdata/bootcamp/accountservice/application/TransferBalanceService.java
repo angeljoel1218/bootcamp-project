@@ -18,43 +18,45 @@ import java.util.Date;
 
 @Service
 public class TransferBalanceService {
-    @Autowired
-    TransactionRepository transactionRepository;
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    MapperTransaction mapperTransaction;
-    public Mono<TransactionDto> balanceToTargetAccount(TransactionRequestDto transferDto) {
-        return accountRepository.findByNumber(transferDto.getTargetAccount())
-                .switchIfEmpty(Mono.error(new TransactionException("Account destination does not exist")))
-                .flatMap(account -> {
-                    account.setUpdatedAt(new Date());
-                    account.setBalance(account.getBalance().add(transferDto.getAmount()));
-                    return accountRepository.save(account);
-                })
-                .flatMap(rs-> {
-                    OperationDto operationDto = new OperationDto();
-                    operationDto.setAmount(transferDto.getAmount());
-                    operationDto.setAccountId(rs.getId());
-                    operationDto.setSourceAccount(transferDto.getSourceAccount());
-                    operationDto.setTargetAccount(transferDto.getTargetAccount());
-                    operationDto.setOperation(transferDto.getOperation());
-                    return this.saveTransaction(operationDto, TypeTransaction.ENTRY_TRANSFER, TypeAffectation.INCREASE, rs.getTypeAccount());
-                });
-    }
-    public Mono<TransactionDto> saveTransaction(OperationDto operationDto, TypeTransaction typeTxn, TypeAffectation typeAffectation, TypeAccount typeAccount){
-        Transaction transaction = new Transaction();
-        transaction.setAccountId(operationDto.getAccountId());
-        transaction.setSourceAccount(operationDto.getSourceAccount());
-        transaction.setTargetAccount(operationDto.getTargetAccount());
-        transaction.setDate(new Date());
-        transaction.setAmount(operationDto.getAmount());
-        transaction.setType(typeTxn);
-        transaction.setOperation(operationDto.getOperation());
-        transaction.setAffectation(typeAffectation);
-        transaction.setTypeAccount(typeAccount);
-        transaction.setCommission(operationDto.getCommission());
-        return transactionRepository.insert(transaction)
-                .map(mapperTransaction::toDto);
-    }
+  @Autowired
+  TransactionRepository transactionRepository;
+  @Autowired
+  AccountRepository accountRepository;
+  @Autowired
+  MapperTransaction mapperTransaction;
+
+  public Mono<TransactionDto> balanceToTargetAccount(TransactionRequestDto transferDto) {
+    return accountRepository.findByNumber(transferDto.getTargetAccount())
+        .switchIfEmpty(Mono.error(new TransactionException("Account destination does not exist")))
+        .flatMap(account -> {
+          account.setUpdatedAt(new Date());
+          account.setBalance(account.getBalance().add(transferDto.getAmount()));
+          return accountRepository.save(account);
+        })
+        .flatMap(rs -> {
+          OperationDto operationDto = new OperationDto();
+          operationDto.setAmount(transferDto.getAmount());
+          operationDto.setAccountId(rs.getId());
+          operationDto.setSourceAccount(transferDto.getSourceAccount());
+          operationDto.setTargetAccount(transferDto.getTargetAccount());
+          operationDto.setOperation(transferDto.getOperation());
+          return this.saveTransaction(operationDto, TypeTransaction.ENTRY_TRANSFER, TypeAffectation.INCREASE, rs.getTypeAccount());
+        });
+  }
+
+  public Mono<TransactionDto> saveTransaction(OperationDto operationDto, TypeTransaction typeTxn, TypeAffectation typeAffectation, TypeAccount typeAccount) {
+    Transaction transaction = new Transaction();
+    transaction.setAccountId(operationDto.getAccountId());
+    transaction.setSourceAccount(operationDto.getSourceAccount());
+    transaction.setTargetAccount(operationDto.getTargetAccount());
+    transaction.setDate(new Date());
+    transaction.setAmount(operationDto.getAmount());
+    transaction.setType(typeTxn);
+    transaction.setOperation(operationDto.getOperation());
+    transaction.setAffectation(typeAffectation);
+    transaction.setTypeAccount(typeAccount);
+    transaction.setCommission(operationDto.getCommission());
+    return transactionRepository.insert(transaction)
+        .map(mapperTransaction::toDto);
+  }
 }

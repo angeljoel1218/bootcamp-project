@@ -10,15 +10,15 @@ import java.util.Date;
 
 @Data
 public class TransactionDto {
-    private String id;
-    private String operation;
-    private BigDecimal amount;
-    private BigDecimal commission;
-    private String accountId;
-    private String sourceAccount;
-    private String targetAccount;
-    private Date date;
-    private TypeTransaction type;
-    private TypeAffectation affectation;
-    private TypeAccount typeAccount;
+  private String id;
+  private String operation;
+  private BigDecimal amount;
+  private BigDecimal commission;
+  private String accountId;
+  private String sourceAccount;
+  private String targetAccount;
+  private Date date;
+  private TypeTransaction type;
+  private TypeAffectation affectation;
+  private TypeAccount typeAccount;
 }
