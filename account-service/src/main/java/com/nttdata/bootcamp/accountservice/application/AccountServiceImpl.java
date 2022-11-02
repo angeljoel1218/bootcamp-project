@@ -13,63 +13,77 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
+
 @Service
-public class AccountServiceImpl implements AccountService<AccountDto>{
-    @Autowired
-    SavingsAccountService<SavingsAccountDto> savingsAccountService;
-    @Autowired
-    CurrentAccountService<CurrentAccountDto> currentAccountService;
-    @Autowired
-    FixedTermAccountService<FixedTermAccountDto> fixedTermAccountService;
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    MapperAccount mapperAccount;
+public class AccountServiceImpl implements AccountService<AccountDto> {
+  @Autowired
+  SavingsAccountService<SavingsAccountDto> savingsAccountService;
+  @Autowired
+  CurrentAccountService<CurrentAccountDto> currentAccountService;
+  @Autowired
+  FixedTermAccountService<FixedTermAccountDto> fixedTermAccountService;
+  @Autowired
+  AccountRepository accountRepository;
+  @Autowired
+  MapperAccount mapperAccount;
 
-    @Override
-    public Mono<AccountDto> create(AccountDto accountDto) {
-        switch (accountDto.getTypeAccount()){
-            case SAVINGS_ACCOUNT:
-                MapperGeneric<SavingsAccountDto> ms = new MapperGeneric<>(SavingsAccountDto.class);
-                return savingsAccountService.create(ms.toDto(accountDto))
+  @Override
+  public Mono<AccountDto> create(AccountDto accountDto) {
+    switch(accountDto.getTypeAccount()) {
+      case SAVINGS_ACCOUNT:
+        MapperGeneric<SavingsAccountDto> ms = new MapperGeneric<>(SavingsAccountDto.class);
+        return savingsAccountService.create(ms.toDto(accountDto))
                         .map(ms::toAccountDto);
-            case FIXED_TERM_ACCOUNT:
-                MapperGeneric<FixedTermAccountDto> mf = new MapperGeneric<>(FixedTermAccountDto.class);
-                return fixedTermAccountService.create(mf.toDto(accountDto))
+      case FIXED_TERM_ACCOUNT:
+        MapperGeneric<FixedTermAccountDto> mf = new MapperGeneric<>(FixedTermAccountDto.class);
+        return fixedTermAccountService.create(mf.toDto(accountDto))
                         .map(mf::toAccountDto);
-            case CURRENT_ACCOUNT:
-                MapperGeneric<CurrentAccountDto> mc = new MapperGeneric<>(CurrentAccountDto.class);
-                return currentAccountService.create(mc.toDto(accountDto))
+      case CURRENT_ACCOUNT:
+        MapperGeneric<CurrentAccountDto> mc = new MapperGeneric<>(CurrentAccountDto.class);
+        return currentAccountService.create(mc.toDto(accountDto))
                         .map(mc::toAccountDto);
-        }
-        return Mono.error(new AccountException("The bank does not support this type of account"));
     }
+    return Mono.error(new AccountException("The bank does not support this type of account"));
+  }
 
-    @Override
-    public Flux<AccountDto> findByHolderId(String holderId) {
-        return accountRepository.findByHolderId(holderId)
+  @Override
+  public Flux<AccountDto> findByHolderId(String holderId) {
+
+    return accountRepository.findByHolderId(holderId)
                 .map(mapperAccount::toDto);
-    }
-    @Override
-    public Mono<AccountDto> findByNumber(String number) {
-        return accountRepository.findByNumber(number)
+
+  }
+
+  @Override
+  public Flux<AccountDto> findByCreateDateBetweenAndProductId(Date startDate,
+                                                              Date endDate, String productId) {
+
+    return accountRepository.findByCreateAtBetweenAndProductId(startDate,
+      endDate, productId).map(mapperAccount::toDto);
+
+  }
+
+  @Override
+  public Mono<AccountDto> findByNumber(String number) {
+    return accountRepository.findByNumber(number)
                 .map(mapperAccount::toDto);
-    }
-    @Override
-    public Mono<Void> delete(String accountId) {
-        return accountRepository.findById(accountId)
+  }
+
+  @Override
+  public Mono<Void> delete(String accountId) {
+    return accountRepository.findById(accountId)
                 .switchIfEmpty(Mono.error(new AccountException("Account not found")))
                 .flatMap(account -> {
-                    switch (account.getTypeAccount()){
-                        case SAVINGS_ACCOUNT:
-                            return savingsAccountService.delete(accountId);
-                        case FIXED_TERM_ACCOUNT:
-                            return fixedTermAccountService.delete(accountId);
-                        case CURRENT_ACCOUNT:
-                            return currentAccountService.delete(accountId);
-
+                  switch (account.getTypeAccount()) {
+                    case SAVINGS_ACCOUNT:
+                      return savingsAccountService.delete(accountId);
+                    case FIXED_TERM_ACCOUNT:
+                      return fixedTermAccountService.delete(accountId);
+                    case CURRENT_ACCOUNT:
+                      return currentAccountService.delete(accountId);
                     }
-                    return Mono.error(new AccountException("Error delete account"));
+                  return Mono.error(new AccountException("Error delete account"));
                 });
-    }
+  }
 }

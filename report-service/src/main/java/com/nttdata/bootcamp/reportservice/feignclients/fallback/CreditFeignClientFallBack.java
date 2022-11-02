@@ -43,7 +43,7 @@ public class CreditFeignClientFallBack implements CreditFeignClient {
     }
 
     @Override
-    public Flux<CreditDto> findByCreditCardCreateDateBetweenAndIdProduct(Date startDate, Date endDate, String idProduct) {
+    public Flux<CreditCardDto> findByCreditCardCreateDateBetweenAndIdProduct(Date startDate, Date endDate, String idProduct) {
         log.info("findByCreditCardCreateDateBetweenAndIdProduct  service no available  startDate={},endDate={}, idProduct={}", startDate,endDate,idProduct);
         return Flux.just();
     }

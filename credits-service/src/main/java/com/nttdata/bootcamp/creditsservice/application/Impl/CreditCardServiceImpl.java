@@ -185,6 +185,7 @@ public class CreditCardServiceImpl implements CreditCardService {
      .map(last -> DateUtils.addDays(last.getEndDate(), BigDecimal.ONE.intValue()))
       .switchIfEmpty(Mono.just(new Date()))
      .flatMap(dateStart -> {
+
        dateStart  = DateUtil.setStartDate(dateStart);
        Date dateOfEnd = DateUtil.getDateEndByDayOfMonth(creditCard.getClosingDay());
        Date dateOfPay = DateUtil.getDateEndByDayOfMonth(creditCard.getDayOfPay());
@@ -222,10 +223,9 @@ public class CreditCardServiceImpl implements CreditCardService {
   }
 
   @Override
-  public Mono<List<TransactionCreditCard>> findLastTransactionByIdCredit(String idCredit,
-                                                                         Integer limit) {
+  public Mono<List<TransactionCreditCard>> findLastTenTransactionByIdCredit(String idCredit) {
     return transactionRepository.findByIdCreditOrderByDateDesc(idCredit).collectList().map(t -> {
-      return t.stream().limit(limit).collect(Collectors.toList());
+      return t.stream().limit(10).collect(Collectors.toList());
     });
   }
 

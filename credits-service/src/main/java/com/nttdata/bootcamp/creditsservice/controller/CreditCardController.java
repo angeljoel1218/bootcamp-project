@@ -105,10 +105,9 @@ public class CreditCardController {
   }
 
   @GetMapping("/transaction-lasted/{idCredit}")
-  public Mono<List<TransactionCreditCard>> findLastTransactionByIdCredit(
+  public Mono<List<TransactionCreditCard>> findLastTenTransactionByIdCredit(
       @PathVariable("idCredit") String idCredit) {
-
-    return  creditCardService.findLastTransactionByIdCredit(idCredit, 10);
+    return  creditCardService.findLastTenTransactionByIdCredit(idCredit);
   }
 
   @GetMapping(value = "/product", produces = MediaType.APPLICATION_JSON_VALUE)

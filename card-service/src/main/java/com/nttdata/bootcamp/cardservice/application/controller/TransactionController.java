@@ -7,23 +7,30 @@ import com.nttdata.bootcamp.cardservice.model.dto.PaymentDto;
 import com.nttdata.bootcamp.cardservice.model.dto.WithdrawDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RefreshScope
 @RestController
 public class TransactionController {
-    @Autowired
-    TransactionService transactionService;
-    @PostMapping("card/transaction/payment")
-    public Mono<CardMovementDto> payment(@RequestBody PaymentDto paymentDto){
-        return transactionService.payment(paymentDto);
-    }
+  @Autowired
+  TransactionService transactionService;
 
-    @PostMapping("card/transaction/withdraw")
-    public Mono<CardMovementDto> withdraw(@RequestBody WithdrawDto withdrawDto){
-        return transactionService.withdraw(withdrawDto);
-    }
+  @PostMapping("card/transaction/payment")
+  public Mono<CardMovementDto> payment(@RequestBody PaymentDto paymentDto) {
+    return transactionService.payment(paymentDto);
+  }
+
+  @PostMapping("card/transaction/withdraw")
+  public Mono<CardMovementDto> withdraw(@RequestBody WithdrawDto withdrawDto) {
+    return transactionService.withdraw(withdrawDto);
+  }
+
+  @GetMapping("card/transaction-lasted/{cardId}")
+  public Mono<List<CardMovementDto>> findLastTenByCardIdOrderByOperationDateDesc(
+    @PathVariable("cardId") String cardId) {
+    return  transactionService.findLastByCardIdOrderByOperationDateDesc(cardId,10);
+  }
 }

@@ -69,6 +69,11 @@ public class CreditController {
     return creditService.findCreditDuesByIdCredit(id);
   }
 
+  /**
+   * javadoc.
+   * Resume products by customer ID
+   * @since 2022
+   */
   @GetMapping(value = "/product", produces = MediaType.APPLICATION_JSON_VALUE)
   public Flux<Credit> findByCreateDateBetweenAndIdProduct(
                               @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date startDate,
