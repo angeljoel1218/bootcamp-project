@@ -1,5 +1,11 @@
 package com.nttdata.bootcamp.productservice.model.constant;
 
+
+/**
+ * javadoc.
+ * Constants ProductType
+ * @since 2022
+ */
 public enum ProductType {
     SAVINGS_ACCOUNT,
     CURRENT_ACCOUNT,

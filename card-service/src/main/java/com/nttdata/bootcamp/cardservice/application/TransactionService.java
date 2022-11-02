@@ -13,5 +13,5 @@ public interface TransactionService {
 
   Mono<CardMovementDto> withdraw(WithdrawDto withdrawDto);
 
-  Mono<List<CardMovementDto>>  findLastByCardIdOrderByOperationDateDesc(String cardId, Integer top);
+  Mono<List<CardMovementDto>> findLastByCardIdOrderByOperationDateDesc(String cardId, Integer top);
 }

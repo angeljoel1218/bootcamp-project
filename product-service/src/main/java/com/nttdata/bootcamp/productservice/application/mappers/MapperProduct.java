@@ -4,15 +4,22 @@ import com.nttdata.bootcamp.productservice.model.Product;
 import com.nttdata.bootcamp.productservice.model.dto.ProductDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+
+/**
+ * javadoc.
+ * Convert DTO to Model
+ * @since 2022
+ */
+
 @Component
 public class MapperProduct {
-    public ProductDto toDto(Product product) {
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(product, ProductDto.class);
-    }
+  public ProductDto toDto(Product product) {
+    ModelMapper modelMapper = new ModelMapper();
+    return modelMapper.map(product, ProductDto.class);
+  }
 
-    public Product toProduct(ProductDto productDto) {
-        ModelMapper modelMapper = new ModelMapper();
-        return modelMapper.map(productDto, Product.class);
-    }
+  public Product toProduct(ProductDto productDto) {
+    ModelMapper modelMapper = new ModelMapper();
+    return modelMapper.map(productDto, Product.class);
+  }
 }
