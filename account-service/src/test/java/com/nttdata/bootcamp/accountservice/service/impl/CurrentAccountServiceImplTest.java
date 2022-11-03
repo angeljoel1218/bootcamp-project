@@ -8,7 +8,6 @@ import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.CreditClie
 import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.CustomerClientService;
 import com.nttdata.bootcamp.accountservice.infrastructure.feignclient.ProductClientService;
 import com.nttdata.bootcamp.accountservice.model.CurrentAccount;
-import com.nttdata.bootcamp.accountservice.model.constant.StateAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeAccount;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeCustomer;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeProfile;
@@ -16,7 +15,6 @@ import com.nttdata.bootcamp.accountservice.model.dto.CreditCardDto;
 import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.CustomerDto;
 import com.nttdata.bootcamp.accountservice.model.dto.ProductDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +31,6 @@ import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)

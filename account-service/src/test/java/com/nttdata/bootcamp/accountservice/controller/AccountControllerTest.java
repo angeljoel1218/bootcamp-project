@@ -293,7 +293,7 @@ public class AccountControllerTest {
     }
 
     @TestConfiguration
-    static class TestConfig {
+    static class AccountControllerTestConfig {
         @Bean
         public AccountService<AccountDto> accountService() {
             return new AccountServiceImpl();
