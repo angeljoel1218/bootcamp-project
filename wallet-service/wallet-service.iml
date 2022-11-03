@@ -26,7 +26,6 @@
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.30" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-actuator-autoconfigure:2.7.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-actuator:2.7.5" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.13.4.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4" level="project" />
     <orderEntry type="library" name="Maven: io.micrometer:micrometer-core:1.9.5" level="project" />
     <orderEntry type="library" name="Maven: org.hdrhistogram:HdrHistogram:2.1.12" level="project" />
@@ -41,7 +40,6 @@
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-mongodb:3.4.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.23" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.23" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.3.23" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:5.3.23" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.23" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:2.7.5" level="project" />
@@ -144,8 +142,6 @@
     <orderEntry type="library" name="Maven: com.playtika.reactivefeign:feign-reactor-core:3.1.0" level="project" />
     <orderEntry type="library" name="Maven: io.github.openfeign:feign-core:11.8" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-openfeign-core:3.1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-aop:2.7.5" level="project" />
-    <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.9.7" level="project" />
     <orderEntry type="library" name="Maven: io.github.openfeign.form:feign-form-spring:3.8.0" level="project" />
     <orderEntry type="library" name="Maven: io.github.openfeign.form:feign-form:3.8.0" level="project" />
     <orderEntry type="library" name="Maven: commons-fileupload:commons-fileupload:1.4" level="project" />
@@ -196,5 +192,28 @@
     <orderEntry type="library" name="Maven: jakarta.validation:jakarta.validation-api:2.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.jboss.logging:jboss-logging:3.4.3.Final" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml:classmate:1.5.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-config:3.1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-config-client:3.1.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.13.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j:2.1.4" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-circuitbreaker-resilience4j:2.1.4" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-spring-boot2:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-spring:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-annotations:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-consumer:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-circularbuffer:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-framework-common:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-ratelimiter:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-retry:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-micrometer:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-circuitbreaker:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.vavr:vavr:0.10.2" level="project" />
+    <orderEntry type="library" name="Maven: io.vavr:vavr-match:0.10.2" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-core:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-timelimiter:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: io.github.resilience4j:resilience4j-reactor:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-aop:2.7.5" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-aop:5.3.23" level="project" />
+    <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.9.7" level="project" />
   </component>
 </module>

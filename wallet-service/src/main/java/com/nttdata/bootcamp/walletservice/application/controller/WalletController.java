@@ -22,7 +22,6 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/wallet")
 public class WalletController {
 
-
   @Autowired
   private WalletService walletService;
 
