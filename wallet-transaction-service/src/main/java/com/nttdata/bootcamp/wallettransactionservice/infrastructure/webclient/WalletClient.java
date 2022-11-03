@@ -24,7 +24,7 @@ public class WalletClient {
                 .run(
                         webClientBuilder
                                 .get()
-                                .uri("/wallet/get/"+cellNumber)
+                                .uri("wallet/get/"+cellNumber)
                                 .retrieve()
                                 .bodyToMono(WalletDto.class),
                         throwable -> Mono.error(new ServiceUnavailableException("The service is not available, try in a few minutes please")));
@@ -35,7 +35,7 @@ public class WalletClient {
                 .run(
                         webClientBuilder
                                 .put()
-                                .uri("/wallet/set-balance/"+phone+"/" + amount)
+                                .uri("wallet/set-balance/"+phone+"/" + amount)
                                 .retrieve()
                                 .bodyToMono(WalletDto.class),
                         throwable -> Mono.error(new ServiceUnavailableException("The service is not available, try in a few minutes please")));

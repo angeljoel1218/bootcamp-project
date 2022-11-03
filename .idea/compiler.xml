@@ -16,11 +16,8 @@
         <module name="account-service" />
         <module name="credits-service" />
         <module name="discovery-service" />
-        <module name="wallet-service" />
-<<<<<<< HEAD
         <module name="wallet-transaction-service" />
-=======
->>>>>>> 7dd822547ae7504a541c234c1e0759d0d66fe86c
+        <module name="wallet-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -34,10 +31,7 @@
       <module name="product-service" target="11" />
       <module name="report-service" target="11" />
       <module name="wallet-service" target="11" />
-<<<<<<< HEAD
       <module name="wallet-transaction-service" target="11" />
-=======
->>>>>>> 7dd822547ae7504a541c234c1e0759d0d66fe86c
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -52,10 +46,7 @@
       <module name="product-service" options="-parameters" />
       <module name="report-service" options="-parameters" />
       <module name="wallet-service" options="-parameters" />
-<<<<<<< HEAD
       <module name="wallet-transaction-service" options="-parameters" />
-=======
->>>>>>> 7dd822547ae7504a541c234c1e0759d0d66fe86c
     </option>
   </component>
 </project>

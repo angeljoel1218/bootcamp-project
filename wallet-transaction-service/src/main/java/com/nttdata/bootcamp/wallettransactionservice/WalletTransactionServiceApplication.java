@@ -24,15 +24,6 @@ public class WalletTransactionServiceApplication {
 	}
 
 	@Bean
-	@LoadBalanced
-	public WebClient loadBalancedWebClientBuilder() {
-		return WebClient.builder()
-				.baseUrl("${webclient.baseurl}")
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-				.build();
-	}
-
-	@Bean
 	public ReactiveRedisTemplate<String, LastTransaction> reactiveJsonPostRedisTemplate(
 			ReactiveRedisConnectionFactory connectionFactory) {
 		RedisSerializationContext<String, LastTransaction> serializationContext =
@@ -42,5 +33,14 @@ public class WalletTransactionServiceApplication {
 						.hashValue(new Jackson2JsonRedisSerializer<>(LastTransaction.class))
 						.build();
 		return new ReactiveRedisTemplate<>(connectionFactory, serializationContext);
+	}
+
+	@Bean
+	@LoadBalanced
+	public WebClient loadBalancedWebClientBuilder() {
+		return WebClient.builder()
+				.baseUrl("${webclient.baseurl}")
+				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+				.build();
 	}
 }

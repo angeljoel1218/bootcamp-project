@@ -69,4 +69,10 @@ public class TransactionServiceImpl implements TransactionService {
                             });
                 });
     }
+
+    @Override
+    public Mono<LastTransaction> lastTransaction(String walletId) {
+        return lastTransactionRepository.findById(walletId)
+                .switchIfEmpty(Mono.error(new WalletException("Transaction not found")));
+    }
 }

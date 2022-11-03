@@ -33,8 +33,7 @@ public class WalletServiceImpl implements WalletService {
         t.setBalance(BigDecimal.ZERO);
         t.setCreateAt(LocalDate.now());
         return walletRepository.insert(t);
-    }).flatMap(walletRepository::insert)
-      .map(mapperWallet::toDto);
+    }).map(mapperWallet::toDto);
   }
 
   @Override
