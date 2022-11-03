@@ -6,8 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class TransactionDto {
-
-  private String id;
-  private String phone;
+  private String sourceNumberCell;
+  private String targetNumberCell;
   private BigDecimal amount;
 }

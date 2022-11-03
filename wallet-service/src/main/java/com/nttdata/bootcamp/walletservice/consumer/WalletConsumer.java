@@ -29,8 +29,7 @@ public class WalletConsumer {
 
 	private Mono<WalletDto> applyBalance(TransactionDto request) {
 		log.debug("applyBalance executed : {} ", request);
-		return walletService.findByPhone(request.getPhone()).flatMap(wallet -> {
-			 return walletService.setBalance(wallet.getPhone(),request.getAmount());
-		});
+		return walletService.setBalance(request.getSourceNumberCell(),request.getAmount().negate())
+				.flatMap(walletDto -> walletService.setBalance(request.getTargetNumberCell(), request.getAmount()));
 	}
 }

@@ -6,17 +6,20 @@ import com.nttdata.bootcamp.wallettransactionservice.application.mapper.MapperGe
 import com.nttdata.bootcamp.wallettransactionservice.application.servivce.TransactionService;
 import com.nttdata.bootcamp.wallettransactionservice.infrastructure.LastTransactionRepository;
 import com.nttdata.bootcamp.wallettransactionservice.infrastructure.TransactionRepository;
+import com.nttdata.bootcamp.wallettransactionservice.infrastructure.producer.BalanceProducer;
 import com.nttdata.bootcamp.wallettransactionservice.infrastructure.webclient.WalletClient;
 import com.nttdata.bootcamp.wallettransactionservice.model.LastTransaction;
 import com.nttdata.bootcamp.wallettransactionservice.model.Transaction;
 import com.nttdata.bootcamp.wallettransactionservice.model.dto.TransactionDto;
 import com.nttdata.bootcamp.wallettransactionservice.model.dto.TransactionRequestDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.Date;
 
+@Slf4j
 @Service
 public class TransactionServiceImpl implements TransactionService {
     @Autowired
@@ -31,6 +34,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     MapperGeneric mapperGeneric;
 
+    @Autowired
+    private BalanceProducer balanceProducer;
+
     @Override
     public Mono<TransactionDto> transfer(TransactionRequestDto transactionRequestDto) {
         return walletClient.getWallet(transactionRequestDto.getSourceNumberCell())
@@ -43,13 +49,8 @@ public class TransactionServiceImpl implements TransactionService {
                 .flatMap(srcWalletDto -> {
                     return walletClient.getWallet(transactionRequestDto.getTargetNumberCell())
                             .switchIfEmpty(Mono.error(new WalletException("The target wallet not found")))
-                            .flatMap(targetWalletDto -> {
-                               return walletClient.setBalance(transactionRequestDto.getTargetNumberCell(), transactionRequestDto.getAmount())
-                                       .flatMap(walletTransactionDto -> {
-                                           return walletClient.setBalance(transactionRequestDto.getSourceNumberCell(), transactionRequestDto.getAmount().negate());
-                                       });
-                            })
-                            .flatMap(walletDto -> {
+                            .map(targetWalletDto -> this.sendBalance(transactionRequestDto))
+                            .flatMap(t -> {
                                 Transaction transaction = new Transaction();
                                 transaction.setAmount(transactionRequestDto.getAmount());
                                 transaction.setSourceWallet(transactionRequestDto.getSourceNumberCell());
@@ -74,5 +75,13 @@ public class TransactionServiceImpl implements TransactionService {
     public Mono<LastTransaction> lastTransaction(String walletId) {
         return lastTransactionRepository.findById(walletId)
                 .switchIfEmpty(Mono.error(new WalletException("Transaction not found")));
+    }
+
+    private TransactionRequestDto sendBalance(TransactionRequestDto transactionRequestDto) {
+        log.debug("sendBalance executed {}", transactionRequestDto);
+        if (transactionRequestDto != null) {
+            balanceProducer.sendMessage(transactionRequestDto);
+        }
+        return transactionRequestDto;
     }
 }
