@@ -6,16 +6,17 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
-public class CurrentAccountDto extends AccountDto{
+public class CurrentAccountDto{
     private String id;
     private String number;
     private BigDecimal balance;
     private String coin;
     private String holderId;
-    private String [] holders;
-    private String [] authorizedSigners;
+    private List<String> holders;
+    private List<String> authorizedSigners;
     private String productId;
     private Date createdAt;
     private Date updatedAt;

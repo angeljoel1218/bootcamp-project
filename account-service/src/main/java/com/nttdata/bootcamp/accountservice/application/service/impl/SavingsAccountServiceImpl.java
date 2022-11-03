@@ -77,7 +77,13 @@ public class SavingsAccountServiceImpl implements SavingsAccountService<SavingsA
                         throw new AccountException("Insufficient minimum amount to open an account");
                     }
                 })
-                .flatMap(productAccountDto -> {
+                .flatMap(productDto -> savingsAccountRepository.countByNumber(accountDto.getNumber()))
+                .doOnNext(count -> {
+                    if (count > 0) {
+                        throw new AccountException("Account number already exists");
+                    }
+                })
+                .flatMap(count -> {
                     accountDto.setTypeAccount(TypeAccount.SAVINGS_ACCOUNT);
                     return Mono.just(accountDto)
                             .map(mapperSavingsAccount::toSavingsAccount)

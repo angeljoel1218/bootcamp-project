@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Document(collection = "accounts")
 @Getter
@@ -25,8 +26,8 @@ public class Account {
     private Integer dayOfOperation;
     private String coin;
     private String holderId;
-    private String [] holders;
-    private String [] authorizedSigners;
+    private List<String> holders;
+    private List<String> authorizedSigners;
     private String productId;
     private Date createdAt;
     private Date updatedAt;

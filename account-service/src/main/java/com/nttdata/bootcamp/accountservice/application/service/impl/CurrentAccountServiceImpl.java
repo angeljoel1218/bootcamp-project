@@ -67,6 +67,12 @@ public class CurrentAccountServiceImpl implements CurrentAccountService<CurrentA
                         throw new AccountException("Insufficient minimum amount to open an account");
                     }
                 })
+                .flatMap(productDto -> currentAccountRepository.countByNumber(accountDto.getNumber()))
+                .doOnNext(count -> {
+                    if (count > 0) {
+                        throw new AccountException("Account number already exists");
+                    }
+                })
                 .flatMap(pr -> {
                     accountDto.setTypeAccount(TypeAccount.CURRENT_ACCOUNT);
                     return Mono.just(accountDto)

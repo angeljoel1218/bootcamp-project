@@ -55,6 +55,12 @@ public class FixedTermAccountServiceImpl implements FixedTermAccountService<Fixe
                         throw new AccountException("Insufficient minimum amount to open an account");
                     }
                 })
+                .flatMap(productDto -> fixedTermAccountRepository.countByNumber(accountDto.getNumber()))
+                .doOnNext(count -> {
+                    if (count > 0) {
+                        throw new AccountException("Account number already exists");
+                    }
+                })
                 .flatMap(productAccountDto -> {
                     accountDto.setTypeAccount(TypeAccount.FIXED_TERM_ACCOUNT);
                     return Mono.just(accountDto)

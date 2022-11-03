@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 public interface FixedTermAccountRepository extends ReactiveMongoRepository<FixedTermAccount, String> {
     Mono<Long> countByHolderIdAndTypeAccount(String id, TypeAccount typeAccount);
     Mono<FixedTermAccount> findByNumberAndTypeAccount(String number, TypeAccount typeAccount);
-
+    Mono<Long> countByNumber(String number);
 }
