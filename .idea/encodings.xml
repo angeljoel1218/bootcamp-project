@@ -14,6 +14,9 @@
     <file url="file://$PROJECT_DIR$/product-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/report-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/wallet-service/src/main/java" charset="UTF-8" />
+<<<<<<< HEAD
     <file url="file://$PROJECT_DIR$/wallet-transaction-service/src/main/java" charset="UTF-8" />
+=======
+>>>>>>> 7dd822547ae7504a541c234c1e0759d0d66fe86c
   </component>
 </project>

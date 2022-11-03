@@ -1,11 +1,15 @@
 package com.nttdata.bootcamp.walletservice.application;
 
+import com.nttdata.bootcamp.walletservice.application.mappers.MapperWallet;
 import com.nttdata.bootcamp.walletservice.infrastructure.WalletRepository;
 import com.nttdata.bootcamp.walletservice.model.Wallet;
+import com.nttdata.bootcamp.walletservice.model.dto.WalletDto;
 import com.nttdata.bootcamp.walletservice.model.feignclient.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,39 +23,48 @@ public class WalletServiceImpl implements WalletService {
   @Autowired
   CardService cardService;
 
+  @Autowired
+  MapperWallet mapperWallet;
+
   @Override
-  public Mono<Wallet> create(Wallet wallet) {
-    return  Mono.just(wallet).flatMap(walletRepository::insert);
+  public Mono<WalletDto> create(WalletDto walletDto) {
+    return  Mono.just(walletDto).map(mapperWallet::toWallet)
+      .flatMap(t->{
+        t.setBalance(BigDecimal.ZERO);
+        t.setCreateAt(LocalDate.now());
+        return walletRepository.insert(t);
+    }).flatMap(walletRepository::insert)
+      .map(mapperWallet::toDto);
   }
 
   @Override
-  public Mono<Wallet> findByPhone(String phone) {
-    return walletRepository.findByPhone(phone);
+  public Mono<WalletDto> findByPhone(String phone) {
+    return walletRepository.findByPhone(phone).map(mapperWallet::toDto);
   }
 
   @Override
-  public Mono<Wallet> addCard(String phone,  String cardNumber, String cardCvv) {
+  public Mono<WalletDto> addCard(String phone,  String cardNumber, String cardCvv) {
     return cardService.findCardByNumberAndCvv(cardNumber, cardCvv)
       .switchIfEmpty(Mono.error(new InterruptedException("The card not found")))
       .flatMap(c ->
         walletRepository.findByPhone(phone).map(w -> {
           w.setCard(c);
           return  w;
-        }).flatMap(walletRepository::save));
+        }).flatMap(walletRepository::save)).map(mapperWallet::toDto);
   }
 
   @Override
-  public Mono<Wallet> setBalance(String phone, BigDecimal amount) {
+  public Mono<WalletDto> setBalance(String phone, BigDecimal amount) {
     return walletRepository.findByPhone(phone)
-      .map(w -> {
+      .flatMap(w -> {
         w.setBalance(w.getBalance().add(amount));
-        return w;
-      }).flatMap(walletRepository::save);
+        return walletRepository.save(w);
+      }).map(mapperWallet::toDto);
   }
 
 
   @Override
-  public Flux<Wallet> findAll() {
-    return walletRepository.findAll();
+  public Flux<WalletDto> findAll() {
+    return walletRepository.findAll().map(mapperWallet::toDto);
   }
 }
