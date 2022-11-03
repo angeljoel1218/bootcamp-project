@@ -3,8 +3,8 @@ package com.nttdata.bootcamp.customerservice.aplication.mappers;
 
 
 import com.nttdata.bootcamp.customerservice.model.Customer;
-import com.nttdata.bootcamp.customerservice.model.TypeCustomer;
-import com.nttdata.bootcamp.customerservice.model.TypeProfile;
+import com.nttdata.bootcamp.customerservice.model.constant.TypeCustomer;
+import com.nttdata.bootcamp.customerservice.model.constant.TypeProfile;
 import com.nttdata.bootcamp.customerservice.model.dto.CustomerDto;
 import java.util.Objects;
 import org.modelmapper.ModelMapper;

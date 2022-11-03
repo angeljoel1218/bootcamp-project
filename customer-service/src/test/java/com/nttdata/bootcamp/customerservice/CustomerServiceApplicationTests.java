@@ -2,8 +2,11 @@ package com.nttdata.bootcamp.customerservice;
 
 import com.nttdata.bootcamp.customerservice.aplication.CustomerService;
 import com.nttdata.bootcamp.customerservice.controller.CustomerController;
-import com.nttdata.bootcamp.customerservice.model.TypeCustomer;
-import com.nttdata.bootcamp.customerservice.model.TypeProfile;
+import com.nttdata.bootcamp.customerservice.infraestructure.CustomerRepository;
+import com.nttdata.bootcamp.customerservice.model.Customer;
+import com.nttdata.bootcamp.customerservice.model.constant.Constants;
+import com.nttdata.bootcamp.customerservice.model.constant.TypeCustomer;
+import com.nttdata.bootcamp.customerservice.model.constant.TypeProfile;
 import com.nttdata.bootcamp.customerservice.model.dto.CustomerDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,9 +34,14 @@ class CustomerServiceApplicationTests {
   private WebTestClient webTestClient;
 
 
+
+
   @MockBean
   private CustomerService customerService;
 
+
+  @MockBean
+  private CustomerRepository customerRepository;
 
   @Test
 	void create() {
@@ -42,7 +50,6 @@ class CustomerServiceApplicationTests {
 
     webTestClient.post().uri("/customer/create")
       .contentType(MediaType.APPLICATION_JSON)
-      .accept(MediaType.APPLICATION_JSON)
       .body(Mono.just(monoDto),CustomerDto.class)
       .exchange()
       .expectStatus().isCreated();
@@ -80,11 +87,14 @@ class CustomerServiceApplicationTests {
     var monoDto = new CustomerDto("70150585sdsds",TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP);
 
     when(customerService.findById("70150585sdsds")).thenReturn(Mono.just(monoDto));
+
     var responseFlux= webTestClient.get().uri("/customer/get/70150585sdsds")
       .exchange()
       .expectStatus().isOk()
       .returnResult(CustomerDto.class)
       .getResponseBody();
+
+    System.out.println("aquio toy " + responseFlux);
 
     StepVerifier.create(responseFlux)
       .expectSubscription()

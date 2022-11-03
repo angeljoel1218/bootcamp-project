@@ -1,7 +1,7 @@
 package com.nttdata.bootcamp.customerservice.model.dto;
 
-import com.nttdata.bootcamp.customerservice.model.TypeCustomer;
-import com.nttdata.bootcamp.customerservice.model.TypeProfile;
+import com.nttdata.bootcamp.customerservice.model.constant.TypeCustomer;
+import com.nttdata.bootcamp.customerservice.model.constant.TypeProfile;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;

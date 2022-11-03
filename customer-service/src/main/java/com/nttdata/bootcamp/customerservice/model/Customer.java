@@ -1,5 +1,7 @@
 package com.nttdata.bootcamp.customerservice.model;
 
+import com.nttdata.bootcamp.customerservice.model.constant.TypeCustomer;
+import com.nttdata.bootcamp.customerservice.model.constant.TypeProfile;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

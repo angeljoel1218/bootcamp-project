@@ -2,6 +2,8 @@ package com.nttdata.bootcamp.customerservice.aplication;
 
 import com.nttdata.bootcamp.customerservice.aplication.mappers.MapperCustomer;
 import com.nttdata.bootcamp.customerservice.infraestructure.CustomerRepository;
+import com.nttdata.bootcamp.customerservice.model.Customer;
+import com.nttdata.bootcamp.customerservice.model.constant.Constants;
 import com.nttdata.bootcamp.customerservice.model.dto.CustomerDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,35 +23,44 @@ public class CustomerServiceImpl implements CustomerService {
   @Autowired
   CustomerRepository costumerRepository;
 
+
   @Override
   public Mono<CustomerDto> create(CustomerDto  customerDto) {
-  return Mono.just(customerDto).map(mapperCustomer::toCustomer)
-  .flatMap(costumerRepository::insert)
-  .map(mapperCustomer::toDto);
+    return Mono.just(customerDto).map(mapperCustomer::toCustomer)
+      .map(t -> changeStatus(t, Constants.STATUS_CREATED))
+      .flatMap(costumerRepository::insert)
+      .map(mapperCustomer::toDto);
   }
 
   @Override
   public Mono<CustomerDto> update(CustomerDto customerDto, String id) {
-  return costumerRepository.findById(id)
-  .flatMap(c -> Mono.just(customerDto).map(mapperCustomer::toCustomer))
-  .doOnNext(c -> c.setId(id))
-  .flatMap(costumerRepository::save)
-  .map(mapperCustomer::toDto);
+    return costumerRepository.findById(id)
+    .flatMap(c -> Mono.just(customerDto).map(mapperCustomer::toCustomer))
+      .map(t -> changeStatus(t, Constants.STATUS_UPDATED))
+      .doOnNext(c -> c.setId(id))
+      .flatMap(costumerRepository::save)
+      .map(mapperCustomer::toDto);
   }
 
   @Override
   public Mono<Void> delete(String id) {
-  return  costumerRepository.findById(id).flatMap(costumerRepository::delete);
+    return  costumerRepository.findById(id).flatMap(costumerRepository::delete);
   }
 
   @Override
   public Flux<CustomerDto> findAll() {
-  return costumerRepository.findAll().map(mapperCustomer::toDto);
+    return costumerRepository.findAll().map(mapperCustomer::toDto);
   }
 
   @Override
   public Mono<CustomerDto> findById(String id) {
-  return costumerRepository.findById(id).map(mapperCustomer::toDto);
+    return costumerRepository.findById(id).map(mapperCustomer::toDto);
+  }
+
+
+  private Customer changeStatus(Customer customer, String status) {
+    customer.setStatus(status);
+    return  customer;
   }
 
 }

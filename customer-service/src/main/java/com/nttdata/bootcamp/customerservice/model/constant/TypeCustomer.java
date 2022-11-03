@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.customerservice.model;
+package com.nttdata.bootcamp.customerservice.model.constant;
 
 /**
  * Some javadoc.
