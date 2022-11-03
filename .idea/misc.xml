@@ -16,6 +16,8 @@
         <option value="$PROJECT_DIR$/report-service/pom.xml" />
         <option value="$PROJECT_DIR$/card-service/pom.xml" />
         <option value="$PROJECT_DIR$/transaction-wallet-service/pom.xml" />
+        <option value="$PROJECT_DIR$/wallet-service/pom.xml" />
+        <option value="$PROJECT_DIR$/wallet-transaction-service/pom.xml" />
       </list>
     </option>
   </component>

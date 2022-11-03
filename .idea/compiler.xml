@@ -7,7 +7,6 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="transaction-wallet-service" />
         <module name="config-server" />
         <module name="customer-service" />
         <module name="api-gateway" />
@@ -17,6 +16,8 @@
         <module name="account-service" />
         <module name="credits-service" />
         <module name="discovery-service" />
+        <module name="wallet-service" />
+        <module name="wallet-transaction-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -29,7 +30,8 @@
       <module name="discovery-service" target="11" />
       <module name="product-service" target="11" />
       <module name="report-service" target="11" />
-      <module name="transaction-wallet-service" target="11" />
+      <module name="wallet-service" target="11" />
+      <module name="wallet-transaction-service" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -43,7 +45,8 @@
       <module name="discovery-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="report-service" options="-parameters" />
-      <module name="transaction-wallet-service" options="-parameters" />
+      <module name="wallet-service" options="-parameters" />
+      <module name="wallet-transaction-service" options="-parameters" />
     </option>
   </component>
 </project>

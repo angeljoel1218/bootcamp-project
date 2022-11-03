@@ -44,6 +44,15 @@ services:
       - ./db/:/data/db
     networks:
       - bootcamp
+  redis-server:
+    image: redis
+    ports:
+      - '6379:6379'
+    container_name: redis-server
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - bootcamp
   product-service:
     container_name: product-service
     build:
@@ -125,6 +134,35 @@ services:
     image: card-service:latest
     ports:
       - '8086:8086'
+    networks:
+      - bootcamp
+  wallet-service:
+    container_name: wallet-service
+    build:
+      context: .
+      dockerfile: ./wallet-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - config-server
+      - discovery-service
+    image: wallet-service:latest
+    ports:
+      - '8087:8087'
+    networks:
+      - bootcamp
+  wallet-transaction-service:
+    container_name: wallet-transaction-service
+    build:
+      context: .
+      dockerfile: ./wallet-transaction-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - redis-server
+      - config-server
+      - discovery-service
+    image: wallet-transaction-service:latest
+    ports:
+      - '8088:8088'
     networks:
       - bootcamp
 networks:

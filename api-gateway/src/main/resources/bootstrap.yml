@@ -58,3 +58,11 @@ spring:
           uri: lb://CARD-SERVICE
           predicates:
             - Path=/card/**
+        - id: wallet-service
+          uri: lb://CARD-SERVICE
+          predicates:
+            - Path=/wallet/**
+        - id: wallet-transaction-service
+          uri: lb://CARD-SERVICE
+          predicates:
+            - Path=/wallet-transfer/**
