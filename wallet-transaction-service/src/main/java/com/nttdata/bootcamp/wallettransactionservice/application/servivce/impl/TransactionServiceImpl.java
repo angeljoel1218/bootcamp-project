@@ -79,8 +79,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     private TransactionRequestDto sendBalance(TransactionRequestDto transactionRequestDto) {
         log.debug("sendBalance executed {}", transactionRequestDto);
+        transactionRequestDto.setId("83477834687");
         if (transactionRequestDto != null) {
-            balanceProducer.sendMessage(transactionRequestDto);
+            balanceProducer.sendMessage(TransactionRequestDto.builder().id(transactionRequestDto.getId()).sourceNumberCell(transactionRequestDto.getSourceNumberCell()).targetNumberCell(transactionRequestDto.getTargetNumberCell()).amount(transactionRequestDto.getAmount()).build());
         }
         return transactionRequestDto;
     }

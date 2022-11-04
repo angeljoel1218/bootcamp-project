@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public Mono<ResponseEntity<ApiError>> handleGlobalException(Exception ex){
+        ex.printStackTrace();
         List<String> errors = new ArrayList<>();
         errors.add(ex.getLocalizedMessage());
         ApiError apiError = new ApiError();

@@ -1,11 +1,19 @@
 package com.nttdata.bootcamp.wallettransactionservice.model.dto;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
-public class TransactionRequestDto {
+@Builder
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+public class TransactionRequestDto implements Serializable {
+    @JsonIgnore
+    private String id;
     private String sourceNumberCell;
     private String targetNumberCell;
     private BigDecimal amount;
