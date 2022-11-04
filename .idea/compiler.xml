@@ -15,9 +15,9 @@
         <module name="card-service" />
         <module name="account-service" />
         <module name="credits-service" />
-        <module name="discovery-service" />
-        <module name="wallet-transaction-service" />
         <module name="wallet-service" />
+        <module name="wallet-transaction-service" />
+        <module name="discovery-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
