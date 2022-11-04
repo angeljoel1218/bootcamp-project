@@ -20,7 +20,6 @@ public class BalanceProducer {
     private String topic;
 
     public void sendMessage(TransactionRequestDto transactionRequestDto) {
-        System.out.println("============="+transactionRequestDto.getSourceNumberCell());
         ListenableFuture<SendResult<String, TransactionRequestDto>> future = kafkaTemplate.send(this.topic, transactionRequestDto);
 
         future.addCallback(new ListenableFutureCallback<SendResult<String, TransactionRequestDto>>() {
