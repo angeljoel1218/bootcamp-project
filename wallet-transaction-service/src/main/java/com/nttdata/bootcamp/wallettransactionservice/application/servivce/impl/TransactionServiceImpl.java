@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
         return walletClient.getWallet(transactionRequestDto.getSourceNumberCell())
                 .switchIfEmpty(Mono.error(new WalletException("The source wallet not found")))
                 .doOnNext(walletDto -> {
-                    if(walletDto.getBalance().compareTo(transactionRequestDto.getAmount()) == -1){
+                    if(walletDto.getBalance().compareTo(transactionRequestDto.getAmount()) < 0){
                         throw new InsufficientBalanceException("You do not have enough balance in your wallet");
                     }
                 })
@@ -79,7 +79,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     private TransactionRequestDto sendBalance(TransactionRequestDto transactionRequestDto) {
         log.debug("sendBalance executed {}", transactionRequestDto);
-        transactionRequestDto.setId("83477834687");
         if (transactionRequestDto != null) {
             balanceProducer.sendMessage(transactionRequestDto);
         }
