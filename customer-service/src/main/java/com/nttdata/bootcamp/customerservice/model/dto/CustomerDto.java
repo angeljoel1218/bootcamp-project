@@ -1,7 +1,7 @@
 package com.nttdata.bootcamp.customerservice.model.dto;
 
-import com.nttdata.bootcamp.customerservice.model.TypeCustomer;
-import com.nttdata.bootcamp.customerservice.model.TypeProfile;
+import com.nttdata.bootcamp.customerservice.model.constants.TypeCustomer;
+import com.nttdata.bootcamp.customerservice.model.constants.TypeProfile;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
@@ -14,6 +14,7 @@ import org.springframework.data.annotation.Id;
  * @author Alex Bejarano
  * @since 2022
  */
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
