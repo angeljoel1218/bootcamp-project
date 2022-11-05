@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="config-server" />
+        <module name="bootcoin-service" />
         <module name="customer-service" />
         <module name="api-gateway" />
         <module name="product-service" />
@@ -23,6 +24,7 @@
     <bytecodeTargetLevel>
       <module name="account-service" target="11" />
       <module name="api-gateway" target="11" />
+      <module name="bootcoin-service" target="11" />
       <module name="card-service" target="11" />
       <module name="config-server" target="11" />
       <module name="credits-service" target="11" />
@@ -38,6 +40,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="account-service" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
+      <module name="bootcoin-service" options="-parameters" />
       <module name="card-service" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="credits-service" options="-parameters" />

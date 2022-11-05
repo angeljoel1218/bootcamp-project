@@ -29,7 +29,7 @@ public class TransactionServiceImpl implements TransactionService {
     LastTransactionRepository lastTransactionRepository;
 
     @Autowired
-    WalletClient walletClient;
+    WalletClient walletClient ;
 
     @Autowired
     MapperGeneric mapperGeneric;
