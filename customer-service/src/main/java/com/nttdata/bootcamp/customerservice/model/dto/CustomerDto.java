@@ -30,7 +30,7 @@ public class CustomerDto {
   private String businessName;
   private String emailAddress;
 
-  @NotNull(message = "The field Type is required")
+  @NotNull(message = "numberDocument   is required")
   private String numberDocument;
   private String status;
 

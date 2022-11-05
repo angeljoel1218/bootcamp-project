@@ -37,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
       .switchIfEmpty(Mono.error(new RuntimeException("this product is not personal credit")))
       .flatMap(c -> Mono.just(customerDto).map(mapperCustomer::toCustomer))
       .doOnNext(c -> c.setId(id))
-      .map(t -> changeStatus(t, Constants.STATUS_UPDATED)).flatMap(costumerRepository::insert)
+      .map(t -> changeStatus(t, Constants.STATUS_UPDATED))
       .flatMap(costumerRepository::save)
       .map(mapperCustomer::toDto);
 
