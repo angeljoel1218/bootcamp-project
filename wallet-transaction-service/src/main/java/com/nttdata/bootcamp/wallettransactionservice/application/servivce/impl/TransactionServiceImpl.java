@@ -29,7 +29,7 @@ public class TransactionServiceImpl implements TransactionService {
     LastTransactionRepository lastTransactionRepository;
 
     @Autowired
-    WalletClient walletClient;
+    WalletClient walletClient ;
 
     @Autowired
     MapperGeneric mapperGeneric;
@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
         return walletClient.getWallet(transactionRequestDto.getSourceNumberCell())
                 .switchIfEmpty(Mono.error(new WalletException("The source wallet not found")))
                 .doOnNext(walletDto -> {
-                    if(walletDto.getBalance().compareTo(transactionRequestDto.getAmount()) == -1){
+                    if(walletDto.getBalance().compareTo(transactionRequestDto.getAmount()) < 0){
                         throw new InsufficientBalanceException("You do not have enough balance in your wallet");
                     }
                 })

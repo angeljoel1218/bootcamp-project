@@ -69,7 +69,6 @@ public class ReportServiceImpl  implements  ReportSevice{
                         return map;
          });
     });
-
   }
 
   private List<TransactionDto> listCommision(String accountId, Date startDay, Date endDate) {
@@ -103,6 +102,7 @@ public class ReportServiceImpl  implements  ReportSevice{
   private  List<CreditDuesDto> listDuesCredit(String idCredit) {
     List<CreditDuesDto> list  =  new ArrayList<>();
     creditFeignClient.findCreditDuesByIdCredit(idCredit).collectList().subscribe(list::addAll);
+
     return list;
   }
 

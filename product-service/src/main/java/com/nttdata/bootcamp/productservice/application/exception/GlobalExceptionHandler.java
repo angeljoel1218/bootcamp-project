@@ -2,14 +2,20 @@ package com.nttdata.bootcamp.productservice.application.exception;
 
 import com.nttdata.bootcamp.productservice.model.dto.ApiError;
 import com.nttdata.bootcamp.productservice.model.dto.ResponseCode;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
 
+
+/**
+ * Some javadoc.
+ *
+ * @since 2022
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 

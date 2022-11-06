@@ -101,6 +101,12 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.4</version>
+          <configuration>
+              <excludes>
+                  <!-- Exclude model classes (POJO's) -->
+                  <exclude>**/dto/*.class</exclude>
+              </excludes>
+          </configuration>
         <executions>
           <execution>
             <id>default-prepare-agent</id>
@@ -150,5 +156,19 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <!-- Optional URL to server. Default value is http://localhost:9000 -->
+                <sonar.host.url>
+                    http://localhost:9002
+                </sonar.host.url>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

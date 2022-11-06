@@ -21,6 +21,7 @@
         <option value="$PROJECT_DIR$/ad-bootcoin-service/pom.xml" />
         <option value="$PROJECT_DIR$/exchange-bootcoin-service/pom.xml" />
         <option value="$PROJECT_DIR$/master-data-bootcoin-service/pom.xml" />
+        <option value="$PROJECT_DIR$/bootcoin-service/pom.xml" />
       </list>
     </option>
   </component>

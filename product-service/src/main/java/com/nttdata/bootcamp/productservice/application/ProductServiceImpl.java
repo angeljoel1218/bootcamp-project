@@ -3,11 +3,17 @@ package com.nttdata.bootcamp.productservice.application;
 import com.nttdata.bootcamp.productservice.application.mappers.MapperProduct;
 import com.nttdata.bootcamp.productservice.infrastructure.ProductRepository;
 import com.nttdata.bootcamp.productservice.model.dto.ProductDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * Some javadoc.
+ * @since 2022
+ */
+@Slf4j
 @Service
 public class ProductServiceImpl implements ProductService{
     @Autowired

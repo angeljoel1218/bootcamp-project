@@ -16,44 +16,27 @@ spring:
       enable: 'true'
       uri: http://config-server:8888
     gateway:
-      default-filters:
-      - name: SCGWGlobalFilter
       routes:
         - id: account-service
           uri: lb://ACCOUNT-SERVICE
           predicates:
             - Path=/account/**
-          filters:
-          - name: SCGWPreFilter
-          - name: SCGWPostFilter
         - id: credit-service
           uri: lb://CREDIT-SERVICE
           predicates:
             - Path=/credit/**
-          filters:
-          - name: SCGWPreFilter
-          - name: SCGWPostFilter
         - id: customer-service
           uri: lb://CUSTOMER-SERVICE
           predicates:
             - Path=/customer/**
-          filters:
-            - name: SCGWPreFilter
-            - name: SCGWPostFilter
         - id: product-service
           uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/product/**
-          filters:
-            - name: SCGWPreFilter
-            - name: SCGWPostFilter
         - id: report-service
           uri: lb://REPORT-SERVICE
           predicates:
             - Path=/report/**
-          filters:
-            - name: SCGWPreFilter
-            - name: SCGWPostFilter
         - id: card-service
           uri: lb://CARD-SERVICE
           predicates:
@@ -78,3 +61,7 @@ spring:
           uri: lb://EXCHANGE-BOOTCOIN-SERVICE
           predicates:
             - Path=/exchange/**
+        - id: bootcoin-service
+          uri: lb://BOOTCOIN-SERVICE
+          predicates:
+            - Path=/bootcoin/**

@@ -15,6 +15,7 @@ import com.nttdata.bootcamp.accountservice.model.dto.CreditCardDto;
 import com.nttdata.bootcamp.accountservice.model.dto.CurrentAccountDto;
 import com.nttdata.bootcamp.accountservice.model.dto.CustomerDto;
 import com.nttdata.bootcamp.accountservice.model.dto.ProductDto;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

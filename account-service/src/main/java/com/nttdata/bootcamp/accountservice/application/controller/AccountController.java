@@ -16,33 +16,33 @@ import javax.validation.Valid;
 @RefreshScope
 @RestController
 public class AccountController {
-    @Autowired
-    AccountService<AccountDto> accountService;
+  @Autowired
+  AccountService<AccountDto> accountService;
 
-    @PostMapping("account")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<AccountDto> create(@Valid @RequestBody AccountDto AccountDto){
-        return accountService.create(AccountDto);
-    }
+  @PostMapping("account")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Mono<AccountDto> create(@Valid @RequestBody AccountDto accountDto) {
+    return accountService.create(accountDto);
+  }
 
-    @GetMapping("account/{number}")
-    public Mono<ResponseEntity<AccountDto>> findByNumber(@PathVariable String number){
-        return accountService.findByNumber(number)
+  @GetMapping("account/{number}")
+  public Mono<ResponseEntity<AccountDto>> findByNumber(@PathVariable String number) {
+    return accountService.findByNumber(number)
                 .map(a -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(a))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
-    }
+  }
 
-    @GetMapping("account/customer/{holderId}")
-    public Flux<AccountDto> findByHolderId(@PathVariable("holderId") String holderId){
-        return accountService.findByHolderId(holderId);
-    }
+  @GetMapping("account/customer/{holderId}")
+  public Flux<AccountDto> findByHolderId(@PathVariable("holderId") String holderId) {
+    return accountService.findByHolderId(holderId);
+  }
 
-    @DeleteMapping("account/{id}")
-    public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
-        return accountService.delete(id)
+  @DeleteMapping("account/{id}")
+  public Mono<ResponseEntity<Void>> delete(@PathVariable String id) {
+    return accountService.delete(id)
                 .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)))
                 .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
-    }
+  }
 }

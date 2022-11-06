@@ -1,6 +1,11 @@
 package com.nttdata.bootcamp.customerservice.model;
 
+import com.nttdata.bootcamp.customerservice.model.constants.TypeCustomer;
+import com.nttdata.bootcamp.customerservice.model.constants.TypeProfile;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,7 +15,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * Customer
  */
 @Document(collection = "costumer")
+@Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Customer {
 
   @Id
