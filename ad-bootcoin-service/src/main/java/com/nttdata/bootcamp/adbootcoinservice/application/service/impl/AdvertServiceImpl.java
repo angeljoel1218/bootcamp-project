@@ -20,6 +20,12 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.Date;
 
+
+
+/**
+ *
+ * @since 2022
+ */
 @Service
 public class AdvertServiceImpl implements AdvertService {
     @Autowired
@@ -57,13 +63,15 @@ public class AdvertServiceImpl implements AdvertService {
                 .findById(requestPurchaseDto.getAdvertId())
                 .switchIfEmpty(Mono.error(new AdvertException("Ad no found")))
                 .doOnNext(advert -> {
-                    if (requestPurchaseDto.getAmount().compareTo(advert.getMinAmount()) == -1) {
-                        throw new AdvertException("The amount must be at least " + advert.getMinAmount());
+                    if (requestPurchaseDto.getAmount().compareTo(advert.getMinAmount()) < 0) {
+                        throw new AdvertException("The amount must be at least "
+                          + advert.getMinAmount());
                     }
                 })
                 .flatMap(advert -> masterDataService.getExchangeRate()
                         .flatMap(exchangeRate -> {
-                            BigDecimal amountPay = requestPurchaseDto.getAmount().multiply(exchangeRate.getPrice());
+                            BigDecimal amountPay = requestPurchaseDto.getAmount()
+                              .multiply(exchangeRate.getPrice());
                             PayOrder payOrder = new PayOrder();
                             payOrder.setAmount(requestPurchaseDto.getAmount());
                             payOrder.setAmountPay(amountPay);

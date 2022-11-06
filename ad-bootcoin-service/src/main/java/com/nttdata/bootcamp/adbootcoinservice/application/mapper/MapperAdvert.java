@@ -5,6 +5,12 @@ import com.nttdata.bootcamp.adbootcoinservice.domain.model.Advert;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+
+
+/**
+ *
+ * @since 2022
+ */
 @Component
 public class MapperAdvert {
     public AdvertDto toDto(Advert advert) {

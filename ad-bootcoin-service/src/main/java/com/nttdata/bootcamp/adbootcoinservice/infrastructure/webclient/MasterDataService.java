@@ -7,6 +7,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+
+/**
+ *
+ * @since 2022
+ */
 @Component
 public class MasterDataService {
     @Autowired
@@ -21,7 +26,10 @@ public class MasterDataService {
                         .get()
                         .uri("data-bootcoin/exchange-rate")
                         .retrieve()
-                        .bodyToMono(ExchangeRateDto.class), throwable -> Mono.error(new RuntimeException("The service is not available, try in a few minutes please")));
+                        .bodyToMono(ExchangeRateDto.class),
+                  throwable -> Mono.error(
+                    new RuntimeException(
+                      "The service is not available, try in a few minutes please")));
     }
 
 }

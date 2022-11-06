@@ -3,9 +3,13 @@ package com.nttdata.bootcamp.adbootcoinservice.domain.model;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.math.BigDecimal;
 import java.util.Date;
+
+/**
+ *
+ * @since 2022
+ */
 
 @Document(collection = "pay_order")
 @Getter
