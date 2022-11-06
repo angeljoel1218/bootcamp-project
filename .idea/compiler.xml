@@ -7,27 +7,34 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="config-server" />
         <module name="customer-service" />
-        <module name="api-gateway" />
         <module name="product-service" />
+        <module name="discovery-service" />
+        <module name="config-server" />
+        <module name="ad-bootcoin-service" />
+        <module name="exchange-bootcoin-service" />
+        <module name="api-gateway" />
         <module name="report-service" />
         <module name="card-service" />
+        <module name="master-data-bootcoin-service" />
         <module name="account-service" />
         <module name="credits-service" />
         <module name="wallet-service" />
         <module name="wallet-transaction-service" />
-        <module name="discovery-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="account-service" target="11" />
+      <module name="ad-bootcoin-service" target="11" />
       <module name="api-gateway" target="11" />
       <module name="card-service" target="11" />
       <module name="config-server" target="11" />
       <module name="credits-service" target="11" />
       <module name="customer-service" target="11" />
       <module name="discovery-service" target="11" />
+      <module name="exchange-bootcoin-service" target="11" />
+      <module name="exchange-rate-bootcoin-service" target="11" />
+      <module name="master-data-bootcoin-service" target="11" />
       <module name="product-service" target="11" />
       <module name="report-service" target="11" />
       <module name="wallet-service" target="11" />
@@ -37,12 +44,16 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="account-service" options="-parameters" />
+      <module name="ad-bootcoin-service" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
       <module name="card-service" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="credits-service" options="-parameters" />
       <module name="customer-service" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
+      <module name="exchange-bootcoin-service" options="-parameters" />
+      <module name="exchange-rate-bootcoin-service" options="-parameters" />
+      <module name="master-data-bootcoin-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="report-service" options="-parameters" />
       <module name="wallet-service" options="-parameters" />

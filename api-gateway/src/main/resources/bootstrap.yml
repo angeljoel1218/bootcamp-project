@@ -66,3 +66,15 @@ spring:
           uri: lb://WALLET-TRANSACTION-SERVICE
           predicates:
             - Path=/wallet-transfer/**
+        - id: ad-bootcoin-service
+          uri: lb://AD-BOOTCOIN-SERVICE
+          predicates:
+            - Path=/ad/**
+        - id: master-data-bootcoin-service
+          uri: lb://MASTER-DATA-BOOTCOIN-SERVICE
+          predicates:
+            - Path=/data-bootcoin/**
+        - id: exchange-bootcoin-service
+          uri: lb://EXCHANGE-BOOTCOIN-SERVICE
+          predicates:
+            - Path=/exchange/**

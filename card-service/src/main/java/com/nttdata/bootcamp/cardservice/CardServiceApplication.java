@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.cardservice;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -14,6 +15,9 @@ import reactivefeign.spring.config.EnableReactiveFeignClients;
 @EnableReactiveFeignClients
 @EnableEurekaClient
 public class CardServiceApplication {
+	@Value(value = "${webclient.baseurl}")
+	private String baseurl;
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(CardServiceApplication.class, args);
@@ -23,7 +27,7 @@ public class CardServiceApplication {
 	@LoadBalanced
 	public WebClient loadBalancedWebClientBuilder() {
 		return WebClient.builder()
-				.baseUrl("${webclient.baseurl}")
+				.baseUrl(baseurl)
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}

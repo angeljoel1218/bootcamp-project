@@ -25,6 +25,7 @@ public class WalletConsumer {
 	public void listener(@Payload TransactionDto transactionDto) {
 		  log.debug("Message received : {} ", transactionDto);
 		  applyBalance(transactionDto).block();
+
 	}
 
 	private Mono<WalletDto> applyBalance(TransactionDto request) {
