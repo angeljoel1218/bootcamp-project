@@ -1,6 +1,5 @@
 package com.nttdata.bootcamp.masterdatabootcoinservice.infrastructure;
 
-import com.nttdata.bootcamp.masterdatabootcoinservice.domain.ExchangeRate;
 import com.nttdata.bootcamp.masterdatabootcoinservice.domain.MethodPayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.ReactiveRedisOperations;
@@ -8,6 +7,11 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
+
+/**
+ *
+ * @since 2022
+ */
 
 @Repository
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class MethodPaymentRepository {
             methodPayment.setId(id);
         }
         return this.reactiveRedisOperations.<String, MethodPayment>opsForHash()
-                .put("payments", methodPayment.getId(), methodPayment).log().map(p -> methodPayment);
+                .put("payments", methodPayment.getId(),
+                  methodPayment).log().map(p -> methodPayment);
     }
 }

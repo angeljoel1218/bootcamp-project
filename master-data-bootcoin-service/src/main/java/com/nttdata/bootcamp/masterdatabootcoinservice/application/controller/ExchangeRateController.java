@@ -8,6 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
+
 @RefreshScope
 @RestController
 public class ExchangeRateController {
@@ -21,7 +26,8 @@ public class ExchangeRateController {
     }
 
     @PutMapping("data-bootcoin/exchange-rate/{id}")
-    public Mono<ExchangeRate> update(@PathVariable("id") String id, @RequestBody ExchangeRate exchangeRate){
+    public Mono<ExchangeRate> update(@PathVariable("id") String id,
+                                     @RequestBody ExchangeRate exchangeRate){
         return exchangeRateService.update(exchangeRate, id);
     }
 

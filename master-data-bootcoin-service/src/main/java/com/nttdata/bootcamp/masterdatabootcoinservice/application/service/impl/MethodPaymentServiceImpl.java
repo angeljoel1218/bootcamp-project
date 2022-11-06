@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
+
 @Service
 public class MethodPaymentServiceImpl implements MethodPaymentService {
     @Autowired
@@ -30,6 +35,7 @@ public class MethodPaymentServiceImpl implements MethodPaymentService {
     @Override
     public Mono<MethodPayment> getMethodPayment(String id) {
         return methodPaymentRepository.findById(id)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Method payment not found")));
+                .switchIfEmpty(Mono.error(
+                  new IllegalArgumentException("Method payment not found")));
     }
 }

@@ -8,6 +8,12 @@ import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
 
+
+
+/**
+ *
+ * @since 2022
+ */
 @Getter
 @Setter
 @AllArgsConstructor

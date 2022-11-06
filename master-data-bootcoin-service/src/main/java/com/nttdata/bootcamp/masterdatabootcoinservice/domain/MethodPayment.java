@@ -6,6 +6,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+/**
+ *
+ * @since 2022
+ */
+
 @Getter
 @Setter
 @AllArgsConstructor

@@ -9,6 +9,11 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+/**
+ *
+ * @since 2022
+ */
+
 @Repository
 @RequiredArgsConstructor
 public class ExchangeRateRepository {
