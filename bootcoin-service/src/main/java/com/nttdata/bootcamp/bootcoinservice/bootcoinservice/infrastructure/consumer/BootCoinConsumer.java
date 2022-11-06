@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.bootcoinservice.bootcoinservice.consumer;
+package com.nttdata.bootcamp.bootcoinservice.bootcoinservice.infrastructure.consumer;
 
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.application.BootcoinService;
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.model.dto.BootcoinDto;
@@ -12,32 +12,39 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+
+/**
+ * Some javadoc.
+ *
+ * @since 2022
+ */
+
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class BootCoinConsumer {
 
-	@Autowired
-	private BootcoinService bootcoinService;
+  @Autowired
+  private BootcoinService bootcoinService;
 
+  @KafkaListener(topics = "${kafka.topic.balance.name}")
+  public void listener(@Payload TransactionDto transactionDto) {
+    log.debug("Message received : {} ", transactionDto);
+    applyBalance(transactionDto).block();
+  }
 
-	@KafkaListener(topics = "${kafka.topic.balance.name}")
-	public void listener(@Payload TransactionDto transactionDto) {
-		  log.debug("Message received : {} ", transactionDto);
-		  applyBalance(transactionDto).block();
-	}
-
-	private Mono<BootcoinDto> applyBalance(TransactionDto request) {
-		log.debug("applyBalance executed : {} ", request);
-		return bootcoinService.addMovements(
+  private Mono<BootcoinDto> applyBalance(TransactionDto request) {
+    log.debug("applyBalance executed : {} ", request);
+    return bootcoinService.addMovements(
          MovementsDto.builder()
-        .phone(request.getSourceNumberCell())
-        .description("seller")
-        .amount(request.getAmount().negate()).build())
-				.flatMap(walletDto -> bootcoinService.addMovements(
+           .phone(request.getSourceNumberCell())
+           .description("seller")
+           .amount(request.getAmount().negate()).build())
+      .flatMap(walletDto -> bootcoinService.addMovements(
             MovementsDto.builder()
             .phone(request.getTargetNumberCell())
             .description("purchase")
             .amount(request.getAmount().negate()).build()));
-	}
+  }
 }

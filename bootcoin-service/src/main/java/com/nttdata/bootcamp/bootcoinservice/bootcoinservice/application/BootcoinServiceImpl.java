@@ -10,9 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import javax.naming.InsufficientResourcesException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+
+/**
+ * Some javadoc.
+ *
+ * @since 2022
+ */
 
 @Service
 public class BootcoinServiceImpl implements BootcoinService {
@@ -28,8 +36,8 @@ public class BootcoinServiceImpl implements BootcoinService {
   MapperBootcoin mapperBootcoin;
 
   @Override
-  public Mono<BootcoinDto> create(BootcoinDto walletDto) {
-    return  Mono.just(walletDto).map(mapperBootcoin::toBootCoin)
+  public Mono<BootcoinDto> create(BootcoinDto bootcoinDto) {
+    return  Mono.just(bootcoinDto).map(mapperBootcoin::toBootCoin)
       .flatMap(t -> {
         t.setBalance(BigDecimal.ZERO);
         t.setCreateAt(LocalDate.now());
@@ -49,7 +57,7 @@ public class BootcoinServiceImpl implements BootcoinService {
       .switchIfEmpty(Mono.error(new InterruptedException("Bootcoin  not found")))
       .flatMap(bootcoin -> {
         if ((bootcoin.getBalance().add(movementsDto.getAmount())).compareTo(BigDecimal.ZERO) < 0) {
-          return   Mono.error(new InterruptedException("You do not have enough balance in your wallet bootcoin"));
+          return   Mono.error(InsufficientResourcesException::new);
         }
 
         BootcoinMovements bootcoinMovements = BootcoinMovements.builder()

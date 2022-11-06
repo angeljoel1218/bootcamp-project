@@ -12,6 +12,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 
+/**
+ * Some javadoc.
+ *
+ * @since 2022
+ */
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

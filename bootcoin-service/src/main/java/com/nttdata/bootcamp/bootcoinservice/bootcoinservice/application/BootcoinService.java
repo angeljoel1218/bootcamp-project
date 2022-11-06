@@ -5,7 +5,12 @@ import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.model.dto.MovementsD
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
+
+/**
+ * Some javadoc.
+ *
+ * @since 2022
+ */
 
 public interface BootcoinService {
 

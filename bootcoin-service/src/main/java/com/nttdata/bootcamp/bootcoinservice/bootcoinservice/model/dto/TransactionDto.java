@@ -4,6 +4,11 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * Some javadoc.
+ *
+ * @since 2022
+ */
 @Data
 public class TransactionDto {
 
