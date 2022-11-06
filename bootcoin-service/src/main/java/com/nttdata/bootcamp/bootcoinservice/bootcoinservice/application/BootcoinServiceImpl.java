@@ -53,7 +53,7 @@ public class BootcoinServiceImpl implements BootcoinService {
 
   @Override
   public Mono<BootcoinDto> addMovements(MovementsDto movementsDto) {
-    return bootcoinRepository.findByPhone(movementsDto.getPhone())
+    return bootcoinRepository.findById(movementsDto.getBootcoinId())
       .switchIfEmpty(Mono.error(new InterruptedException("Bootcoin  not found")))
       .flatMap(bootcoin -> {
         if ((bootcoin.getBalance().add(movementsDto.getAmount())).compareTo(BigDecimal.ZERO) < 0) {

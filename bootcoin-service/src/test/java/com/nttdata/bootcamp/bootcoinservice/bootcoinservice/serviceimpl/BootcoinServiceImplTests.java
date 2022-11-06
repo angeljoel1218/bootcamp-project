@@ -158,12 +158,13 @@ class BootcoinServiceImplTests {
       .build();
 
 
-    when(bootcoinRepository.findByPhone("934819535")).thenReturn(Mono.just(initialBoot));
+    when(bootcoinRepository.findById("12345678")).thenReturn(Mono.just(initialBoot));
     when(movementsRepository.insert(movement)).thenReturn(Mono.just(movement));
     when(bootcoinRepository.save(finalBoot)).thenReturn(Mono.just(finalBoot));
 
 
     var parameter = MovementsDto.builder()
+      .bootcoinId("12345678")
       .phone("934819535")
       .description("movement")
       .amount(BigDecimal.TEN)
@@ -208,12 +209,13 @@ class BootcoinServiceImplTests {
       .build();
 
 
-    when(bootcoinRepository.findByPhone("934819535")).thenReturn(Mono.just(initialBoot));
+    when(bootcoinRepository.findById("12345678")).thenReturn(Mono.just(initialBoot));
     when(movementsRepository.insert(movement)).thenReturn(Mono.just(movement));
     when(bootcoinRepository.save(finalBoot)).thenReturn(Mono.just(finalBoot));
 
 
     var parameter = MovementsDto.builder()
+      .bootcoinId("12345678")
       .phone("934819535")
       .description("movement")
       .amount(BigDecimal.TEN.negate())
