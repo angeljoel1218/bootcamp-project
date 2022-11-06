@@ -10,6 +10,7 @@ import com.nttdata.bootcamp.customerservice.model.constants.Constants;
 import com.nttdata.bootcamp.customerservice.model.constants.TypeCustomer;
 import com.nttdata.bootcamp.customerservice.model.constants.TypeProfile;
 import com.nttdata.bootcamp.customerservice.model.dto.CustomerDto;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ class CustomerServiceImplTests {
 
 
   @Test
+  @DisplayName("should validate the customer creation")
 	void create() {
     Customer customer = Customer.builder()
       .typeCustomer(TypeCustomer.PERSONAL)
@@ -111,6 +113,7 @@ class CustomerServiceImplTests {
 
 
   @Test
+  @DisplayName("should validate the customer update, error")
   void update() {
     var id = "01505254514";
 
@@ -131,58 +134,124 @@ class CustomerServiceImplTests {
       .verify();
   }
 
-  /*
+
+
+  @DisplayName("should validate the customer delete, error")
   @Test
   void delete() {
     var id = "70150585sdsds";
-    when(customerService.delete(id)).thenReturn(Mono.empty().then());
-    webTestClient.delete().uri("/customer/delete/"+id)
-      .accept(MediaType.APPLICATION_JSON)
-      .exchange()
-      .expectStatus().isOk();
+    when(customerRepository.findById(id)).thenReturn(Mono.just(new Customer()));
+
+    StepVerifier.create(customerService.delete(id))
+      .expectError(RuntimeException.class)
+      .verify();
   }
 
   @Test
   void findById() {
-    var monoDto = new CustomerDto("70150585sdsds",TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP);
+    var id="70150585sdsds";
+    Customer customer = Customer.builder()
+      .typeCustomer(TypeCustomer.PERSONAL)
+      .name("Alexander")
+      .lastName("Bejarano")
+      .businessName("Company")
+      .emailAddress("ales.bejarano@gmail.com")
+      .numberDocument("70150525")
+      .status(Constants.STATUS_CREATED)
+      .typeProfile(TypeProfile.VIP)
+      .build();
 
-    when(customerService.findById("70150585sdsds")).thenReturn(Mono.just(monoDto));
-    var responseFlux= webTestClient.get().uri("/customer/get/70150585sdsds")
-      .exchange()
-      .expectStatus().isOk()
-      .returnResult(CustomerDto.class)
-      .getResponseBody();
 
-    StepVerifier.create(responseFlux)
-      .expectSubscription()
-      .expectNext(new CustomerDto("70150585sdsds",TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP))
-      .verifyComplete();
+    when(customerRepository.findById("70150585sdsds")).thenReturn(Mono.just(customer));
+
+
+
+    CustomerDto response = CustomerDto.builder()
+      .typeCustomer(TypeCustomer.PERSONAL)
+      .name("Alexander")
+      .lastName("Bejarano")
+      .businessName("Company")
+      .emailAddress("ales.bejarano@gmail.com")
+      .numberDocument("70150525")
+      .typeProfile(TypeProfile.VIP)
+      .status(Constants.STATUS_CREATED)
+      .itsVip(true)
+      .itsPyme(false)
+      .itsCompany(false)
+      .itsPersonal(true)
+      .build();
+
+    StepVerifier.create(customerService.findById(id))
+      .expectNext(response)
+      .expectComplete()
+      .verify();
   }
 
   @Test
   void findAll() {
 
-    var empFlux = Flux.just(
-      new CustomerDto(TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP),
-      new CustomerDto(TypeCustomer.PERSONAL,"Angel","Alvarado","Other","angel@gmail.com","784574", null)
-      );
+    Customer customerOne = Customer.builder()
+      .typeCustomer(TypeCustomer.PERSONAL)
+      .name("Alexander")
+      .lastName("Bejarano")
+      .businessName("Company")
+      .emailAddress("ales.bejarano@gmail.com")
+      .numberDocument("70150525")
+      .status(Constants.STATUS_CREATED)
+      .typeProfile(TypeProfile.VIP)
+      .build();
 
-    when(customerService.findAll()).thenReturn(empFlux);
+    Customer customerTwo = Customer.builder()
+      .typeCustomer(TypeCustomer.COMPANY)
+      .name("Alejandro")
+      .lastName("Marioano")
+      .businessName("sdfsd")
+      .emailAddress("ales.bejarano@gmail.com")
+      .numberDocument("232323")
+      .status(Constants.STATUS_CREATED)
+      .typeProfile(TypeProfile.PYME)
+      .build();
 
-    var responseFlux = webTestClient.get().uri("/customer/all")
-      .exchange()
-      .expectStatus().isOk()
-      .returnResult(CustomerDto.class)
-      .getResponseBody();
+    when(customerRepository.findAll()).thenReturn(Flux.just(customerOne,customerTwo));
 
-    StepVerifier.create(responseFlux)
 
+    StepVerifier.create(customerService.findAll())
       .expectSubscription()
-      .expectNext(new CustomerDto(TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP))
-      .expectNext(new CustomerDto(TypeCustomer.PERSONAL,"Angel","Alvarado","Other","angel@gmail.com","784574", null))
-      .verifyComplete();
+      .expectNext(
+
+        CustomerDto.builder()
+          .typeCustomer(TypeCustomer.PERSONAL)
+          .name("Alexander")
+          .lastName("Bejarano")
+          .businessName("Company")
+          .emailAddress("ales.bejarano@gmail.com")
+          .numberDocument("70150525")
+          .typeProfile(TypeProfile.VIP)
+          .status(Constants.STATUS_CREATED)
+          .itsVip(true)
+          .itsPyme(false)
+          .itsCompany(false)
+          .itsPersonal(true)
+          .build()
+      )
+      .expectNext(
+        CustomerDto.builder()
+          .typeCustomer(TypeCustomer.COMPANY)
+          .name("Alejandro")
+          .lastName("Marioano")
+          .businessName("sdfsd")
+          .emailAddress("ales.bejarano@gmail.com")
+          .numberDocument("232323")
+          .typeProfile(TypeProfile.PYME)
+          .status(Constants.STATUS_CREATED)
+          .itsVip(false)
+          .itsPyme(true)
+          .itsCompany(true)
+          .itsPersonal(false)
+          .build()
+      ).verifyComplete();
 
 
   }
-*/
+
 }

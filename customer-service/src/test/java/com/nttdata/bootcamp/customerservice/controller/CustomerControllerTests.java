@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.customerservice.controller;
 
 import com.nttdata.bootcamp.customerservice.aplication.CustomerService;
+import com.nttdata.bootcamp.customerservice.model.constants.Constants;
 import com.nttdata.bootcamp.customerservice.model.constants.TypeCustomer;
 import com.nttdata.bootcamp.customerservice.model.constants.TypeProfile;
 import com.nttdata.bootcamp.customerservice.model.dto.CustomerDto;
@@ -36,7 +37,19 @@ class CustomerControllerTests {
 
   @Test
 	void create() {
-    var monoDto = new CustomerDto(TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP);
+
+
+    var monoDto = CustomerDto.builder()
+      .typeCustomer(TypeCustomer.PERSONAL)
+      .name("Alexander")
+      .lastName("Bejarano")
+      .businessName("Company")
+      .emailAddress("ales.bejarano@gmail.com")
+      .numberDocument("70150525")
+      .status(Constants.STATUS_CREATED)
+      .typeProfile(TypeProfile.VIP)
+      .build();
+
     when(customerService.create(monoDto)).thenReturn(Mono.just(monoDto));
 
     webTestClient.post().uri("/customer/create")
@@ -50,9 +63,31 @@ class CustomerControllerTests {
   }
 
   @Test
+  void createInvalidData() {
+
+    webTestClient.post().uri("/customer/create")
+      .contentType(MediaType.APPLICATION_JSON)
+      .accept(MediaType.APPLICATION_JSON)
+      .body(Mono.just(new CustomerDto()),CustomerDto.class)
+      .exchange()
+      .expectStatus().is5xxServerError();
+
+  }
+
+  @Test
   void update() {
     var id = "70150585sdsds";
-    var monoDto = new CustomerDto("70150585sdsds",TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP);
+
+    var monoDto = CustomerDto.builder()
+      .typeCustomer(TypeCustomer.PERSONAL)
+      .name("Alexander")
+      .lastName("Bejarano")
+      .businessName("Company")
+      .emailAddress("ales.bejarano@gmail.com")
+      .numberDocument("70150525")
+      .status(Constants.STATUS_CREATED)
+      .typeProfile(TypeProfile.VIP)
+      .build();
 
     when(customerService.update(monoDto,id)).thenReturn(Mono.just(monoDto));
 
@@ -76,9 +111,21 @@ class CustomerControllerTests {
 
   @Test
   void findById() {
-    var monoDto = new CustomerDto("70150585sdsds",TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP);
+
+    var monoDto = CustomerDto.builder()
+      .typeCustomer(TypeCustomer.PERSONAL)
+      .name("Alexander")
+      .lastName("Bejarano")
+      .businessName("Company")
+      .emailAddress("ales.bejarano@gmail.com")
+      .numberDocument("70150525")
+      .status(Constants.STATUS_CREATED)
+      .typeProfile(TypeProfile.VIP)
+      .build();
+
 
     when(customerService.findById("70150585sdsds")).thenReturn(Mono.just(monoDto));
+
     var responseFlux= webTestClient.get().uri("/customer/get/70150585sdsds")
       .exchange()
       .expectStatus().isOk()
@@ -87,7 +134,7 @@ class CustomerControllerTests {
 
     StepVerifier.create(responseFlux)
       .expectSubscription()
-      .expectNext(new CustomerDto("70150585sdsds",TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP))
+      .expectNext(monoDto)
       .verifyComplete();
   }
 
@@ -95,8 +142,25 @@ class CustomerControllerTests {
   void findAll() {
 
     var empFlux = Flux.just(
-      new CustomerDto(TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP),
-      new CustomerDto(TypeCustomer.PERSONAL,"Angel","Alvarado","Other","angel@gmail.com","784574", null)
+      CustomerDto.builder()
+        .typeCustomer(TypeCustomer.PERSONAL)
+        .name("Alexander")
+        .lastName("Bejarano")
+        .businessName("Company")
+        .emailAddress("ales.bejarano@gmail.com")
+        .numberDocument("70150525")
+        .status(Constants.STATUS_CREATED)
+        .typeProfile(TypeProfile.VIP)
+        .build(),
+
+      CustomerDto.builder()
+        .typeCustomer(TypeCustomer.COMPANY)
+        .businessName("Company")
+        .emailAddress("ales.bejarano@gmail.com")
+        .numberDocument("70150525")
+        .status(Constants.STATUS_CREATED)
+        .typeProfile(TypeProfile.PYME)
+        .build()
       );
 
     when(customerService.findAll()).thenReturn(empFlux);
@@ -110,8 +174,27 @@ class CustomerControllerTests {
     StepVerifier.create(responseFlux)
 
       .expectSubscription()
-      .expectNext(new CustomerDto(TypeCustomer.PERSONAL,"Alexander","Bejarano","Company","ales.bejarano@gmail.com","70150525", TypeProfile.VIP))
-      .expectNext(new CustomerDto(TypeCustomer.PERSONAL,"Angel","Alvarado","Other","angel@gmail.com","784574", null))
+      .expectNext(
+        CustomerDto.builder()
+        .typeCustomer(TypeCustomer.PERSONAL)
+        .name("Alexander")
+        .lastName("Bejarano")
+        .businessName("Company")
+        .emailAddress("ales.bejarano@gmail.com")
+        .numberDocument("70150525")
+        .status(Constants.STATUS_CREATED)
+        .typeProfile(TypeProfile.VIP)
+        .build())
+      .expectNext(
+        CustomerDto.builder()
+          .typeCustomer(TypeCustomer.COMPANY)
+          .businessName("Company")
+          .emailAddress("ales.bejarano@gmail.com")
+          .numberDocument("70150525")
+          .status(Constants.STATUS_CREATED)
+          .typeProfile(TypeProfile.PYME)
+          .build()
+      )
       .verifyComplete();
 
 
