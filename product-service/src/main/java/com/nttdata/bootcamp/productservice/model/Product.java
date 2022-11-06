@@ -2,16 +2,17 @@ package com.nttdata.bootcamp.productservice.model;
 
 import com.nttdata.bootcamp.productservice.model.constant.Category;
 import com.nttdata.bootcamp.productservice.model.constant.ProductType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * Some javadoc.
+ * @since 2022
+ */
 @Document
-@Getter
-@Setter
+@Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {

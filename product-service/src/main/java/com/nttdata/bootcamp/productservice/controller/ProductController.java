@@ -13,6 +13,10 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+/**
+ * Some javadoc.
+ * @since 2022
+ */
 @RefreshScope
 @RestController
 @RequestMapping("/product")
@@ -27,7 +31,8 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public Mono<ResponseEntity<ProductDto>> update(@Valid @RequestBody ProductDto productDto, @PathVariable String id) {
+    public Mono<ResponseEntity<ProductDto>> update(@Valid @RequestBody ProductDto productDto,
+                                                   @PathVariable String id) {
         return productService.update(id, productDto)
                 .map(a -> ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_JSON)
