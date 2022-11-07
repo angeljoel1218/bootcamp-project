@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.walletservice.application.consumer;
+package com.nttdata.bootcamp.walletservice.infrastructure.consumer;
 
 import com.nttdata.bootcamp.walletservice.application.WalletService;
 import com.nttdata.bootcamp.walletservice.model.Wallet;

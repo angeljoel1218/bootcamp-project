@@ -28,7 +28,7 @@ public interface AccountFeignClient {
   @GetMapping("account/transaction/{accountId}/list")
   public Flux<TransactionDto> findTransactionByAccountId(@PathVariable("accountId") String id);
 
-  @GetMapping("account/product/product")
+  @GetMapping("account/product")
   public Flux<CreditCardDto> findByCreateDateBetweenAndProductId (
     @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date startDate,
     @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date endDate,

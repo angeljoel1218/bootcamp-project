@@ -10,4 +10,6 @@ import reactor.core.publisher.Flux;
  */
 public interface CardMovementRepository extends ReactiveMongoRepository<CardMovement, String> {
     Flux<CardMovement> findByCardId(String cardId);
+
+    Flux<CardMovement> findByCardIdOrderByOperationDateDesc(String cardId);
 }

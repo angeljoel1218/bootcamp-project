@@ -17,4 +17,5 @@ public interface CreditCardService extends GeneralService<CreditCard> {
     Flux<TransactionCreditCard> findTransactionByIdCredit(String id);
     Mono<List<TransactionCreditCard>> findLastTransactionByIdCredit(String idCredit, Integer limit);
 
+    Mono<List<TransactionCreditCard>> findLastTenTransactionByIdCredit(String idCredit);
 }
