@@ -238,8 +238,8 @@ public class CreditCardServiceImpl implements CreditCardService {
     }
 
     @Override
-      public Mono<Boolean> findIsCustomerHaveDebs(String idCustomer) {
-        return  creditCardRepository.findByIdCustomer(idCustomer)
+    public Mono<Boolean> findIsCustomerHaveDebs(String idCustomer) {
+      return  creditCardRepository.findByIdCustomer(idCustomer)
           .flatMap(listCredits-> monthlyRepository
             .findFirstByIdCreditCardAndStatusOrderByEndDateAsc(listCredits.getId(),
               CreditStatus.PENDING)).collectList().map(list->{
@@ -247,7 +247,7 @@ public class CreditCardServiceImpl implements CreditCardService {
                return t.getExpireDate().before(DateUtil.getStartCurrentDate());
               });
           }).switchIfEmpty(Mono.just(Boolean.FALSE));
-      }
+    }
 
     @Override
     public Flux<CreditCard> findByCreateDateBetweenAndIdProduct(Date start,

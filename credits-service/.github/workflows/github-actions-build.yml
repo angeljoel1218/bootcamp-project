@@ -22,5 +22,5 @@ jobs:
       with:
        username: ${{ secrets.DOCKER_HUB_USERNAME }}
        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-       repository: abejarano7/discovery-service
+       repository: ${{ secrets.DOCKER_HUB_USERNAME }}/credits-service
        tags: ${{github.run_number}}
