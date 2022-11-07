@@ -258,4 +258,12 @@ public class CreditCardServiceImpl implements CreditCardService {
             end,
             idProduct);
     }
+
+  @Override
+  public Mono<List<TransactionCreditCard>> findLastTenTransactionByIdCredit(String idCredit) {
+    return transactionCreditRepository.findByIdCreditOrderByDateDesc(idCredit)
+      .collectList().map(t -> {
+      return t.stream().limit(10).collect(Collectors.toList());
+    });
+  }
 }
