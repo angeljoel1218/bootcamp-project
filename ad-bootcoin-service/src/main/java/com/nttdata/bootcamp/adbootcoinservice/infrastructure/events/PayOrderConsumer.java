@@ -26,7 +26,7 @@ public class PayOrderConsumer {
   @Autowired
   private AdvertService advertService;
 
-  @KafkaListener(topics = "${spring.kafka.consumer.group-id}}")
+  @KafkaListener(topics = "${kafka.topic.accept.purchase}")
   public void listener(@Payload String id) {
     log.debug("Message received : {} ", id);
     applyBalance(id).block();
