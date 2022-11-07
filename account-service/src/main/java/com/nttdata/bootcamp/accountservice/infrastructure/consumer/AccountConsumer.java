@@ -1,7 +1,8 @@
-package com.nttdata.bootcamp.accountservice.application.consumer;
+package com.nttdata.bootcamp.accountservice.infrastructure.consumer;
 
-import com.nttdata.bootcamp.accountservice.application.producer.OrderBootcoinProducer;
+import com.nttdata.bootcamp.accountservice.infrastructure.producer.OrderBootcoinProducer;
 import com.nttdata.bootcamp.accountservice.application.service.TransactionService;
+import com.nttdata.bootcamp.accountservice.model.constant.StateTransaction;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionBootcoinDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionRequestDto;
@@ -13,6 +14,10 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -39,11 +44,11 @@ public class AccountConsumer {
         .sourceAccount(request.getSourceNumber())
         .targetAccount(request.getTargetNumber())
       .build()).map(r -> {
-      request.setStatus(TransactionBootcoinDto.Status.COMPLETED);
+      request.setState(StateTransaction.DONE);
       return request;
     }).onErrorResume(throwable -> {
-      request.setStatus(TransactionBootcoinDto.Status.PENDING);
+      request.setState(StateTransaction.DENIED);
       return Mono.just(request);
     });
-	}
+  }
 }

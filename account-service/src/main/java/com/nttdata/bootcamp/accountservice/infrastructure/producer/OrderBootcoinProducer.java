@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.accountservice.application.producer;
+package com.nttdata.bootcamp.accountservice.infrastructure.producer;
 
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionBootcoinDto;
 import lombok.RequiredArgsConstructor;
@@ -10,17 +10,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
+/**
+ *
+ * @since 2022
+ */
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class OrderBootcoinProducer {
   private final KafkaTemplate<String, TransactionBootcoinDto> kafkaTemplate;
 
-  @Value(value = "${kafka.topic.wallet.transaction.result.name}")
+  @Value(value = "${kafka.topic.transaction.result.name}")
   private String topic;
 
   public void sendMessage(TransactionBootcoinDto transactionRequestDto) {
-    ListenableFuture<SendResult<String, TransactionBootcoinDto>> future = kafkaTemplate.send(this.topic, transactionRequestDto);
+    ListenableFuture<SendResult<String, TransactionBootcoinDto>> future =
+      kafkaTemplate.send(this.topic, transactionRequestDto);
 
     future.addCallback(new ListenableFutureCallback<SendResult<String, TransactionBootcoinDto>>() {
       @Override

@@ -9,6 +9,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class AccountDto {
     private String id;

@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
 @Service
 public class AccountServiceImpl implements AccountService<AccountDto> {
     @Autowired
@@ -34,15 +38,18 @@ public class AccountServiceImpl implements AccountService<AccountDto> {
     public Mono<AccountDto> create(AccountDto accountDto) {
         switch (accountDto.getTypeAccount()){
             case SAVINGS_ACCOUNT:
-                MapperGeneric<SavingsAccountDto> ms = new MapperGeneric<>(SavingsAccountDto.class);
+                MapperGeneric<SavingsAccountDto> ms =
+                  new MapperGeneric<>(SavingsAccountDto.class);
                 return savingsAccountService.create(ms.toDto(accountDto))
                         .map(ms::toAccountDto);
             case FIXED_TERM_ACCOUNT:
-                MapperGeneric<FixedTermAccountDto> mf = new MapperGeneric<>(FixedTermAccountDto.class);
+                MapperGeneric<FixedTermAccountDto> mf =
+                  new MapperGeneric<>(FixedTermAccountDto.class);
                 return fixedTermAccountService.create(mf.toDto(accountDto))
                         .map(mf::toAccountDto);
             case CURRENT_ACCOUNT:
-                MapperGeneric<CurrentAccountDto> mc = new MapperGeneric<>(CurrentAccountDto.class);
+                MapperGeneric<CurrentAccountDto> mc =
+                  new MapperGeneric<>(CurrentAccountDto.class);
                 return currentAccountService.create(mc.toDto(accountDto))
                         .map(mc::toAccountDto);
         }

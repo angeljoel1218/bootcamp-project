@@ -3,6 +3,11 @@ package com.nttdata.bootcamp.accountservice.application.helper;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ *
+ * @since 2022
+ */
+
 public class DateUtil {
     public static Date getStartOfMonth() {
         Calendar calendar = Calendar.getInstance();

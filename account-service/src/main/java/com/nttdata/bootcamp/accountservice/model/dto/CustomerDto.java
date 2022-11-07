@@ -4,8 +4,10 @@ import com.nttdata.bootcamp.accountservice.model.constant.TypeCustomer;
 import com.nttdata.bootcamp.accountservice.model.constant.TypeProfile;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class CustomerDto {
     private String id;

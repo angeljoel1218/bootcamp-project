@@ -5,6 +5,10 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ *
+ * @since 2022
+ */
 @Builder
 @Data
 public class TransactionRequestDto {

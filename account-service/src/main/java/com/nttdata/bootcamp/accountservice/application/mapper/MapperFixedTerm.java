@@ -4,7 +4,11 @@ import com.nttdata.bootcamp.accountservice.model.FixedTermAccount;
 import com.nttdata.bootcamp.accountservice.model.dto.FixedTermAccountDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
+
+/**
+ *
+ * @since 2022
+ */
 
 @Component
 public class MapperFixedTerm {

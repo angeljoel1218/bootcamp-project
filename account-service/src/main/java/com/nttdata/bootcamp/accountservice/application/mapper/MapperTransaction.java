@@ -4,7 +4,12 @@ import com.nttdata.bootcamp.accountservice.model.Transaction;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
+
+/**
+ *
+ * @since 2022
+ */
+
 @Component
 public class MapperTransaction {
     public TransactionDto toDto(Transaction transaction) {
