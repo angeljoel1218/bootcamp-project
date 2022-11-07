@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.bootcoinservice.bootcoinservice.application;
 
+import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.application.exception.InsufficientBalanceException;
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.application.mappers.MapperBootcoin;
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.infrastructure.BootcoinRepository;
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.infrastructure.BootcointMovementsRepository;
@@ -57,7 +58,7 @@ public class BootcoinServiceImpl implements BootcoinService {
       .switchIfEmpty(Mono.error(new InterruptedException("Bootcoin  not found")))
       .flatMap(bootcoin -> {
         if ((bootcoin.getBalance().add(movementsDto.getAmount())).compareTo(BigDecimal.ZERO) < 0) {
-          return   Mono.error(InsufficientResourcesException::new);
+          return   Mono.error(new InsufficientBalanceException("There is not enough balance to execute the operation"));
         }
 
         BootcoinMovements bootcoinMovements = BootcoinMovements.builder()
