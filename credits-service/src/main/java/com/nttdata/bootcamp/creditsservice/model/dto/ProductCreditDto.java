@@ -4,6 +4,10 @@ import com.nttdata.bootcamp.creditsservice.model.constant.Category;
 import com.nttdata.bootcamp.creditsservice.model.constant.ProductType;
 import lombok.Data;
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class ProductCreditDto {
     private String id;

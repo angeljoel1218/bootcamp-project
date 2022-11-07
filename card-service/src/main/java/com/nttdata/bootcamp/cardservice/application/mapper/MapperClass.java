@@ -7,6 +7,10 @@ import com.nttdata.bootcamp.cardservice.model.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+/**
+ *
+ * @since 2022
+ */
 @Component
 public class MapperClass {
     public CardDto toDto(Card card) {

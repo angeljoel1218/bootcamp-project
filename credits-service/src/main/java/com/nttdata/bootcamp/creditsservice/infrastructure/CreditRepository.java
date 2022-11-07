@@ -6,9 +6,16 @@ import reactor.core.publisher.Flux;
 
 import java.util.Date;
 
+
+/**
+ *
+ * @since 2022
+ */
 public interface CreditRepository extends ReactiveMongoRepository<Credit, String > {
 
     public Flux<Credit> findByIdCustomer(String id);
 
-    public  Flux<Credit> findByCreateDateBetweenAndIdProduct(Date start, Date end,String idProduct);
+    public  Flux<Credit> findByCreateDateBetweenAndIdProduct(Date start,
+                                                             Date end,
+                                                             String idProduct);
 }

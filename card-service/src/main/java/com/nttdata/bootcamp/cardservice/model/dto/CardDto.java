@@ -7,6 +7,10 @@ import lombok.Data;
 import java.util.Date;
 import java.util.List;
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class CardDto {
     private String id;

@@ -3,6 +3,10 @@ package com.nttdata.bootcamp.creditsservice.model.dto;
 import lombok.*;
 
 
+/**
+ *
+ * @since 2022
+ */
 @Builder
 @Data
 @Getter

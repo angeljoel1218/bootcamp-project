@@ -1,7 +1,6 @@
 package com.nttdata.bootcamp.cardservice.application.controller;
 
 import com.nttdata.bootcamp.cardservice.application.TransactionService;
-import com.nttdata.bootcamp.cardservice.model.CardMovement;
 import com.nttdata.bootcamp.cardservice.model.dto.CardMovementDto;
 import com.nttdata.bootcamp.cardservice.model.dto.PaymentDto;
 import com.nttdata.bootcamp.cardservice.model.dto.WithdrawDto;
@@ -12,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
 @RefreshScope
 @RestController
 public class TransactionController {

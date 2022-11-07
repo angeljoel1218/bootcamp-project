@@ -5,6 +5,10 @@ import com.nttdata.bootcamp.creditsservice.model.dto.CreditDuesDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+/**
+ *
+ * @since 2022
+ */
 @Component
 public class MapperCredit {
     public CreditDuesDto toCreditDto(CreditDues creditDues) {

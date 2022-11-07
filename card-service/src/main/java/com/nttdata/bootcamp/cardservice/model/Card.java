@@ -11,6 +11,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
 import java.util.List;
 
+/**
+ *
+ * @since 2022
+ */
+
 @Document("cards")
 @Getter
 @Setter

@@ -4,6 +4,10 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class CreditDuesRequestDto {
     private  String idCredit;
