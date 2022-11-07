@@ -12,6 +12,7 @@ import com.nttdata.bootcamp.exchangebootcoinservice.domain.model.Transaction;
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.ConfigPaymentMethodRepository;
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.PayOrderRepository;
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.TransactionRepository;
+import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.events.ProducerAcceptPurchase;
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.events.ProducerBootcoinBalance;
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.events.ProducerTransactionAccount;
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.events.ProducerTransactionWallet;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import javax.xml.transform.TransformerException;
 import java.util.Date;
 
 @Slf4j
@@ -46,6 +46,9 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
     BootcoinService bootcoinService;
+
+    @Autowired
+    ProducerAcceptPurchase producerAcceptPurchase;
 
     @Autowired
     MapperTransaction mapperTransaction;
@@ -138,6 +141,7 @@ public class TransactionServiceImpl implements TransactionService {
                         .targetNumber(payOrder.getConfigPayment().getTargetNumber())
                         .build());
             }
+            producerAcceptPurchase.sendMessage(payOrder.getAdvertId());
         }
         return transaction;
     }

@@ -82,6 +82,7 @@ public class AdvertServiceImpl implements AdvertService {
                             payOrder.setSellerWalletId(advert.getWalletId());
                             payOrder.setExchangeRate(exchangeRate.getPrice());
                             payOrder.setMethodPayment(advert.getMethodPayment());
+                            payOrder.setAdvertId(advert.getId());
                             payOrder.setCreatedAt(new Date());
                             return Mono.just(payOrder)
                                     .flatMap(payOrderRepository::insert)
