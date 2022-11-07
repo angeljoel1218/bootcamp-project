@@ -95,4 +95,12 @@ public class AdvertServiceImpl implements AdvertService {
                                     .map(mapperPayOrder::toDto);
                         }));
     }
+
+  @Override
+  public Mono<AdvertDto> acceptPurchase(String id) {
+    return advertRepository.findById(id)
+      .doOnNext(t->t.setState(StateAdvert.CLOSED))
+      .flatMap(advertRepository::save)
+      .map(mapperAdvert::toDto);
+  }
 }

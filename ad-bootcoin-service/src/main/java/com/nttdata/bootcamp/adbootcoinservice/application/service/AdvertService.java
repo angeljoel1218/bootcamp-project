@@ -15,4 +15,5 @@ public interface AdvertService {
     Mono<AdvertDto> postAd(AdvertDto advertDto);
     Flux<AdvertDto> listAd();
     Mono<PayOrderDto> requestPurchase(RequestPurchaseDto requestPurchaseDto);
+    Mono<AdvertDto> acceptPurchase(String id);
 }
