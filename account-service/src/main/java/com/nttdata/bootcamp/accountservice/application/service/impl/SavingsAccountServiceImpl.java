@@ -16,6 +16,10 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.util.Date;
+/**
+ *
+ * @since 2022
+ */
 
 @Service
 public class SavingsAccountServiceImpl implements SavingsAccountService<SavingsAccountDto> {
@@ -39,20 +43,27 @@ public class SavingsAccountServiceImpl implements SavingsAccountService<SavingsA
         accountDto.setState(StateAccount.ACTIVE);
         accountDto.setCreatedAt(new Date());
         return customerClientService.getCustomer(accountDto.getHolderId())
-                .switchIfEmpty(Mono.error(new AccountException("Customer not found")))
+                .switchIfEmpty(Mono.error(
+                  new AccountException("Customer not found")))
                 .doOnNext(customerDto -> {
-                    if(customerDto.getTypeCustomer().equals(TypeCustomer.COMPANY)) {
-                        throw new AccountException("Customer must be personal type");
+                    if (customerDto.getTypeCustomer().equals(TypeCustomer.COMPANY)) {
+                        throw new AccountException(
+                          "Customer must be personal type");
                     }
                 })
                 .flatMap(customerDto -> {
-                    if(customerDto.getTypeProfile() != null && customerDto.getTypeProfile().equals(TypeProfile.VIP)) {
-                        return creditClientService.getCreditCardCustomer(accountDto.getHolderId())
-                                .switchIfEmpty(Mono.error(new AccountException("The customer must have a credit card to enable this account")))
+                    if (customerDto.getTypeProfile() != null
+                      && customerDto.getTypeProfile().equals(TypeProfile.VIP)) {
+                        return creditClientService
+                          .getCreditCardCustomer(accountDto.getHolderId())
+                                .switchIfEmpty(Mono.error(
+                                  new AccountException("The customer must have a credit" +
+                                    " card to enable this account")))
                                 .count()
                                 .doOnNext(count -> {
                                     if (count == 0) {
-                                        throw new AccountException("The customer must have a credit card to enable this account");
+                                        throw new AccountException("The customer must have" +
+                                          " a credit card to enable this account");
                                     }
                                 })
                                 .flatMap(count -> this.findAndSave(accountDto));
@@ -61,10 +72,12 @@ public class SavingsAccountServiceImpl implements SavingsAccountService<SavingsA
                 });
     }
     public Mono<SavingsAccountDto> findAndSave(SavingsAccountDto accountDto) {
-        return savingsAccountRepository.findByHolderIdAndTypeAccount(accountDto.getHolderId(), TypeAccount.SAVINGS_ACCOUNT)
+        return savingsAccountRepository.findByHolderIdAndTypeAccount(accountDto.getHolderId(),
+            TypeAccount.SAVINGS_ACCOUNT)
                 .doOnNext(savingsAccount -> {
                     if (savingsAccount.getId() != null) {
-                        throw new AccountException("The customer can only have one savings account");
+                        throw new AccountException(
+                          "The customer can only have one savings account");
                     }
                 })
                 .flatMap(savingsAccount -> this.save(accountDto))
@@ -73,11 +86,14 @@ public class SavingsAccountServiceImpl implements SavingsAccountService<SavingsA
     public Mono<SavingsAccountDto> save(SavingsAccountDto accountDto) {
         return productClientService.getProductAccount(accountDto.getProductId())
                 .doOnNext(productDto -> {
-                    if (accountDto.getBalance().compareTo(BigDecimal.valueOf(productDto.getMinFixedAmount())) == -1) {
-                        throw new AccountException("Insufficient minimum amount to open an account");
+                    if (accountDto.getBalance()
+                      .compareTo(BigDecimal.valueOf(productDto.getMinFixedAmount())) < 0) {
+                        throw new AccountException(
+                          "Insufficient minimum amount to open an account");
                     }
                 })
-                .flatMap(productDto -> savingsAccountRepository.countByNumber(accountDto.getNumber()))
+                .flatMap(productDto -> savingsAccountRepository
+                  .countByNumber(accountDto.getNumber()))
                 .doOnNext(count -> {
                     if (count > 0) {
                         throw new AccountException("Account number already exists");

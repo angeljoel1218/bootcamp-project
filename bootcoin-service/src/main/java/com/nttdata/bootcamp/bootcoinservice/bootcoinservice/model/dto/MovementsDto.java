@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class MovementsDto {
+  private String bootcoinId;
   private String phone;
   private String description;
   private BigDecimal amount;

@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.wallettransactionservice.model.dto;
 
+import com.nttdata.bootcamp.wallettransactionservice.model.constant.StateTransaction;
 import lombok.*;
 
 import java.io.Serializable;
@@ -15,11 +16,9 @@ public class TransactionBootcoinDto implements Serializable {
     private String targetNumber;
     private BigDecimal amount;
     private String transactionId;
-    private Status status;
+    private StateTransaction state;
 
-    public enum  Status {
-      PENDING, COMPLETED, REFUSED
-    }
+
 
 
 }

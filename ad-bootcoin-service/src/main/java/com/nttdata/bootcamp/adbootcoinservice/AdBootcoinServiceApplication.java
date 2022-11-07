@@ -10,22 +10,29 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
+
+/**
+ *
+ * @since 2022
+ */
 @SpringBootApplication
 @EnableEurekaClient
 public class AdBootcoinServiceApplication {
-	@Value(value = "${webclient.baseurl}")
-	private String baseurl;
 
-	public static void main(String[] args) {
-		SpringApplication.run(AdBootcoinServiceApplication.class, args);
-	}
+  @Value(value = "${webclient.baseurl}")
+  private String baseurl;
 
-	@Bean
-	@LoadBalanced
-	public WebClient loadBalancedWebClientBuilder() {
-		return WebClient.builder()
-				.baseUrl(baseurl)
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-				.build();
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(AdBootcoinServiceApplication.class, args);
+  }
+
+  @Bean
+  @LoadBalanced
+  public WebClient loadBalancedWebClientBuilder() {
+    return WebClient.builder()
+      .baseUrl(baseurl)
+      .defaultHeader(HttpHeaders.CONTENT_TYPE,
+        MediaType.APPLICATION_JSON_VALUE)
+      .build();
+  }
 }

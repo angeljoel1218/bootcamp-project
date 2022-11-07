@@ -2,6 +2,7 @@ package com.nttdata.bootcamp.wallettransactionservice.infrastructure.consumer;
 
 import com.nttdata.bootcamp.wallettransactionservice.application.servivce.TransactionService;
 import com.nttdata.bootcamp.wallettransactionservice.infrastructure.producer.OrderBootcoinProducer;
+import com.nttdata.bootcamp.wallettransactionservice.model.constant.StateTransaction;
 import com.nttdata.bootcamp.wallettransactionservice.model.dto.TransactionBootcoinDto;
 import com.nttdata.bootcamp.wallettransactionservice.model.dto.TransactionRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +38,10 @@ public class WalletTransactionConsumer {
       .sourceNumberCell(request.getSourceNumber())
       .targetNumberCell(request.getTargetNumber())
       .amount(request.getAmount()).build()).map(r -> {
-        request.setStatus(TransactionBootcoinDto.Status.COMPLETED);
+        request.setState(StateTransaction.DONE);
         return request;
       }).onErrorResume(throwable -> {
-        request.setStatus(TransactionBootcoinDto.Status.PENDING);
+        request.setState(StateTransaction.DENIED);
         return Mono.just(request);
       });
   }

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Data
 public class TransactionDto {
 
-  private String sourceNumberCell;
-  private String targetNumberCell;
+  private String sourceWalletId;
+  private String targetWalletId;
   private BigDecimal amount;
 }

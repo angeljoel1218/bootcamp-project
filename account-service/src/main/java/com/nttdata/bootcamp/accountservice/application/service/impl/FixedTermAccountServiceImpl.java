@@ -17,6 +17,10 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ *
+ * @since 2022
+ */
 @Service
 public class FixedTermAccountServiceImpl implements FixedTermAccountService<FixedTermAccountDto> {
     @Autowired
@@ -32,33 +36,38 @@ public class FixedTermAccountServiceImpl implements FixedTermAccountService<Fixe
         accountDto.setState(StateAccount.ACTIVE);
         accountDto.setCreatedAt(new Date());
         return customerClient.getCustomer(accountDto.getHolderId())
-                .switchIfEmpty(Mono.error(new AccountException("Customer not found")))
-                .doOnNext(customerDto -> {
-                    if(customerDto.getTypeCustomer().equals(TypeCustomer.COMPANY)) {
-                        throw new AccountException("Customer must be personal type");
-                    }
-                })
-                .flatMap(client -> fixedTermAccountRepository.countByHolderIdAndTypeAccount(accountDto.getHolderId(), TypeAccount.FIXED_TERM_ACCOUNT)
-                            .doOnNext(count -> {
-                                if (count >= 1) {
-                                    throw new AccountException("The customer can only have one fixed term deposit account");
-                                }
-                            })
-                            .flatMap(count -> this.save(accountDto))
-                            .switchIfEmpty(Mono.defer(() -> this.save(accountDto))));
+          .switchIfEmpty(Mono.error(new AccountException("Customer not found")))
+          .doOnNext(customerDto -> {
+            if (customerDto.getTypeCustomer().equals(TypeCustomer.COMPANY)) {
+              throw new AccountException("Customer must be personal type");
+            }
+          }).flatMap(client -> fixedTermAccountRepository
+            .countByHolderIdAndTypeAccount(accountDto.getHolderId(),
+              TypeAccount.FIXED_TERM_ACCOUNT)
+            .doOnNext(count -> {
+              if (count >= 1) {
+                throw new AccountException(
+                  "The customer can only have one fixed term deposit account");
+              }
+            }).flatMap(count -> this.save(accountDto))
+            .switchIfEmpty(Mono.defer(() -> this.save(accountDto))));
     }
     public Mono<FixedTermAccountDto> save(FixedTermAccountDto accountDto) {
         return productClient.getProductAccount(accountDto.getProductId())
                 .switchIfEmpty(Mono.error(new AccountException("Product does not exist")))
                 .doOnNext(productDto -> {
-                    if (BigDecimal.valueOf(productDto.getMinFixedAmount()).compareTo(accountDto.getBalance()) == 1) {
-                        throw new AccountException("Insufficient minimum amount to open an account");
+                    if (BigDecimal.valueOf(productDto.getMinFixedAmount())
+                      .compareTo(accountDto.getBalance()) > 0) {
+                        throw new AccountException(
+                          "Insufficient minimum amount to open an account");
                     }
                 })
-                .flatMap(productDto -> fixedTermAccountRepository.countByNumber(accountDto.getNumber()))
+                .flatMap(productDto -> fixedTermAccountRepository
+                  .countByNumber(accountDto.getNumber()))
                 .doOnNext(count -> {
                     if (count > 0) {
-                        throw new AccountException("Account number already exists");
+                        throw new AccountException(
+                          "Account number already exists");
                     }
                 })
                 .flatMap(productAccountDto -> {

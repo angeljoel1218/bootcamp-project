@@ -9,8 +9,16 @@ import reactor.core.publisher.Mono;
 
 import java.util.Date;
 
-public interface TransactionRepository extends ReactiveMongoRepository<Transaction, String> {
+/**
+ *
+ * @since 2022
+ */
+public interface TransactionRepository
+  extends ReactiveMongoRepository<Transaction, String> {
     Flux<Transaction> findByAccountId(String id);
     Flux<Transaction> findByAccountIdAndTypeAccount(String id, TypeAccount typeAccount);
-    Mono<Long> countByDateBetweenAndAccountIdAndTypeNot(Date start, Date end, String accountId, TypeTransaction type);
+    Mono<Long> countByDateBetweenAndAccountIdAndTypeNot(Date start,
+                                                        Date end,
+                                                        String accountId,
+                                                        TypeTransaction type);
 }

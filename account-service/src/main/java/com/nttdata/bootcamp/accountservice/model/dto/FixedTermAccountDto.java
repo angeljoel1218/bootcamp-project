@@ -7,6 +7,10 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class FixedTermAccountDto {
     private String id;

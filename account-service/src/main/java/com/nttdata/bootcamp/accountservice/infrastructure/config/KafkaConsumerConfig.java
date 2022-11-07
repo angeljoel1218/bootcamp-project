@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.accountservice.application.config;
+package com.nttdata.bootcamp.accountservice.infrastructure.config;
 
 
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionRequestDto;
@@ -16,6 +16,11 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ * @since 2022
+ *
+ */
 @Configuration
 public class KafkaConsumerConfig {
 
@@ -34,8 +39,10 @@ public class KafkaConsumerConfig {
   }
 
   @Bean
-  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, TransactionRequestDto>> kafkaListenerContainerFactory() {
-    ConcurrentKafkaListenerContainerFactory<String, TransactionRequestDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,
+    TransactionRequestDto>> kafkaListenerContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, TransactionRequestDto> factory =
+      new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
 
     return factory;

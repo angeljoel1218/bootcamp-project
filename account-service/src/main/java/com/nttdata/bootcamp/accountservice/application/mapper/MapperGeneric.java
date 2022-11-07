@@ -3,6 +3,12 @@ package com.nttdata.bootcamp.accountservice.application.mapper;
 import com.nttdata.bootcamp.accountservice.model.dto.AccountDto;
 import org.modelmapper.ModelMapper;
 
+/**
+ *
+ * @since 2022
+ * @param <T> Account
+ */
+
 public class MapperGeneric <T> {
     final Class<T> typeClass;
     ModelMapper modelMapper;

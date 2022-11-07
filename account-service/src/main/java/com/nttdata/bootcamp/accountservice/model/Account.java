@@ -13,6 +13,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+
+/**
+ *
+ * @since 2022
+ */
 @Document(collection = "accounts")
 @Getter
 @Setter

@@ -4,8 +4,11 @@ import com.nttdata.bootcamp.accountservice.model.Account;
 import com.nttdata.bootcamp.accountservice.model.dto.AccountDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
 @Component
 public class MapperAccount {
     public AccountDto toDto(Account account) {

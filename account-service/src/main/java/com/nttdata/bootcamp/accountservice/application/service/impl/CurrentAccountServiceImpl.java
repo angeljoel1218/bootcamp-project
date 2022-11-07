@@ -17,6 +17,10 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ *
+ * @since 2022
+ */
 @Service
 public class CurrentAccountServiceImpl implements CurrentAccountService<CurrentAccountDto> {
     @Autowired
@@ -36,13 +40,19 @@ public class CurrentAccountServiceImpl implements CurrentAccountService<CurrentA
         return customerClient.getCustomer(accountDto.getHolderId())
                 .switchIfEmpty(Mono.error(new AccountException("Customer not found")))
                 .flatMap(customerDto -> {
-                    if(customerDto.getTypeProfile() != null && customerDto.getTypeProfile().equals(TypeProfile.PYME)) {
-                        return creditClient.getCreditCardCustomer(accountDto.getHolderId())
-                                .switchIfEmpty(Mono.error(new AccountException("The customer must have a credit card to enable this account")))
+                  if (customerDto.getTypeProfile() != null
+                    && customerDto.getTypeProfile().equals(TypeProfile.PYME)) {
+                        return creditClient
+                          .getCreditCardCustomer(accountDto.getHolderId())
+                                .switchIfEmpty(Mono.error(new AccountException(
+                                  "The customer must have a credit card to enable this account")))
+
                                 .count()
                                 .doOnNext(count -> {
                                     if (count == 0) {
-                                        throw new AccountException("The customer must have a credit card to enable this account");
+                                      throw new AccountException(
+                                        "The customer must have a credit" +
+                                          " card to enable this account");
                                     }
                                 })
                                 .flatMap(count -> this.findAndSave(accountDto, customerDto));
@@ -50,12 +60,14 @@ public class CurrentAccountServiceImpl implements CurrentAccountService<CurrentA
                     return this.findAndSave(accountDto, customerDto);
                 });
     }
-    public Mono<CurrentAccountDto> findAndSave(CurrentAccountDto accountDto, CustomerDto customerDto) {
+    public Mono<CurrentAccountDto> findAndSave(CurrentAccountDto accountDto,
+                                               CustomerDto customerDto) {
         return currentAccountRepository.countByHolderId(accountDto.getHolderId())
                 .doOnNext(count -> {
-                    if(count >= 1 && customerDto.getTypeCustomer().equals(TypeCustomer.PERSONAL)) {
-                        throw new AccountException("The customer can only have one savings account");
-                    }
+                  if (count >= 1 && customerDto.getTypeCustomer()
+                    .equals(TypeCustomer.PERSONAL)) {
+                    throw new AccountException("The customer can only have one savings account");
+                  }
                 })
                 .flatMap(count -> this.save(accountDto))
                 .switchIfEmpty(Mono.defer(() -> this.save(accountDto)));
@@ -63,11 +75,14 @@ public class CurrentAccountServiceImpl implements CurrentAccountService<CurrentA
     public Mono<CurrentAccountDto> save(CurrentAccountDto accountDto) {
         return productClient.getProductAccount(accountDto.getProductId())
                 .doOnNext(productDto -> {
-                    if (BigDecimal.valueOf(productDto.getMinFixedAmount()).compareTo(accountDto.getBalance()) == 1) {
-                        throw new AccountException("Insufficient minimum amount to open an account");
+                    if (BigDecimal.valueOf(productDto.getMinFixedAmount())
+                      .compareTo(accountDto.getBalance()) > 0) {
+                        throw new AccountException(
+                          "Insufficient minimum amount to open an account");
                     }
                 })
-                .flatMap(productDto -> currentAccountRepository.countByNumber(accountDto.getNumber()))
+                .flatMap(productDto -> currentAccountRepository
+                  .countByNumber(accountDto.getNumber()))
                 .doOnNext(count -> {
                     if (count > 0) {
                         throw new AccountException("Account number already exists");
@@ -80,7 +95,7 @@ public class CurrentAccountServiceImpl implements CurrentAccountService<CurrentA
                             .flatMap(currentAccountRepository::insert)
                             .map(mapperCurrentAccount::toDto);
                 });
-    };
+    }
 
     @Override
     public Mono<Void> delete(String accountId) {

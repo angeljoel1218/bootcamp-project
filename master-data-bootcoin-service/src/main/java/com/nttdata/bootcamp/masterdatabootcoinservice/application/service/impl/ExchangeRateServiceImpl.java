@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
+
 @Service
 public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Autowired

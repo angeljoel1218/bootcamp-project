@@ -28,7 +28,7 @@ public class BootCoinConsumer {
   @Autowired
   private BootcoinService bootcoinService;
 
-  @KafkaListener(topics = "${kafka.topic.balance.name}")
+  @KafkaListener(topics = "${kafka.topic.bootcoin.balance.name}")
   public void listener(@Payload TransactionDto transactionDto) {
     log.debug("Message received : {} ", transactionDto);
     applyBalance(transactionDto).block();
@@ -38,12 +38,13 @@ public class BootCoinConsumer {
     log.debug("applyBalance executed : {} ", request);
     return bootcoinService.addMovements(
          MovementsDto.builder()
-           .phone(request.getSourceNumberCell())
+           .bootcoinId(request.getSourceWalletId())
            .description("seller")
            .amount(request.getAmount().negate()).build())
+
       .flatMap(walletDto -> bootcoinService.addMovements(
             MovementsDto.builder()
-            .phone(request.getTargetNumberCell())
+            .bootcoinId(request.getTargetWalletId())
             .description("purchase")
             .amount(request.getAmount().negate()).build()));
   }

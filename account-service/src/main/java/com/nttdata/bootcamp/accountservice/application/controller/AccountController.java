@@ -13,6 +13,11 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+
+/**
+ *
+ * @since 2022
+ */
 @RefreshScope
 @RestController
 public class AccountController {
