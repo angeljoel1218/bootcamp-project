@@ -1,4 +1,4 @@
 FROM openjdk:11
-ARG JAR_FILE=wallet-transaction-service/target/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ADD target/wallet-transaction-service-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 7010
+ENTRYPOINT ["java", "-jar", "app.jar"]
