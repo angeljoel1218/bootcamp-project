@@ -46,6 +46,6 @@ public class BootCoinConsumer {
             MovementsDto.builder()
             .bootcoinId(request.getTargetWalletId())
             .description("purchase")
-            .amount(request.getAmount().negate()).build()));
+            .amount(request.getAmount()).build()));
   }
 }
