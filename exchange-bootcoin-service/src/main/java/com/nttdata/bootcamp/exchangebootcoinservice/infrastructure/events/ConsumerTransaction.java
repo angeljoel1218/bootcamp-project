@@ -17,7 +17,7 @@ public class ConsumerTransaction {
     @Autowired
     TransactionService transactionService;
 
-    @KafkaListener(topics = "${kafka.topic.transaction.result.name}")
+    @KafkaListener(topics = "${kafka.topic.transaction.result.name}", containerFactory = "transactionBootcoinDtoKafkaListenerContainerFactory")
     public void listener(@Payload TransactionBootcoinDto transactionDto) {
         log.debug("Message received : {} ", transactionDto);
         applyResult(transactionDto).block();

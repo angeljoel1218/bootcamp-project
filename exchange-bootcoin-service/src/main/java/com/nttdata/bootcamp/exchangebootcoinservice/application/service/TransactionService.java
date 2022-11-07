@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 public interface TransactionService {
     Mono<TransactionDto> acceptRequest(String orderId);
     Mono<Void> receiveTransactionConfirmation(TransactionBootcoinDto transactionBootcoinDto);
-    Mono<Void> purchaseRequest(PayOrderDto payOrderDto);
+    Mono<PayOrderDto> purchaseRequest(PayOrderDto payOrderDto);
 }

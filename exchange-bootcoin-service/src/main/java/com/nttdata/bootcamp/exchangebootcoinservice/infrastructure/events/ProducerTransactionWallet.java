@@ -16,7 +16,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 public class ProducerTransactionWallet {
     private final KafkaTemplate<String, TransactionBootcoinDto> kafkaTemplate;
 
-    @Value(value = "${wallet-transaction-topic}")
+    @Value(value = "${kafka.topic.wallet.transaction.name}")
     private String topic;
 
     public void sendMessage(TransactionBootcoinDto transactionRequestDto) {

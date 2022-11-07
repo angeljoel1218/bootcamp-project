@@ -17,7 +17,7 @@ services:
       dockerfile: ./discovery-service/Dockerfile
     image: discovery-service:latest
     ports:
-      - '9091:9091'
+      - '7001:7001'
     networks:
       - bootcamp
     depends_on:
@@ -29,7 +29,7 @@ services:
       dockerfile: ./api-gateway/Dockerfile
     image: api-gateway:latest
     ports:
-      - '8080:8080'
+      - '7000:7000'
     networks:
       - bootcamp
     depends_on:
@@ -64,7 +64,7 @@ services:
       - discovery-service
     image: product-service:latest
     ports:
-      - '8081:8081'
+      - '7003:7003'
     networks:
       - bootcamp
   customer-service:
@@ -78,7 +78,7 @@ services:
       - discovery-service
     image: customer-service:latest
     ports:
-      - '8082:8082'
+      - '7004:7004'
     networks:
       - bootcamp
   account-service:
@@ -92,7 +92,7 @@ services:
       - discovery-service
     image: account-service:latest
     ports:
-      - '8083:8083'
+      - '7005:7005'
     networks:
       - bootcamp
   credit-service:
@@ -106,7 +106,7 @@ services:
       - discovery-service
     image: credit-service:latest
     ports:
-      - '8084:8084'
+      - '7006:7006'
     networks:
       - bootcamp
   report-service:
@@ -119,7 +119,7 @@ services:
       - discovery-service
     image: report-service:latest
     ports:
-      - '8085:8085'
+      - '7007:7007'
     networks:
       - bootcamp
   card-service:
@@ -133,7 +133,7 @@ services:
       - discovery-service
     image: card-service:latest
     ports:
-      - '8086:8086'
+      - '7008:7008'
     networks:
       - bootcamp
   wallet-service:
@@ -147,7 +147,7 @@ services:
       - discovery-service
     image: wallet-service:latest
     ports:
-      - '8087:8087'
+      - '7009:7009'
     networks:
       - bootcamp
   wallet-transaction-service:
@@ -162,7 +162,65 @@ services:
       - discovery-service
     image: wallet-transaction-service:latest
     ports:
-      - '8089:8089'
+      - '7010:7010'
+    networks:
+      - bootcamp
+  bootcoin-service:
+    container_name: bootcoin-service
+    build:
+      context: .
+      dockerfile: ./bootcoin-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - config-server
+      - discovery-service
+    image: bootcoin-service:latest
+    ports:
+      - '7011:7011'
+    networks:
+      - bootcamp
+  ad-bootcoin-service:
+    container_name: ad-bootcoin-service
+    build:
+      context: .
+      dockerfile: ./ad-bootcoin-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - redis-server
+      - config-server
+      - discovery-service
+    image: ad-bootcoin-service:latest
+    ports:
+      - '7012:7012'
+    networks:
+      - bootcamp
+  exchange-bootcoin-service:
+    container_name: exchange-bootcoin-service
+    build:
+      context: .
+      dockerfile: ./exchange-bootcoin-service/Dockerfile
+    depends_on:
+      - mongodb-service
+      - redis-server
+      - config-server
+      - discovery-service
+    image: exchange-bootcoin-service:latest
+    ports:
+      - '7013:7013'
+    networks:
+      - bootcamp
+  master-data-bootcoin-service:
+    container_name: master-data-bootcoin-service
+    build:
+      context: .
+      dockerfile: ./master-data-bootcoin-service/Dockerfile
+    depends_on:
+      - redis-server
+      - config-server
+      - discovery-service
+    image: master-data-bootcoin-service:latest
+    ports:
+      - '7014:7014'
     networks:
       - bootcamp
 networks:

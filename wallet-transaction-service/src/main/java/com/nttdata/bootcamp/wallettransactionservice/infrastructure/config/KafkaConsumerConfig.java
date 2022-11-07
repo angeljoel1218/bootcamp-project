@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.wallettransactionservice.infrastructure.config;
 
+import com.nttdata.bootcamp.wallettransactionservice.model.dto.TransactionBootcoinDto;
 import com.nttdata.bootcamp.wallettransactionservice.model.dto.TransactionDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -22,15 +23,15 @@ public class KafkaConsumerConfig {
   private String bootstrapServers;
 
   @Bean
-  public ConsumerFactory<String, TransactionDto> consumerFactory() {
-    JsonDeserializer<TransactionDto> jsonDeserializer = new JsonDeserializer<>(TransactionDto.class, false);
+  public ConsumerFactory<String, TransactionBootcoinDto> consumerFactory() {
+    JsonDeserializer<TransactionBootcoinDto> jsonDeserializer = new JsonDeserializer<>(TransactionBootcoinDto.class, false);
     jsonDeserializer.addTrustedPackages("*");
     return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(), jsonDeserializer);
   }
 
   @Bean
-  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, TransactionDto>> kafkaListenerContainerFactory() {
-    ConcurrentKafkaListenerContainerFactory<String, TransactionDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, TransactionBootcoinDto>> kafkaListenerContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, TransactionBootcoinDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
     return factory;
   }

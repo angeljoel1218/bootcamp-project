@@ -1,7 +1,7 @@
 package com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.events;
 
 import com.nttdata.bootcamp.exchangebootcoinservice.application.service.TransactionService;
-import com.nttdata.bootcamp.exchangebootcoinservice.domain.dto.TransactionBootcoinDto;
+import com.nttdata.bootcamp.exchangebootcoinservice.domain.dto.PayOrderDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +17,14 @@ public class ConsumerPurchaseRequest {
     @Autowired
     TransactionService transactionService;
 
-    @KafkaListener(topics = "${kafka.topic.transaction.result.name}")
-    public void listener(@Payload TransactionBootcoinDto transactionDto) {
-        log.debug("Message received : {} ", transactionDto);
-        applyResult(transactionDto).block();
+    @KafkaListener(topics = "${kafka.topic.bootcoin.purchase.request}", containerFactory = "kafkaListenerContainerFactory")
+    public void listener(@Payload PayOrderDto payOrderDto) {
+        log.debug("Message received : {} ", payOrderDto);
+        applyRequest(payOrderDto).block();
     }
 
-    private Mono<Void> applyResult(TransactionBootcoinDto request) {
-        log.debug("applyBalance executed : {} ", request);
-        return transactionService.receiveTransactionConfirmation(request);
+    private Mono<PayOrderDto> applyRequest(PayOrderDto payOrderDto) {
+        log.debug("applyRequest executed : {} ", payOrderDto);
+        return transactionService.purchaseRequest(payOrderDto);
     }
 }

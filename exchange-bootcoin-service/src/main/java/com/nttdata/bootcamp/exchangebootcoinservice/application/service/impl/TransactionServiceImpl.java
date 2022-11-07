@@ -75,20 +75,23 @@ public class TransactionServiceImpl implements TransactionService {
     public Mono<Void> receiveTransactionConfirmation(TransactionBootcoinDto transactionBootcoinDto) {
         return transactionRepository.findById(transactionBootcoinDto.getTransactionId())
                 .flatMap(transaction -> {
-                    transaction.setState(StateTransaction.DONE);
+                    transaction.setDetail(transactionBootcoinDto.getDetail());
+                    transaction.setState(transactionBootcoinDto.getState());
                     return transactionRepository.save(transaction);
                 })
                 .doOnNext(transaction -> {
-                    RequestBootcoin requestBootcoin = new RequestBootcoin();
-                    requestBootcoin.setAmount(transaction.getAmount());
-                    requestBootcoin.setSourceWalletId(transaction.getSellerWalletId());
-                    requestBootcoin.setTargetWalletId(transaction.getBuyerWalletId());
-                    producerBootcoinBalance.sendMessage(requestBootcoin);
+                    if(transaction.getState().equals(StateTransaction.DONE)) {
+                        RequestBootcoin requestBootcoin = new RequestBootcoin();
+                        requestBootcoin.setAmount(transaction.getAmount());
+                        requestBootcoin.setSourceWalletId(transaction.getSellerWalletId());
+                        requestBootcoin.setTargetWalletId(transaction.getBuyerWalletId());
+                        producerBootcoinBalance.sendMessage(requestBootcoin);
+                    }
                 }).then();
     }
 
     @Override
-    public Mono<Void> purchaseRequest(PayOrderDto payOrderDto) {
+    public Mono<PayOrderDto> purchaseRequest(PayOrderDto payOrderDto) {
         return configPaymentMethodRepository.findByWalletId(payOrderDto.getSellerWalletId())
                 .flatMap(configPaymentMethod -> configPaymentMethodRepository.findByWalletId(payOrderDto.getBuyerWalletId())
                         .flatMap(configPaymentMethod1 -> {
@@ -99,8 +102,8 @@ public class TransactionServiceImpl implements TransactionService {
                                 payOrder.setConfigPayment(new ConfigPayment(configPaymentMethod1.getNumberCellPhone(), configPaymentMethod.getNumberCellPhone()));
                             }
                             return Mono.just(payOrder)
-                                    .map(payOrderRepository::insert)
-                                    .then();
+                                    .flatMap(payOrderRepository::insert)
+                                    .map(mapperPayOrder::toDto);
                         }));
     }
 

@@ -1,11 +1,15 @@
 package com.nttdata.bootcamp.exchangebootcoinservice.domain.dto;
 
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
+@Builder
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class PayOrderDto {
     private String id;
     private BigDecimal amount;

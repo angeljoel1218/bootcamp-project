@@ -16,7 +16,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 public class ProducerPurchaseRequest {
     private final KafkaTemplate<String, PayOrder> kafkaTemplate;
 
-    @Value(value = "${kafka.topic.bootcoin.purchase-request.name}")
+    @Value(value = "${kafka.topic.bootcoin.purchase.request}")
     private String topic;
 
     public void sendMessage(PayOrder payOrder) {

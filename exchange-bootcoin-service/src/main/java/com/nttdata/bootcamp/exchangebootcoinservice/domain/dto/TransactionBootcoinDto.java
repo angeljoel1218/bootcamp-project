@@ -15,5 +15,6 @@ public class TransactionBootcoinDto {
   private String targetNumber;
   private BigDecimal amount;
   private String transactionId;
-  private StateTransaction status;
+  private String detail;
+  private StateTransaction state;
 }
