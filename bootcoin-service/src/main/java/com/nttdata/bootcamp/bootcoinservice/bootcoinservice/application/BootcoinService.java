@@ -18,8 +18,10 @@ public interface BootcoinService {
 
   Mono<BootcoinDto> findByPhone(String phone);
 
+  Mono<BootcoinDto> findById(String id);
 
   Mono<BootcoinDto> addMovements(MovementsDto movementsDto);
 
   Flux<BootcoinDto> findAll();
+
 }

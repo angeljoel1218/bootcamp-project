@@ -35,9 +35,9 @@ public class BootcoinController {
     return bootcoinService.create(bootcoinDto);
   }
 
-  @GetMapping("/get/{phone}")
-  public Mono<ResponseEntity<BootcoinDto>> findByPhone(@PathVariable("phone") String phone) {
-    return bootcoinService.findByPhone(phone)
+  @GetMapping("/{id}")
+  public Mono<ResponseEntity<BootcoinDto>> findByPhone(@PathVariable("id") String id) {
+    return bootcoinService.findById(id)
       .map(a -> ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_JSON)
         .body(a))
