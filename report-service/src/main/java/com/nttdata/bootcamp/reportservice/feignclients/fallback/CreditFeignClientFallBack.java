@@ -8,6 +8,11 @@ import reactor.core.publisher.Flux;
 
 import java.util.Date;
 
+
+/**
+ *
+ * @since 2022
+ */
 @Log4j2
 public class CreditFeignClientFallBack implements CreditFeignClient {
 
@@ -24,9 +29,14 @@ public class CreditFeignClientFallBack implements CreditFeignClient {
     }
 
     @Override
-    public Flux<CreditDto> findCreditByCreateDateBetweenAndIdProduct(Date startDate, Date endDate, String idProduct) {
+    public Flux<CreditDto> findCreditByCreateDateBetweenAndIdProduct(Date startDate,
+                                                                     Date endDate,
+                                                                     String idProduct) {
 
-        log.info("findCreditByCreateDateBetweenAndIdProduct  service no available  startDate={},endDate={}, idProduct={}", startDate,endDate,idProduct);
+        log.info("findCreditByCreateDateBetweenAndIdProduct " +
+          " service no available  startDate={},endDate={}, idProduct={}", startDate,
+          endDate, idProduct);
+
         return Flux.just();
     }
 
@@ -41,10 +51,14 @@ public class CreditFeignClientFallBack implements CreditFeignClient {
         log.info("findTransactionByIdCreditCard  service no available  {}", idCredit);
         return Flux.just();
     }
+    @Override public Flux<CreditCardDto> findByCreditCardCreateDateBetweenAndIdProduct(
+      Date startDate,
+      Date endDate,
+      String idProduct) {
 
-    @Override
-    public Flux<CreditDto> findByCreditCardCreateDateBetweenAndIdProduct(Date startDate, Date endDate, String idProduct) {
-        log.info("findByCreditCardCreateDateBetweenAndIdProduct  service no available  startDate={},endDate={}, idProduct={}", startDate,endDate,idProduct);
-        return Flux.just();
+      log.info("findByCreditCardCreateDateBetweenAndIdProduct " +
+        " service no available  startDate={},endDate={}, idProduct={}",
+        startDate, endDate, idProduct);
+      return Flux.just();
     }
 }

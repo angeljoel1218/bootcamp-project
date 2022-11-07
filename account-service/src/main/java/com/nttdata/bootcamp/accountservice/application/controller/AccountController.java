@@ -4,6 +4,7 @@ import com.nttdata.bootcamp.accountservice.application.service.AccountService;
 import com.nttdata.bootcamp.accountservice.model.dto.AccountDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.Date;
 
 
 /**
@@ -49,5 +51,20 @@ public class AccountController {
     return accountService.delete(id)
                 .then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)))
                 .defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
+  }
+
+  /**
+   * javadoc.
+   * Resume products by customer ID
+   * @since 2022
+   */
+  @GetMapping(value = "account/product", produces = MediaType.APPLICATION_JSON_VALUE)
+  public Flux<AccountDto> findByCreateDateBetweenAndIdProduct(
+    @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date startDate,
+    @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date endDate,
+    @RequestParam String productId) {
+
+    return accountService.findByCreateDateBetweenAndProductId(startDate, endDate, productId);
+
   }
 }

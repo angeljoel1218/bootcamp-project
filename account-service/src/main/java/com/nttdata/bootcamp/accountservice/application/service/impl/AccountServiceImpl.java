@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
+
 /**
  *
  * @since 2022
@@ -83,4 +85,14 @@ public class AccountServiceImpl implements AccountService<AccountDto> {
                     return Mono.error(new AccountException("Error delete account"));
                 });
     }
+
+  @Override
+  public Flux<AccountDto> findByCreateDateBetweenAndProductId(Date startDate,
+                                                              Date endDate,
+                                                              String productId) {
+
+    return accountRepository.findByCreateAtBetweenAndProductId(startDate,
+      endDate, productId).map(mapperAccount::toDto);
+
+  }
 }

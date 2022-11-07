@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.accountservice.infrastructure.config;
 
 
+import com.nttdata.bootcamp.accountservice.model.dto.TransactionBootcoinDto;
 import com.nttdata.bootcamp.accountservice.model.dto.TransactionRequestDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -28,9 +29,9 @@ public class KafkaConsumerConfig {
   private String bootstrapServers;
 
   @Bean
-  public ConsumerFactory<String, TransactionRequestDto> consumerFactory() {
-    JsonDeserializer<TransactionRequestDto> jsonDeserializer =
-        new JsonDeserializer<>(TransactionRequestDto.class, false);
+  public ConsumerFactory<String, TransactionBootcoinDto> consumerFactory() {
+    JsonDeserializer<TransactionBootcoinDto> jsonDeserializer =
+        new JsonDeserializer<>(TransactionBootcoinDto.class, false);
 
     jsonDeserializer.addTrustedPackages("*");
 
@@ -40,8 +41,8 @@ public class KafkaConsumerConfig {
 
   @Bean
   public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,
-    TransactionRequestDto>> kafkaListenerContainerFactory() {
-    ConcurrentKafkaListenerContainerFactory<String, TransactionRequestDto> factory =
+    TransactionBootcoinDto>> kafkaListenerContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, TransactionBootcoinDto> factory =
       new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory());
 

@@ -9,6 +9,10 @@ import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
 @Log4j2
 public class CustomerFeignClientFallBack implements CustomerFeignClient {
     @Override

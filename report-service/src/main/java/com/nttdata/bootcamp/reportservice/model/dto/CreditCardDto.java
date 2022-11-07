@@ -3,6 +3,11 @@ package com.nttdata.bootcamp.reportservice.model.dto;
 import lombok.*;
 import java.math.BigDecimal;
 
+
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class CreditCardDto {
     private String id;

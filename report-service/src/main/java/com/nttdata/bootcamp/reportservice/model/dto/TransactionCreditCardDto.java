@@ -5,6 +5,10 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class TransactionCreditCardDto {
     private String id;
