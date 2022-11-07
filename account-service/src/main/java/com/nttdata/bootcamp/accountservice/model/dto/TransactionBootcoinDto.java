@@ -16,5 +16,6 @@ public class TransactionBootcoinDto {
   private BigDecimal amount;
   private String transactionId;
   private StateTransaction state;
+  private String detail;
 
 }
