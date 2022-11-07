@@ -18,5 +18,6 @@ public class PayOrderDto {
     private String sellerWalletId;
     private String buyerWalletId;
     private String methodPayment;
+    private String advertId;
     private Date createdAt;
 }

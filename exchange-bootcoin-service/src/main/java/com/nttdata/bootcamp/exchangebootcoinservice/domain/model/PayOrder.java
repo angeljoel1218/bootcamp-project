@@ -26,5 +26,6 @@ public class PayOrder {
     private String buyerWalletId;
     private String methodPayment;
     private ConfigPayment configPayment;
+    private String advertId;
     private Date createdAt;
 }
