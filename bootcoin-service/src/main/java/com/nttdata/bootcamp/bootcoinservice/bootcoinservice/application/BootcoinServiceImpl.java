@@ -51,6 +51,11 @@ public class BootcoinServiceImpl implements BootcoinService {
     return bootcoinRepository.findByPhone(phone).map(mapperBootcoin::toDto);
   }
 
+  @Override
+  public Mono<BootcoinDto> findById(String id) {
+    return bootcoinRepository.findById(id).map(mapperBootcoin::toDto);
+  }
+
 
   @Override
   public Mono<BootcoinDto> addMovements(MovementsDto movementsDto) {
