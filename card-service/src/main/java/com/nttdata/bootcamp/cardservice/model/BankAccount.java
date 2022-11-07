@@ -4,6 +4,10 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class BankAccount {
     private String accountNumber;

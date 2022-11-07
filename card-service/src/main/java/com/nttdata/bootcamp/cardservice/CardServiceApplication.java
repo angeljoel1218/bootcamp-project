@@ -11,24 +11,29 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactivefeign.spring.config.EnableReactiveFeignClients;
 
+/**
+ *
+ * @since 2022
+ */
+
 @SpringBootApplication
 @EnableReactiveFeignClients
 @EnableEurekaClient
 public class CardServiceApplication {
-	@Value(value = "${webclient.baseurl}")
-	private String baseurl;
 
+  @Value(value = "${webclient.baseurl}")
+  private String baseurl;
 
-	public static void main(String[] args) {
-		SpringApplication.run(CardServiceApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(CardServiceApplication.class, args);
+  }
 
-	@Bean
-	@LoadBalanced
-	public WebClient loadBalancedWebClientBuilder() {
-		return WebClient.builder()
-				.baseUrl(baseurl)
-				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-				.build();
-	}
+  @Bean
+  @LoadBalanced
+  public WebClient loadBalancedWebClientBuilder() {
+    return WebClient.builder()
+      .baseUrl(baseurl)
+      .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+      .build();
+  }
 }

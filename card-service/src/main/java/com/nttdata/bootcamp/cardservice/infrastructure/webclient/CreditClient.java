@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
 @Component
 public class CreditClient {
     @Autowired
@@ -25,7 +29,9 @@ public class CreditClient {
                         .uri("credit/payment")
                         .body(Mono.just(creditDuesRequestDto), CreditDuesRequestDto.class)
                         .retrieve()
-                        .bodyToMono(String.class), throwable -> Mono.error(new ServiceUnavailableException("The service is not available, try in a few minutes please")));
+                        .bodyToMono(String.class),
+                  throwable -> Mono.error(new ServiceUnavailableException(
+                    "The service is not available, try in a few minutes please")));
     }
 
     public Mono<CreditDuesDto> paymentCreditCard(TransactionCreditDto transactionCreditDto) {
@@ -35,6 +41,8 @@ public class CreditClient {
                         .uri("credit/card/payment")
                         .body(transactionCreditDto, TransactionCreditDto.class)
                         .retrieve()
-                        .bodyToMono(CreditDuesDto.class), throwable -> Mono.error(new ServiceUnavailableException("The service is not available, try in a few minutes please")));
+                        .bodyToMono(CreditDuesDto.class),
+                  throwable -> Mono.error(new ServiceUnavailableException(
+                    "The service is not available, try in a few minutes please")));
     }
 }

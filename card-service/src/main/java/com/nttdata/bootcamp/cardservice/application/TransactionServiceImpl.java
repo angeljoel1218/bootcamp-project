@@ -17,95 +17,108 @@ import reactor.core.publisher.Mono;
 
 import java.util.Objects;
 
+/**
+ *
+ * @since 2022
+ */
 @Service
 public class TransactionServiceImpl implements TransactionService{
-    @Autowired
-    CardRepository cardRepository;
-    @Autowired
-    CardMovementRepository cardMovementRepository;
-    @Autowired
-    AccountService accountService;
-    @Autowired
-    CreditClient creditClient;
-    @Autowired
-    MapperClass mapperClass;
-    @Override
-    public Mono<CardMovementDto> payment(PaymentDto paymentDto) {
-        return cardRepository.findByNumber(paymentDto.getCardNumber())
-                .switchIfEmpty(Mono.error(new CardException("The number card does not exist")))
-                .doOnNext(card -> {
-                    if (!paymentDto.getTypeCredit().equals(TypeCredit.CREDIT)
-                            && !paymentDto.getTypeCredit().equals(TypeCredit.CREDIT_CARD))
-                    {
-                        throw new CardException("Type credit not exist");
-                    }
-                })
-                .flatMap(card -> {
-                    WithdrawDto withdrawDto = mapperClass.toWithdrawDto(paymentDto);
-                    return this.execTransaction(withdrawDto, card, 1)
-                            .flatMap(transactionDto -> this.saveCardMovement(transactionDto, withdrawDto, card.getId()));
-                })
-                .flatMap(cardMovementDto -> {
-                    if (paymentDto.getTypeCredit().equals(TypeCredit.CREDIT)) {
-                        CreditDuesRequestDto creditDuesRequestDto = mapperClass.toCreditDuesRequestDto(paymentDto);
-                        return creditClient.paymentCredit(creditDuesRequestDto)
-                                .map(s -> cardMovementDto);
-                    }
-                    TransactionCreditDto transactionCreditDto = mapperClass.toTransactionCreditDto(paymentDto);
-                    transactionCreditDto.setDescription(paymentDto.getDetail());
-                    return creditClient.paymentCreditCard(transactionCreditDto)
-                            .map(creditDuesDto -> cardMovementDto);
-                });
-    }
+   @Autowired
+   CardRepository cardRepository;
+   @Autowired
+   CardMovementRepository cardMovementRepository;
+   @Autowired
+   AccountService accountService;
+   @Autowired
+   CreditClient creditClient;
+   @Autowired
+   MapperClass mapperClass;
+   @Override
+   public Mono<CardMovementDto> payment(PaymentDto paymentDto) {
+      return cardRepository.findByNumber(paymentDto.getCardNumber())
+            .switchIfEmpty(Mono.error(new CardException("The number card does not exist")))
+            .doOnNext(card -> {
+               if (!paymentDto.getTypeCredit().equals(TypeCredit.CREDIT)
+                     && !paymentDto.getTypeCredit().equals(TypeCredit.CREDIT_CARD))
+               {
+                  throw new CardException("Type credit not exist");
+               }
+            })
+            .flatMap(card -> {
+               WithdrawDto withdrawDto = mapperClass.toWithdrawDto(paymentDto);
+               return this.execTransaction(withdrawDto, card, 1)
+                     .flatMap(transactionDto -> this.saveCardMovement(transactionDto,
+                       withdrawDto, card.getId()));
+            })
+            .flatMap(cardMovementDto -> {
+               if (paymentDto.getTypeCredit().equals(TypeCredit.CREDIT)) {
+                  CreditDuesRequestDto creditDuesRequestDto =
+                    mapperClass.toCreditDuesRequestDto(paymentDto);
+                  return creditClient.paymentCredit(creditDuesRequestDto)
+                        .map(s -> cardMovementDto);
+               }
+               TransactionCreditDto transactionCreditDto =
+                 mapperClass.toTransactionCreditDto(paymentDto);
 
-    @Override
-    public Mono<CardMovementDto> withdraw(WithdrawDto withdrawDto) {
-        return cardRepository.findByNumber(withdrawDto.getCardNumber())
-                .switchIfEmpty(Mono.error(new CardException("The number card does not exist")))
-                .flatMap(card -> this.execTransaction(withdrawDto, card, 1)
-                        .flatMap(transactionDto -> this.saveCardMovement(transactionDto, withdrawDto, card.getId())));
-    }
+               transactionCreditDto.setDescription(paymentDto.getDetail());
 
-    public Mono<TransactionDto> execTransaction(WithdrawDto withdrawDto, Card card, Integer order) {
-        if(Objects.isNull(card.getAccounts()) || card.getAccounts().isEmpty()) {
-            throw new CardException("The card has no linked accounts");
-        }
+               return creditClient.paymentCreditCard(transactionCreditDto)
+                     .map(creditDuesDto -> cardMovementDto);
+            });
+   }
 
-        if (order > card.getAccounts().size()) {
-            throw new CardException("You do not have enough balance in your accounts");
-        }
+   @Override
+   public Mono<CardMovementDto> withdraw(WithdrawDto withdrawDto) {
+      return cardRepository.findByNumber(withdrawDto.getCardNumber())
+            .switchIfEmpty(Mono.error(new CardException("The number card does not exist")))
+            .flatMap(card -> this.execTransaction(withdrawDto, card, 1)
+                  .flatMap(transactionDto -> this.saveCardMovement(transactionDto,
+                    withdrawDto, card.getId())));
+   }
 
-        String number = card.getAccounts()
-                .stream()
-                .filter(bankAccount -> bankAccount.getOrder().equals(order))
-                .map(BankAccount::getAccountNumber)
-                .findFirst()
-                .orElse(null);
+   public Mono<TransactionDto> execTransaction(WithdrawDto withdrawDto, Card card, Integer order) {
+      if (Objects.isNull(card.getAccounts())
+        || card.getAccounts().isEmpty()) {
+         throw new CardException("The card has no linked accounts");
+      }
 
-        WithdrawTxnDto withdrawTxnDto = new WithdrawTxnDto();
-        withdrawTxnDto.setAccountNumber(number);
-        withdrawTxnDto.setAmount(withdrawDto.getAmount());
-        withdrawTxnDto.setOperation(withdrawDto.getDetail());
-        withdrawDto.setAccountNumber(number);
+      if (order > card.getAccounts().size()) {
+         throw new CardException("You do not have enough balance in your accounts");
+      }
 
-        return accountService.withdraw(withdrawTxnDto)
-                .onErrorResume(throwable -> {
-                    if(throwable instanceof InsufficientBalanceException) {
-                        return execTransaction(withdrawDto, card, order + 1);
-                    }
-                    return Mono.error(new CardException(throwable.getMessage()));
-                });
-    }
+      String number = card.getAccounts()
+            .stream()
+            .filter(bankAccount -> bankAccount.getOrder().equals(order))
+            .map(BankAccount::getAccountNumber)
+            .findFirst()
+            .orElse(null);
 
-    public Mono<CardMovementDto> saveCardMovement(TransactionDto transactionDto, WithdrawDto withdrawDto, String cardId) {
-        return Mono.just(withdrawDto)
-                .map(mapperClass::toCardMovement)
-                .doOnNext(cardMovement -> {
-                    cardMovement.setCardId(cardId);
-                    cardMovement.setOperationDate(transactionDto.getDate());
-                    cardMovement.setTransactionId(transactionDto.getId());
-                })
-                .flatMap(cardMovementRepository::insert)
-                .map(mapperClass::toCardMovementDto);
-    }
+      WithdrawTxnDto withdrawTxnDto = new WithdrawTxnDto();
+      withdrawTxnDto.setAccountNumber(number);
+      withdrawTxnDto.setAmount(withdrawDto.getAmount());
+      withdrawTxnDto.setOperation(withdrawDto.getDetail());
+      withdrawDto.setAccountNumber(number);
+
+      return accountService.withdraw(withdrawTxnDto)
+            .onErrorResume(throwable -> {
+               if (throwable instanceof InsufficientBalanceException) {
+                  return execTransaction(withdrawDto, card, order + 1);
+               }
+               return Mono.error(new CardException(throwable.getMessage()));
+            });
+   }
+
+   public Mono<CardMovementDto> saveCardMovement(TransactionDto transactionDto,
+                                                 WithdrawDto withdrawDto,
+                                                 String cardId) {
+      return Mono.just(withdrawDto)
+            .map(mapperClass::toCardMovement)
+            .doOnNext(cardMovement -> {
+               cardMovement.setCardId(cardId);
+               cardMovement.setOperationDate(transactionDto.getDate());
+               cardMovement.setTransactionId(transactionDto.getId());
+            })
+            .flatMap(cardMovementRepository::insert)
+            .map(mapperClass::toCardMovementDto);
+   }
 }

@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
 @RefreshScope
 @RestController
 public class CardController {
@@ -22,7 +26,8 @@ public class CardController {
     }
 
     @PutMapping("card/account/{cardId}")
-    public Mono<BankAccountDto> attachAccount(@PathVariable("cardId") String cardId, @RequestBody AttachAccountDto attachAccountDto) {
+    public Mono<BankAccountDto> attachAccount(@PathVariable("cardId") String cardId,
+                                              @RequestBody AttachAccountDto attachAccountDto) {
         return cardService.attachAccount(cardId, attachAccountDto);
     }
 
