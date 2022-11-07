@@ -1,4 +1,4 @@
-package com.nttdata.bootcamp.walletservice.application.config;
+package com.nttdata.bootcamp.walletservice.infrastructure.config;
 
 import com.nttdata.bootcamp.walletservice.model.dto.TransactionDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
