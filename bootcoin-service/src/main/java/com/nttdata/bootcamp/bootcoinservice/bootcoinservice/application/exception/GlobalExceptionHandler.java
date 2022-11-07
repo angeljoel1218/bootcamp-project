@@ -6,10 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import reactor.core.publisher.Mono;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  *
@@ -18,7 +16,6 @@ import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
   @ExceptionHandler(Exception.class)
   public Mono<ResponseEntity<ApiError>> handleGlobalException(Exception ex) {
     List<String> errors = new ArrayList<>();

@@ -63,7 +63,8 @@ public class BootcoinServiceImpl implements BootcoinService {
       .switchIfEmpty(Mono.error(new InterruptedException("Bootcoin  not found")))
       .flatMap(bootcoin -> {
         if ((bootcoin.getBalance().add(movementsDto.getAmount())).compareTo(BigDecimal.ZERO) < 0) {
-          return   Mono.error(new InsufficientBalanceException("There is not enough balance to execute the operation"));
+          return   Mono.error(new InsufficientBalanceException(
+            "There is not enough balance to execute the operation"));
         }
 
         BootcoinMovements bootcoinMovements = BootcoinMovements.builder()

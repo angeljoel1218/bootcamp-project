@@ -36,7 +36,7 @@ public class BootcoinController {
   }
 
   @GetMapping("/{id}")
-  public Mono<ResponseEntity<BootcoinDto>> findByPhone(@PathVariable("id") String id) {
+  public Mono<ResponseEntity<BootcoinDto>> findById(@PathVariable("id") String id) {
     return bootcoinService.findById(id)
       .map(a -> ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_JSON)
@@ -44,6 +44,14 @@ public class BootcoinController {
       .defaultIfEmpty(ResponseEntity.notFound().build());
   }
 
+  @GetMapping("/get/{phone}")
+  public Mono<ResponseEntity<BootcoinDto>> findByPhone(@PathVariable("phone") String phone) {
+    return bootcoinService.findByPhone(phone)
+      .map(a -> ResponseEntity.ok()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(a))
+      .defaultIfEmpty(ResponseEntity.notFound().build());
+  }
 
   @PostMapping("/transaction")
   @ResponseStatus(HttpStatus.CREATED)

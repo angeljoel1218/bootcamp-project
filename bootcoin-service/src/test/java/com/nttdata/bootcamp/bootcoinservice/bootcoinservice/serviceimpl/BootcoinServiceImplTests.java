@@ -3,6 +3,7 @@ package com.nttdata.bootcamp.bootcoinservice.bootcoinservice.serviceimpl;
 
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.application.BootcoinService;
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.application.BootcoinServiceImpl;
+import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.application.exception.InsufficientBalanceException;
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.application.mappers.MapperBootcoin;
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.infrastructure.BootcoinRepository;
 import com.nttdata.bootcamp.bootcoinservice.bootcoinservice.infrastructure.BootcointMovementsRepository;
@@ -223,7 +224,7 @@ class BootcoinServiceImplTests {
 
 
     StepVerifier.create(bootcoinService.addMovements(parameter))
-      .expectError(InsufficientResourcesException.class)
+      .expectError(InsufficientBalanceException.class)
       .verify();
 
   }
