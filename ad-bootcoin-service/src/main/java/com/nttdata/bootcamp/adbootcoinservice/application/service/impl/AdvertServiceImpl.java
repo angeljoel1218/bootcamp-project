@@ -87,7 +87,7 @@ public class AdvertServiceImpl implements AdvertService {
                             return Mono.just(payOrder)
                                     .flatMap(payOrderRepository::insert)
                                     .flatMap(order -> {
-                                        advert.setState(StateAdvert.CLOSED);
+                                        advert.setState(StateAdvert.PENDING);
                                         return advertRepository.save(advert)
                                                 .doOnNext(advert1 -> producerPurchaseRequest.sendMessage(order))
                                                 .map(a -> order);
