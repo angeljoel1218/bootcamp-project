@@ -1,6 +1,7 @@
 package com.nttdata.bootcamp.wallettransactionservice;
 
 import com.nttdata.bootcamp.wallettransactionservice.model.LastTransaction;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -18,6 +19,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 @SpringBootApplication
 @EnableEurekaClient
 public class WalletTransactionServiceApplication {
+	@Value(value = "${webclient.baseurl}")
+	private String baseurl;
 
 	public static void main(String[] args) {
 		SpringApplication.run(WalletTransactionServiceApplication.class, args);
@@ -39,7 +42,7 @@ public class WalletTransactionServiceApplication {
 	@LoadBalanced
 	public WebClient loadBalancedWebClientBuilder() {
 		return WebClient.builder()
-				.baseUrl("http://localhost:8080")
+				.baseUrl(baseurl)
 				.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 				.build();
 	}

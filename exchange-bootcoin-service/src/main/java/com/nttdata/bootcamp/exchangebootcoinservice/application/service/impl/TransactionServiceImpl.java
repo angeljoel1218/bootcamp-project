@@ -1,5 +1,6 @@
 package com.nttdata.bootcamp.exchangebootcoinservice.application.service.impl;
 
+import com.nttdata.bootcamp.exchangebootcoinservice.application.exception.TransactionException;
 import com.nttdata.bootcamp.exchangebootcoinservice.application.mapper.MapperPayOrder;
 import com.nttdata.bootcamp.exchangebootcoinservice.application.mapper.MapperTransaction;
 import com.nttdata.bootcamp.exchangebootcoinservice.application.service.TransactionService;
@@ -14,6 +15,7 @@ import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.TransactionRe
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.events.ProducerBootcoinBalance;
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.events.ProducerTransactionAccount;
 import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.events.ProducerTransactionWallet;
+import com.nttdata.bootcamp.exchangebootcoinservice.infrastructure.webclient.BootcoinService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,9 @@ public class TransactionServiceImpl implements TransactionService {
     ProducerBootcoinBalance producerBootcoinBalance;
 
     @Autowired
+    BootcoinService bootcoinService;
+
+    @Autowired
     MapperTransaction mapperTransaction;
 
     @Autowired
@@ -52,7 +57,7 @@ public class TransactionServiceImpl implements TransactionService {
     public Mono<TransactionDto> acceptRequest(String orderId) {
         return payOrderRepository
                 .findById(orderId)
-                .switchIfEmpty(Mono.error(new TransformerException("Payment order not found")))
+                .switchIfEmpty(Mono.error(new TransactionException("Payment order not found")))
                 .flatMap(payOrder -> {
                     Transaction transaction = new Transaction();
                     transaction.setNumber(String.valueOf(System.currentTimeMillis()));
@@ -64,7 +69,13 @@ public class TransactionServiceImpl implements TransactionService {
                     transaction.setBuyerWalletId(payOrder.getBuyerWalletId());
                     transaction.setState(StateTransaction.PENDING);
                     transaction.setCreatedAt(new Date());
-                    return Mono.just(transaction)
+                    return bootcoinService.getWallet(payOrder.getSellerWalletId())
+                            .doOnNext(bootcoinDto -> {
+                                if(bootcoinDto.getBalance().compareTo(payOrder.getAmount()) < 0) {
+                                    throw new TransactionException("Insufficient balance error");
+                                }
+                            })
+                            .map(b -> transaction)
                             .flatMap(transactionRepository::insert)
                             .map(t-> this.sendTransaction(t, payOrder))
                             .map(mapperTransaction::toDto);
