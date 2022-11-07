@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class PayOrderConsumer {
+public class AdvertStatusConsumer {
 
   @Autowired
   private AdvertService advertService;
