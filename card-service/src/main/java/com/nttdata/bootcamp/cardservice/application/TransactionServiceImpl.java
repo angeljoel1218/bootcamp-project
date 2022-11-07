@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -33,6 +35,7 @@ public class TransactionServiceImpl implements TransactionService{
    CreditClient creditClient;
    @Autowired
    MapperClass mapperClass;
+
    @Override
    public Mono<CardMovementDto> payment(PaymentDto paymentDto) {
       return cardRepository.findByNumber(paymentDto.getCardNumber())
@@ -76,7 +79,17 @@ public class TransactionServiceImpl implements TransactionService{
                     withdrawDto, card.getId())));
    }
 
-   public Mono<TransactionDto> execTransaction(WithdrawDto withdrawDto, Card card, Integer order) {
+  @Override
+  public Mono<List<CardMovementDto>> findLastByCardIdOrderByOperationDateDesc(String cardId,
+                                                                              Integer top) {
+    return cardMovementRepository.findByCardIdOrderByOperationDateDesc(cardId)
+      .map(mapperClass::toCardMovementDto)
+      .collectList().map(list -> {
+        return list.stream().limit(top).collect(Collectors.toList());
+      });
+  }
+
+  public Mono<TransactionDto> execTransaction(WithdrawDto withdrawDto, Card card, Integer order) {
       if (Objects.isNull(card.getAccounts())
         || card.getAccounts().isEmpty()) {
          throw new CardException("The card has no linked accounts");
