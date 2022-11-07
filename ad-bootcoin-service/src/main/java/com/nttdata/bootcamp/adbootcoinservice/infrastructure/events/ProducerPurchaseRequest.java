@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
+/**
+ *
+ * @since 2022
+ */
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -20,7 +25,8 @@ public class ProducerPurchaseRequest {
     private String topic;
 
     public void sendMessage(PayOrder payOrder) {
-        ListenableFuture<SendResult<String, PayOrder>> future = kafkaTemplate.send(this.topic, payOrder);
+        ListenableFuture<SendResult<String, PayOrder>> future =
+          kafkaTemplate.send(this.topic, payOrder);
 
         future.addCallback(new ListenableFutureCallback<SendResult<String, PayOrder>>() {
             @Override

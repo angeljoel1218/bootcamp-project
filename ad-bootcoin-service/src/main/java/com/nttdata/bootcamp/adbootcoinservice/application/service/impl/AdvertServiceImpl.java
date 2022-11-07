@@ -89,7 +89,8 @@ public class AdvertServiceImpl implements AdvertService {
                                     .flatMap(order -> {
                                         advert.setState(StateAdvert.PENDING);
                                         return advertRepository.save(advert)
-                                                .doOnNext(advert1 -> producerPurchaseRequest.sendMessage(order))
+                                                .doOnNext(advert1 ->
+                                                  producerPurchaseRequest.sendMessage(order))
                                                 .map(a -> order);
                                     })
                                     .map(mapperPayOrder::toDto);
