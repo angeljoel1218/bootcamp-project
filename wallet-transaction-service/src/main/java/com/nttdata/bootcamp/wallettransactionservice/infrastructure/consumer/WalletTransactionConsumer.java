@@ -42,6 +42,7 @@ public class WalletTransactionConsumer {
         return request;
       }).onErrorResume(throwable -> {
         request.setState(StateTransaction.DENIED);
+        request.setDetail(throwable.getMessage());
         return Mono.just(request);
       });
   }

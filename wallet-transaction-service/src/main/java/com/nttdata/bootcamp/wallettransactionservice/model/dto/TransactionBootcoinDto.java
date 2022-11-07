@@ -17,8 +17,6 @@ public class TransactionBootcoinDto implements Serializable {
     private BigDecimal amount;
     private String transactionId;
     private StateTransaction state;
-
-
-
+    private String detail;
 
 }
