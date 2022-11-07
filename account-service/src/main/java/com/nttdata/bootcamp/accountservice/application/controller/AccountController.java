@@ -64,7 +64,7 @@ public class AccountController {
     @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") Date endDate,
     @RequestParam String productId) {
 
-    return accountService.findByCreateDateBetweenAndProductId(startDate, endDate, productId);
+    return accountService.findByCreatedDateBetweenAndProductId(startDate, endDate, productId);
 
   }
 }

@@ -15,7 +15,7 @@ public interface AccountService<T> extends GenericAccountService<T>{
 
     public Flux<T> findByHolderId(String holderId);
 
-    public Flux<T> findByCreateDateBetweenAndProductId(Date startDate,
+    public Flux<T> findByCreatedDateBetweenAndProductId(Date startDate,
                                                        Date endDate,
                                                        String productId);
 }

@@ -70,8 +70,8 @@ public class TransactionServiceImpl implements TransactionService {
                     transaction.setState(StateTransaction.PENDING);
                     transaction.setCreatedAt(new Date());
                     return bootcoinService.getWallet(payOrder.getSellerWalletId())
-                            .doOnNext(bootcoinDto -> {
-                                if(bootcoinDto.getBalance().compareTo(payOrder.getAmount()) < 0) {
+                            .doOnNext(boot -> {
+                                if(boot.getBalance().compareTo(payOrder.getAmount()) < 0) {
                                     throw new TransactionException("Insufficient balance error");
                                 }
                             })
