@@ -11,6 +11,7 @@ import com.nttdata.bootcamp.adbootcoinservice.domain.dto.RequestPurchaseDto;
 import com.nttdata.bootcamp.adbootcoinservice.domain.model.PayOrder;
 import com.nttdata.bootcamp.adbootcoinservice.infrastructure.AdvertRepository;
 import com.nttdata.bootcamp.adbootcoinservice.infrastructure.PayOrderRepository;
+import com.nttdata.bootcamp.adbootcoinservice.infrastructure.events.ProducerPurchaseRequest;
 import com.nttdata.bootcamp.adbootcoinservice.infrastructure.webclient.MasterDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,8 @@ public class AdvertServiceImpl implements AdvertService {
     PayOrderRepository payOrderRepository;
     @Autowired
     MasterDataService masterDataService;
+    @Autowired
+    ProducerPurchaseRequest producerPurchaseRequest;
     @Autowired
     MapperAdvert mapperAdvert;
     @Autowired
@@ -74,9 +77,11 @@ public class AdvertServiceImpl implements AdvertService {
                             payOrder.setCreatedAt(new Date());
                             return Mono.just(payOrder)
                                     .flatMap(payOrderRepository::insert)
-                                    .flatMap(o -> {
+                                    .flatMap(order -> {
                                         advert.setState(StateAdvert.PENDING);
-                                        return advertRepository.save(advert).map(a -> o);
+                                        return advertRepository.save(advert)
+                                                .doOnNext(advert1 -> producerPurchaseRequest.sendMessage(order))
+                                                .map(a -> order);
                                     })
                                     .map(mapperPayOrder::toDto);
                         }));

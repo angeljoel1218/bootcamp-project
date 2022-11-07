@@ -22,8 +22,11 @@ public class Transaction {
     private String orderId;
     private String number;
     private String detail;
+    private BigDecimal amount;
+    private BigDecimal amountPay;
     private String sellerWalletId;
     private String buyerWalletId;
+    private String methodPayment;
     private StateTransaction state;
     private Date dateTransaction;
     private Date createdAt;

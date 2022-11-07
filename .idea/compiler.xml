@@ -2,18 +2,16 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="config-server" />
-        <module name="bootcoin-service" />
         <module name="customer-service" />
         <module name="product-service" />
         <module name="discovery-service" />
         <module name="config-server" />
         <module name="ad-bootcoin-service" />
+        <module name="bootcoin-service" />
         <module name="exchange-bootcoin-service" />
         <module name="api-gateway" />
         <module name="report-service" />
@@ -21,8 +19,8 @@
         <module name="master-data-bootcoin-service" />
         <module name="account-service" />
         <module name="credits-service" />
-        <module name="wallet-service" />
         <module name="wallet-transaction-service" />
+        <module name="wallet-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -36,7 +34,6 @@
       <module name="customer-service" target="11" />
       <module name="discovery-service" target="11" />
       <module name="exchange-bootcoin-service" target="11" />
-      <module name="exchange-rate-bootcoin-service" target="11" />
       <module name="master-data-bootcoin-service" target="11" />
       <module name="product-service" target="11" />
       <module name="report-service" target="11" />
@@ -56,7 +53,6 @@
       <module name="customer-service" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="exchange-bootcoin-service" options="-parameters" />
-      <module name="exchange-rate-bootcoin-service" options="-parameters" />
       <module name="master-data-bootcoin-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="report-service" options="-parameters" />

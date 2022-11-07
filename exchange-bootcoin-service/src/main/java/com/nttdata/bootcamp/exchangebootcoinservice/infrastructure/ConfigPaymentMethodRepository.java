@@ -5,5 +5,6 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Mono;
 
 public interface ConfigPaymentMethodRepository extends ReactiveMongoRepository<ConfigPaymentMethod, String> {
-    Mono<ConfigPaymentMethod>findByMethodPaymentId(String id);
+    Mono<ConfigPaymentMethod> findByMethodPaymentId(String id);
+    Mono<ConfigPaymentMethod> findByWalletId(String walletId);
 }
