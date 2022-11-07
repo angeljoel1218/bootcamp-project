@@ -2,7 +2,6 @@ package com.nttdata.bootcamp.walletservice.application.controller;
 
 
 import com.nttdata.bootcamp.walletservice.application.WalletService;
-import com.nttdata.bootcamp.walletservice.model.Wallet;
 import java.math.BigDecimal;
 import javax.validation.Valid;
 
@@ -18,6 +17,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
+/**
+ *
+ * @since 2022
+ */
 @Slf4j
 @RefreshScope
 @RestController
@@ -54,7 +57,8 @@ public class WalletController {
   }
 
   @PutMapping("/set-balance/{phone}/{amount}")
-  public  Mono<ResponseEntity<WalletDto>> setBalance(@PathVariable("phone") String phone, @PathVariable("amount") BigDecimal amount) {
+  public Mono<ResponseEntity<WalletDto>> setBalance(@PathVariable("phone") String phone,
+                                                    @PathVariable("amount") BigDecimal amount) {
     return walletService.setBalance(phone, amount).map(a -> ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_JSON)
         .body(a))

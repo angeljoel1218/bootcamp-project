@@ -16,6 +16,11 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ * @since 2022
+ */
+
 @Configuration
 public class KafkaConsumerConfig {
 
@@ -24,14 +29,19 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConsumerFactory<String, TransactionDto> consumerFactory() {
-        JsonDeserializer<TransactionDto> jsonDeserializer = new JsonDeserializer<>(TransactionDto.class, false);
+        JsonDeserializer<TransactionDto> jsonDeserializer =
+          new JsonDeserializer<>(TransactionDto.class, false);
         jsonDeserializer.addTrustedPackages("*");
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(), jsonDeserializer);
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+          new StringDeserializer(), jsonDeserializer);
     }
 
+
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, TransactionDto>> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, TransactionDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,
+      TransactionDto>> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, TransactionDto> factory =
+          new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
 
         return factory;
@@ -44,7 +54,8 @@ public class KafkaConsumerConfig {
                 bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+          JsonDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "myGroup");
         return props;
     }

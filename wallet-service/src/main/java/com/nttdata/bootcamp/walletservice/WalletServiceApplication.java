@@ -10,14 +10,18 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactivefeign.spring.config.EnableReactiveFeignClients;
 
+/**
+ *
+ * @since 2022
+ */
+
 @SpringBootApplication
 @EnableReactiveFeignClients
 @EnableEurekaClient
 public class WalletServiceApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(WalletServiceApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(WalletServiceApplication.class, args);
+  }
 
   @Bean
   @LoadBalanced

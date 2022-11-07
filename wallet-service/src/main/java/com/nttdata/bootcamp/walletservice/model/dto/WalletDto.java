@@ -4,7 +4,11 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+
+/**
+ *
+ * @since 2022
+ */
 
 @Data
 public class WalletDto {

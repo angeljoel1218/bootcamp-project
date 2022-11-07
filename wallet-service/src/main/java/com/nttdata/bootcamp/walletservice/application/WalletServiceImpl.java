@@ -2,9 +2,8 @@ package com.nttdata.bootcamp.walletservice.application;
 
 import com.nttdata.bootcamp.walletservice.application.mappers.MapperWallet;
 import com.nttdata.bootcamp.walletservice.infrastructure.WalletRepository;
-import com.nttdata.bootcamp.walletservice.model.Wallet;
 import com.nttdata.bootcamp.walletservice.model.dto.WalletDto;
-import com.nttdata.bootcamp.walletservice.model.feignclient.CardService;
+import com.nttdata.bootcamp.walletservice.infrastructure.feignclient.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -13,6 +12,10 @@ import java.time.LocalDate;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @since 2022
+ */
 
 @Service
 public class WalletServiceImpl implements WalletService {
