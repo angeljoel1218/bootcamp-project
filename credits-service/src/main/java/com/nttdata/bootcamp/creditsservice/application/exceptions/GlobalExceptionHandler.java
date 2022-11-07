@@ -10,6 +10,10 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * @since 2022
+ */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 

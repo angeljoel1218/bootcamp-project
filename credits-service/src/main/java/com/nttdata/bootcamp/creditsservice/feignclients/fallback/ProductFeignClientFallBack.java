@@ -10,13 +10,16 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+/**
+ *
+ * @since 2022
+ */
 @Log4j2
 @Component
 public class ProductFeignClientFallBack implements ProductFeignClient {
-
-	@Override
-	public Mono<ProductCreditDto> findById(String id) {
-		log.info("findById product Credit not found!");
-		return null;
-	}
+  @Override
+  public Mono<ProductCreditDto> findById(String id) {
+    log.info("findById product Credit not found!");
+    return null;
+  }
 }

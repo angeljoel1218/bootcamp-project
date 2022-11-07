@@ -3,6 +3,10 @@ package com.nttdata.bootcamp.creditsservice.application.utils;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ *
+ * @since 2022
+ */
 public class DateUtil {
 
     public static  Date setStartDate(Date date){
@@ -45,7 +49,8 @@ public class DateUtil {
         calendar.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().getMaximum(Calendar.HOUR_OF_DAY));
         calendar.set(Calendar.MINUTE, Calendar.getInstance().getMaximum(Calendar.MINUTE));
         calendar.set(Calendar.SECOND, Calendar.getInstance().getMaximum(Calendar.SECOND));
-        calendar.set(Calendar.MILLISECOND,  Calendar.getInstance().getMaximum(Calendar.MILLISECOND));
+        calendar.set(Calendar.MILLISECOND,
+          Calendar.getInstance().getMaximum(Calendar.MILLISECOND));
         return calendar.getTime();
     }
 
@@ -74,10 +79,12 @@ public class DateUtil {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().getMaximum(Calendar.HOUR_OF_DAY));
+        calendar.set(Calendar.HOUR_OF_DAY,
+          Calendar.getInstance().getMaximum(Calendar.HOUR_OF_DAY));
         calendar.set(Calendar.MINUTE, Calendar.getInstance().getMaximum(Calendar.MINUTE));
         calendar.set(Calendar.SECOND, Calendar.getInstance().getMaximum(Calendar.SECOND));
-        calendar.set(Calendar.MILLISECOND,  Calendar.getInstance().getMaximum(Calendar.MILLISECOND));
+        calendar.set(Calendar.MILLISECOND,
+          Calendar.getInstance().getMaximum(Calendar.MILLISECOND));
         return calendar.getTime();
     }
 }

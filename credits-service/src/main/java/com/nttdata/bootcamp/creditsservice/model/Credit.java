@@ -10,6 +10,10 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ *
+ * @since 2022
+ */
 @Document(collection = "m_credit" )
 @Getter
 @Setter

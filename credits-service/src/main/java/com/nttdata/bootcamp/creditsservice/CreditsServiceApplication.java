@@ -8,15 +8,17 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import reactivefeign.spring.config.EnableReactiveFeignClients;
 
+
+/**
+ *
+ * @since 2022
+ */
 @Slf4j
 @SpringBootApplication
 @EnableReactiveFeignClients
 @EnableEurekaClient
 public class CreditsServiceApplication {
-
-	public static void main(String[] args) {
-
-		SpringApplication.run(CreditsServiceApplication.class, args);
-	}
-
+  public static void main(String[] args){
+    SpringApplication.run(CreditsServiceApplication.class, args);
+  }
 }
