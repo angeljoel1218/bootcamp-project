@@ -7,6 +7,11 @@ import com.nttdata.bootcamp.reportservice.model.dto.ProductDto;
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
 
+
+/**
+ *
+ * @since 2022
+ */
 @Log4j2
 public class ProductFeignClientFallBack implements ProductFeignClient {
 

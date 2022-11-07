@@ -9,6 +9,10 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 public class ProductConsumer {
 

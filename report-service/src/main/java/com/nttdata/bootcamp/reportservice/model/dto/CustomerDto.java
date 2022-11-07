@@ -3,6 +3,10 @@ package com.nttdata.bootcamp.reportservice.model.dto;
 import lombok.*;
 
 
+/**
+ *
+ * @since 2022
+ */
 @Data
 @Getter
 @Setter

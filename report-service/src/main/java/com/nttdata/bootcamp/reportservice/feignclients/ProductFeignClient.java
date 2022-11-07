@@ -8,10 +8,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import reactivefeign.spring.config.ReactiveFeignClient;
 import reactor.core.publisher.Mono;
 
-@ReactiveFeignClient(value =  "${feign.service.product.name}", fallback = ProductFeignClientFallBack.class)
+/**
+ *
+ * @since 2022
+ */
+@ReactiveFeignClient(value =  "${feign.service.product.name}",
+  fallback = ProductFeignClientFallBack.class)
 public interface ProductFeignClient {
 
-    @GetMapping("product/get/{id}")
-    public  Mono<ProductDto> findById(@PathVariable("id") String id);
-
+  @GetMapping("product/get/{id}")
+  public  Mono<ProductDto> findById(@PathVariable("id") String id);
 }
